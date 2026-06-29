@@ -118,6 +118,7 @@ exports.createBooking = async (req, res, next) => {
         const knownErrors = [
             'already booked', 'invalid', 'expired', 'usage limit',
             'minimum order', 'past', 'inactive', 'not found',
+            'available', 'availability',
         ];
         const isKnown = knownErrors.some(k => err.message?.toLowerCase().includes(k));
 

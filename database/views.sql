@@ -71,7 +71,7 @@ SELECT
     pr.total_reviews,
     pr.experience_yrs,
     COUNT(DISTINCT b.booking_id)                AS total_bookings,
-    COALESCE(SUM(b.total_amount), 0)            AS total_revenue,
+    COALESCE(SUM(b.total_amount) FILTER (WHERE b.status = 'Completed'), 0) AS total_revenue,
     COUNT(DISTINCT b.booking_id)
         FILTER (WHERE b.status = 'Completed')   AS completed_bookings
 FROM Provider pr
@@ -105,10 +105,10 @@ CREATE OR REPLACE VIEW vw_revenue_by_month AS
 SELECT
     TO_CHAR(b.booking_date, 'YYYY-MM')  AS month,
     TO_CHAR(b.booking_date, 'Mon YYYY') AS month_label,
-    COUNT(b.booking_id)                 AS total_bookings,
-    COALESCE(SUM(b.total_amount), 0)    AS total_revenue
+    COUNT(b.booking_id) FILTER (WHERE b.status = 'Completed') AS total_bookings,
+    COALESCE(SUM(b.total_amount) FILTER (WHERE b.status = 'Completed'), 0) AS total_revenue
 FROM Booking b
-WHERE b.status != 'Cancelled'
+WHERE b.status = 'Completed'
 GROUP BY TO_CHAR(b.booking_date, 'YYYY-MM'), TO_CHAR(b.booking_date, 'Mon YYYY')
 ORDER BY month;
 

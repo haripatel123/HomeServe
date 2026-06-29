@@ -103,6 +103,15 @@ BEGIN
     PERFORM 1 FROM Provider WHERE provider_id = p_provider_id AND is_active = TRUE;
     IF NOT FOUND THEN RAISE EXCEPTION 'Provider not found or inactive.'; END IF;
 
+    -- Validate provider availability for the day and time slot
+    PERFORM 1 FROM ProviderAvailability 
+    WHERE provider_id = p_provider_id
+      AND day_of_week = TRIM(TO_CHAR(p_date, 'Day'))::day_of_week_enum
+      AND p_time BETWEEN start_time AND end_time;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Provider is not available at this day of week or time slot. Please choose a slot within their scheduled availability.';
+    END IF;
+
     -- Validate service exists
     PERFORM 1 FROM Service WHERE service_id = p_service_id AND is_active = TRUE;
     IF NOT FOUND THEN RAISE EXCEPTION 'Service not found or inactive.'; END IF;

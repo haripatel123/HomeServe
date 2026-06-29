@@ -1,77 +1,145 @@
 # 🏠 HomeServe — Home Service Booking Platform
 
-[![Node.js Version](https://img.shields.io/badge/node-v18%2B-blue.svg)](https://nodejs.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14%2B-blue.svg)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-ISC-green.svg)](https://opensource.org/licenses/ISC)
-[![Express](https://img.shields.io/badge/Express-4.18-lightgrey.svg)](https://expressjs.com/)
-
-A premium, production-ready full-stack **Home Service Booking Platform** built using **Node.js**, **Express.js**, **PostgreSQL**, **EJS**, and **Bootstrap 5**. Designed with a modern abyssal dark theme, this project serves as a showcase of robust database architecture, MVC design pattern, and interactive user experiences.
+A premium, production-ready full-stack **Home Service Booking Platform** built with a modern **Node.js/Express.js MVC** backend, **PostgreSQL** relational database, **EJS** Server-Side Rendering (SSR), and **Bootstrap 5**. Designed with a high-end abyssal dark theme, this project serves as a showcase of robust database architecture, MVC design pattern, and interactive user experiences.
 
 ---
 
 ## 🌟 Visual Showcase
 
-### Elegant Hero & Trust Showcase
-![Hero Showcase](README-assets/hero.png)
-
-### Dynamic Booking & Provider Management
-![Booking Flow](README-assets/booking.png)
-
-### Platform Analytics Dashboard
-![Analytics Dashboard](README-assets/analytics.png)
+| Landing Page & Trust Showcase | Booking & Provider Management | Platform Analytics Dashboard |
+|:---:|:---:|:---:|
+| ![Hero Showcase](README-assets/hero.png) | ![Booking Flow](README-assets/booking.png) | ![Analytics Dashboard](README-assets/analytics.png) |
 
 ---
 
-## 📋 Features
+## 🗄️ Database Schema (ER Diagram)
 
-| Feature | Description |
-|:---|:---|
-| 🏠 **Home Page** | Premium SaaS hero landing page featuring floating trust metrics and interactive professional reviews. Browse services via categories with client-side searching. |
-| 📄 **Service Detail** | Detailed service descriptions, dynamic pricing variants, and instant provider match lists. |
-| 📅 **Book Service** | Direct booking interface with concurrent double-booking prevention, automatic backend amount calculations, and coupon application. |
-| 📋 **Booking History** | Tracks active, confirmed, completed, or cancelled bookings with customer feedback and review submittals. |
-| 🔧 **Provider Dashboard** | Dedicated console for providers to toggle daily availability slots, view client reviews, and track completed jobs. |
-| 📊 **Analytics Dashboard** | Full platform KPIs displaying revenue charts, category performance, top service products, and highest-rated professionals. |
+This entity-relationship model showcases a highly optimized relational database structure:
+
+```mermaid
+erDiagram
+    Customer ||--o{ Address : "registers"
+    Customer ||--o{ Booking : "creates"
+    Customer ||--o{ ProviderReview : "writes"
+    
+    Address ||--o{ Booking : "ships_to"
+    
+    Provider ||--o{ ProviderService : "offers"
+    Provider ||--o{ ProviderAvailability : "schedules"
+    Provider ||--o{ Booking : "fulfills"
+    Provider ||--o{ ProviderReview : "receives"
+    
+    Category ||--o{ Service : "categorizes"
+    Service ||--o{ ServiceVariant : "extends"
+    Service ||--o{ ProviderService : "maps"
+    Service ||--o{ BookingItem : "includes"
+    ServiceVariant ||--o{ BookingItem : "customizes"
+    
+    Booking ||--o{ BookingItem : "contains"
+    Booking ||--|| Payment : "settles"
+    Booking ||--o{ BookingStatusLog : "tracks"
+    Booking ||--o{ BookingCoupon : "applies"
+    
+    Coupon ||--o{ BookingCoupon : "logs"
+
+    Customer {
+        int customer_id PK
+        string name
+        string email UK
+        string phone
+        timestamp created_at
+    }
+
+    Address {
+        int address_id PK
+        int customer_id FK
+        string line1
+        string line2
+        string city
+        string state
+        string pincode
+        boolean is_default
+    }
+
+    Provider {
+        int provider_id PK
+        string name
+        string email UK
+        string phone
+        text bio
+        int experience_yrs
+        decimal avg_rating
+        int total_reviews
+        boolean is_active
+    }
+
+    Service {
+        int service_id PK
+        int category_id FK
+        string name
+        text description
+        decimal base_price
+        int duration_min
+    }
+
+    Booking {
+        int booking_id PK
+        int customer_id FK
+        int provider_id FK
+        int address_id FK
+        date booking_date
+        time booking_time
+        string status
+        decimal total_amount
+    }
+```
 
 ---
 
-## 🗄️ Database Architecture & DBMS Concepts
+## 🚀 Key DBMS Features
 
-The platform is designed with a highly optimized relational database structure in PostgreSQL, highlighting core DBMS principles:
+This platform emphasizes database-level performance, data integrity, and strict constraints:
 
-*   **Views:** Complex read joins consolidated into high-performance views like `vw_service_details`, `vw_booking_summary`, `vw_provider_analytics`, and `vw_revenue_by_month`.
-*   **Triggers:** Custom trigger functions handling auto status logging, dynamic provider rating recalculations, coupon usage increment limits, and concurrent double-booking validations.
-*   **Stored Procedures:** Programmatic routines (`fn_create_booking`, `fn_calculate_booking_amount`, `fn_update_booking_status`) packing core business logic directly on the SQL compiler engine.
-*   **Performance Indexes:** 17 strategically placed B-Tree indexes targeting foreign key constraints, status flags, and search keywords for sub-millisecond query performance.
-*   **Transactions:** Complete ACID transactions wrapping all multi-table booking operations with atomic ROLLBACK safeguards on failure.
+### 1. High-Performance SQL Views
+Instead of running heavy relational joins on the server, analytical queries are compiled directly on PostgreSQL views:
+*   `vw_service_details`: Joins services, categories, and pricing variants.
+*   `vw_booking_summary`: Merges booking statuses, customer profiles, address metadata, and payments.
+*   `vw_provider_analytics`: Aggregates active jobs, historical ratings, and lifetime provider revenues.
+*   `vw_revenue_by_month`: Pre-computes monthly platform transaction volumes.
+
+### 2. Transactional Stored Procedures
+- **`fn_create_booking`**: Integrates booking entries, item details, coupons, and payments inside a strict transactional boundary with a complete auto-rollback guarantee if any single insert fails.
+- **`fn_calculate_booking_amount`**: Performs server-side calculations of service base prices, optional variant add-ons, and coupon discounts.
+
+### 3. Automated PL/pgSQL Triggers
+- **Prevent Double-Booking**: Rejects confirmed requests if the selected provider is already booked for that date/time slot.
+- **Live Rating Recalculations**: Automatically updates `avg_rating` and `total_reviews` in the `Provider` table whenever a new review is inserted or modified.
+- **Coupon Controls**: Increments coupon usage counters and checks limits dynamically on checkout.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Token System
 
 - **Backend:** Node.js, Express.js (MVC)
-- **Database:** PostgreSQL (Client Pool)
-- **Template Engine:** EJS (Dynamic SSR)
-- **Frontend Styling:** Custom Abyssal CSS (matter tokens, light glass backdrops), GSAP (entrance & float loops), Bootstrap 5.3, Chart.js 4
-- **Security:** Helmet.js, parameterized queries (SQL Injection prevention), Express Validator sanitization
+- **Database:** PostgreSQL (Client Pool, SSL enabled)
+- **Template Engine:** EJS (Dynamic Server-Side Rendering)
+- **Frontend Design:** Custom Abyssal CSS (Matter display types, 18-20px glass surfaces), GSAP (entrance & floating physics loops), Bootstrap 5.3, Chart.js 4
+- **Security:** Helmet.js, parameterized queries (SQL injection prevention), Express Validator sanitization
 
 ---
 
-## 🚀 Installation & Running Locally
+## 📦 Getting Started
 
-### Prerequisites
-- Node.js v18+
-- PostgreSQL v14+
-- Terminal (PowerShell, CMD, or Bash)
+### 1. Prerequisites
+- **Node.js** (v18+)
+- **PostgreSQL** (v14+)
 
-### 1. Clone & Install Dependencies
+### 2. Install Dependencies
 ```bash
-git clone <your-repository-url>
-cd DBMS
 npm install
 ```
 
-### 2. Configure Environment Variables
+### 3. Setup Configuration
 Copy `.env.example` to `.env` and fill in your PostgreSQL credentials:
 ```bash
 cp .env.example .env
@@ -87,13 +155,8 @@ PORT=3000
 NODE_ENV=development
 ```
 
-### 3. Create the Database
-```sql
-CREATE DATABASE home_services;
-```
-
-### 4. Run Schema & Setup Scripts (in order)
-Run these commands in your shell to bootstrap the schema, constraints, procedures, and demo seed data:
+### 4. Create Database & Run SQL Scripts
+Create a local database named `home_services` and execute the schema files in the following order:
 ```bash
 psql -U postgres -d home_services -f database/schema.sql
 psql -U postgres -d home_services -f database/indexes.sql
@@ -105,104 +168,35 @@ psql -U postgres -d home_services -f database/seed.sql
 
 ### 5. Launch the Platform
 ```bash
-# Run in development mode with nodemon auto-restart
+# Start server in development mode (with nodemon auto-restart)
 npm run dev
 
-# Or run in production mode
+# Start server in production mode
 npm start
 ```
 Open **http://localhost:3000** in your browser.
 
 ---
 
-## 📂 Project Structure
+## 🌐 API Reference
 
-```
-DBMS/
-├── app.js                    # Express Application Entry
-├── .env.example              # Environment Configuration Template
-├── README.md                 # Project Documentation
-├── package.json              # Dependencies & Scripts Configuration
-│
-├── config/
-│   └── db.js                 # PostgreSQL Pool Setup & SSL configuration
-│
-├── database/                 # Structured SQL Database Scripts
-│   ├── schema.sql            # Table structures, relations & constraints
-│   ├── indexes.sql           # Query optimization indexes
-│   ├── views.sql             # SQL Views for aggregations
-│   ├── triggers.sql          # Pl/pgSQL triggers
-│   ├── procedures.sql        # Database functions & transactions
-│   └── seed.sql              # Rich demo datasets
-│
-├── controllers/              # MVC Controller Logic
-│   ├── homeController.js
-│   ├── serviceController.js
-│   ├── bookingController.js
-│   ├── providerController.js
-│   └── analyticsController.js
-│
-├── models/                   # Modular SQL Query Models
-│   ├── serviceModel.js
-│   ├── bookingModel.js
-│   ├── providerModel.js
-│   └── analyticsModel.js
-│
-├── routes/                   # Routing Middleware Mapping
-│   ├── index.js
-│   ├── serviceRoutes.js
-│   ├── bookingRoutes.js
-│   ├── providerRoutes.js
-│   └── analyticsRoutes.js
-│
-├── views/                    # EJS Pages and Layout Partials
-│   ├── partials/             # Header, Footer, and Navbar blocks
-│   ├── index.ejs             # Landing page with trust cards
-│   ├── service-detail.ejs    # Service profiles
-│   ├── booking-form.ejs      # Checkout form
-│   ├── booking-history.ejs   # Client booking overview
-│   ├── provider-dashboard.ejs# Provider portal
-│   ├── analytics.ejs         # Admin KPI boards
-│   ├── 404.ejs               # Clean 404 handler page
-│   └── 500.ejs               # Custom 500 error display
-│
-├── public/                   # Public static files
-│   ├── css/style.css         # Dark theme style system
-│   ├── js/main.js            # Particle canvas configurations
-│   └── README-assets/        # Showcase screenshots
-│
-└── middleware/
-    └── errorHandler.js       # Express Global Error handling
-```
-
----
-
-## 🌐 API & Route Documentation
-
-| Route | Method | Description |
+| Endpoint | Method | Role |
 |:---|:---|:---|
-| `/` | `GET` | Home page displaying services list, filters, and trust showcases |
-| `/services/:id` | `GET` | Service details, prices, and matching providers |
-| `/book/:serviceId` | `GET` | Initiates the secure booking process |
-| `/book` | `POST` | Processes the ACID booking transaction |
-| `/bookings` | `GET` | Customer booking history (uses demo `customer_id=1` for showcase) |
-| `/bookings/:id/review` | `POST` | Submits a customer review |
-| `/provider` | `GET` | Portal dashboard for providers (uses demo `provider_id=1` for showcase) |
-| `/provider/availability` | `POST` | Appends active service timeslot slots |
-| `/analytics` | `GET` | Displays dashboard charts, graphs, and metric lists |
-| `/api/calculate-amount` | `GET` | Dynamic pricing API endpoint |
+| `/` | `GET` | Home page with trust cards, category filters, and live search |
+| `/services/:id` | `GET` | Service overview, pricing variants, and matching providers |
+| `/book/:serviceId` | `GET` | Checkout page setup |
+| `/book` | `POST` | Processes the booking transaction |
+| `/bookings` | `GET` | Customer booking history (demo `customer_id=1`) |
+| `/bookings/:id/review` | `POST` | Submits customer rating & review feedback |
+| `/provider` | `GET` | Provider portal dashboard (demo `provider_id=1`) |
+| `/provider/availability` | `POST` | Appends active availability slots |
+| `/analytics` | `GET` | Analytics dashboard displaying KPI graphs and charts |
 
 ---
 
-## 🔐 Security & Production Verification
+## 🔐 Security & Production Validation
 
-- **Helmet CSP Configuration:** Restricts resources to self-origin, google fonts, and trusted CDNs (GSAP, Chart.js).
-- **Injection Safety:** All SQL queries are parameterised using PostgreSQL positional arguments (`$1`, `$2`).
-- **Input Sanitization:** Server-side validating handles input lengths, email validation, and past date bounds.
-- **Production SSL Support:** Configured automatically inside `config/db.js` if deploying on cloud platforms like **Render**, **Railway**, or **Neon** that require secure database channels.
-
----
-
-## 📄 License
-
-This project is licensed under the [ISC License](LICENSE). Feel free to modify and adapt it for showcasing database concepts.
+- **Content Security Policy:** Configured via Helmet.js to secure scripts, styles, and fonts origins.
+- **Atomic Isolation:** All multi-step bookings utilize database transactions ensuring data rollback on network failure.
+- **Production SSL Support:** Configured automatically inside `config/db.js` for seamless cloud hosting (Render, Railway, Neon).
+- **Parameterized Protection:** All SQL commands run through pg-pool positional arguments preventing SQL injection vectors.

@@ -1,0 +1,529 @@
+<%- include('partials/header') %>
+    <%- include('partials/navbar') %>
+
+        <!-- HERO -->
+        <section class="hero-section">
+            <div class="container-xl position-relative" style="z-index:1">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <div class="hero-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                            Trusted Home Services
+                        </div>
+                        <h1 class="hero-title">
+                            Find Trusted Professionals<br>
+                            For Every Home Need
+                        </h1>
+                        <p class="hero-subtitle">
+                            Find trusted experts for repairs, maintenance, and home
+                            improvements with transparent pricing and verified reviews.
+                        </p>
+                        <div class="d-flex gap-3 flex-wrap ">
+                            <a href="#services" class="btn-green">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                </svg>
+                                Browse Services
+                            </a>
+                            <a href="/bookings" class="btn-outline-custom">My Bookings</a>
+                        </div>
+
+                        <div class="hero-stats">
+                            <div class="hero-stat-item">
+                                <div class="stat-number">20+</div>
+                                <div class="stat-label">Services</div>
+                            </div>
+                            <div class="hero-stat-item">
+                                <div class="stat-number">6</div>
+                                <div class="stat-label">Providers</div>
+                            </div>
+                            <div class="hero-stat-item">
+                                <div class="stat-number">4.7★</div>
+                                <div class="stat-label">Avg Rating</div>
+                            </div>
+                            <div class="hero-stat-item">
+                                <div class="stat-number">40+</div>
+                                <div class="stat-label">Bookings</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5 col-12 d-flex justify-content-center justify-content-lg-end mt-5 mt-lg-0">
+                        <div class="hero-showcase-wrapper position-relative w-100" style="max-width: 440px; min-height: 430px;">
+                            
+                            <!-- Card 1: Verified Professional (Main Focus) -->
+                            <div class="showcase-card main-provider-card" id="showcaseCard1">
+                                <div class="showcase-card-header d-flex justify-content-between align-items-center">
+                                    <span class="showcase-badge-label">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="me-1" style="width: 12px; height: 12px; color: #00ffb7; vertical-align: -1px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                        Verified Professional
+                                    </span>
+                                    <span class="prov-pulse-dot"></span>
+                                </div>
+                                <div class="showcase-card-body d-flex align-items-center gap-3">
+                                    <div class="avatar-portrait-box">
+                                        <img src="/images/suresh_kumar.png" alt="Suresh Kumar" class="avatar-portrait-img">
+                                        <span class="avatar-check-badge">✔</span>
+                                    </div>
+                                    <div class="showcase-prov-info">
+                                        <h3 class="showcase-prov-name">Suresh Kumar</h3>
+                                        <div class="showcase-rating-line">
+                                            <span class="showcase-star-rating">★ 4.8</span>
+                                            <span class="showcase-jobs-count">· 6 Jobs Completed</span>
+                                        </div>
+                                        <p class="showcase-prov-spec">Plumbing Specialist</p>
+                                    </div>
+                                </div>
+                                <div class="showcase-card-footer d-flex align-items-center justify-content-between">
+                                    <div class="showcase-rate-strip">
+                                        <span class="rate-amount">₹250/hour</span>
+                                        <span class="rate-status">Available Today</span>
+                                    </div>
+                                    <button class="btn-showcase-cta">Book Service</button>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Customer Review Testimonial -->
+                            <div class="showcase-card review-testimonial-card" id="showcaseCard2">
+                                <div class="review-rating-stars">★★★★★</div>
+                                <p class="review-card-text">
+                                    "Suresh fixed the leak perfectly. Very professional!"
+                                </p>
+                                <div class="review-author-line d-flex align-items-center gap-2">
+                                    <div class="review-author-avatar">
+                                        <img src="/images/priya_shah.png" alt="Priya Shah" class="author-avatar-img">
+                                    </div>
+                                    <span class="review-author-name">— Priya Shah</span>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Trust Statistics -->
+                            <div class="showcase-card trust-stats-card" id="showcaseCard3">
+                                <div class="trust-heading d-flex align-items-center gap-2">
+                                    <span class="trust-verified-icon">✔</span>
+                                    <span class="trust-title">Verified Trust</span>
+                                </div>
+                                <div class="trust-metrics-grid">
+                                    <div class="trust-metric-item">
+                                        <span class="metric-num">40+</span>
+                                        <span class="metric-label">Happy Customers</span>
+                                    </div>
+                                    <div class="trust-metric-item">
+                                        <span class="metric-num">4.7★</span>
+                                        <span class="metric-label">Avg Rating</span>
+                                    </div>
+                                    <div class="trust-metric-item">
+                                        <span class="metric-num">250+</span>
+                                        <span class="metric-label">Verified Pros</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <div class="container-xl">
+                <form method="GET" action="/" class="d-flex align-items-center gap-2 flex-wrap">
+                    <!-- Search -->
+                    <div style="flex:1;min-width:200px;">
+                        <input type="text" name="search" value="<%= searchQuery %>"
+                            class="form-control search-input-dark" placeholder="Search services..." id="searchInput">
+                    </div>
+                    <!-- Category buttons -->
+                    <div class="d-flex gap-2 flex-wrap align-items-center">
+                        <a href="/" class="category-btn <%=!selectedCategory?'active':''%>">All</a>
+                        <% categories.forEach(cat=> { %>
+                            <a href="/?category=<%= cat.category_id %>"
+                                class="category-btn <%=selectedCategory===cat.category_id?'active':''%>">
+                                <%= cat.name %>
+                            </a>
+                            <% }); %>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- SERVICES GRID -->
+        <div class="page-wrapper" id="services">
+            <div class="container-xl">
+                <!-- Section heading -->
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h2 class="section-heading mb-0">
+                        <% if (selectedCategory) { %>
+                            <%= categories.find(c=>c.category_id===selectedCategory)?.name || 'Services' %>
+                                <% } else { %>
+                                    All Services
+                                    <% } %>
+                    </h2>
+                    <span class="text-muted-custom" style="font-size:0.85rem;">
+                        <%= services.length %> service<%= services.length !==1 ? 's' : '' %> found
+                    </span>
+                </div>
+
+                <% if (services.length===0) { %>
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
+                        <h3>No Services Found</h3>
+                        <p>Try a different category or search term.</p>
+                        <a href="/" class="btn-green mt-3">View All Services</a>
+                    </div>
+                    <% } else { %>
+
+                        <% 
+                        // Group services by category 
+                        const grouped={}; 
+                        services.forEach(s=> {
+                            if (!grouped[s.category_name]) grouped[s.category_name] = [];
+                            grouped[s.category_name].push(s);
+                            });
+                            const categoryNames = Object.keys(grouped);
+
+                            const svgIcons = {
+                            'Plumbing': `
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />`,
+                            'Electrical': `
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />`,
+                            'Cleaning': `
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            `,
+                            'Carpentry': `
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" />`,
+                            'Painting': `
+                            <path d="M19 11H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2z" />
+                            <path d="M12 3v8" />`,
+                            'AC & Appliances': `
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />`,
+                            'Pest Control': `
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />`,
+                            'Gardening': `
+                            <path
+                                d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22l1-2.3A4.49 4.49 0 0 0 8 20c9.13 0 13.84-7.83 14-8l-5-4z" />
+                            `,
+                            };
+
+                            const serviceImages = {
+                            'Pipe Leak Repair': 'Pipe Leak Repair.avif',
+                            'Tap / Faucet Installation': 'Tap Installation.webp',
+                            'Drain Cleaning': 'Drain Cleaning.webp',
+                            'Switchboard Repair': 'Switch board Repair.webp',
+                            'Fan Installation': 'Fan Installation.webp',
+                            'Inverter / UPS Setup': 'Inverter Setup.avif',
+                            'Home Deep Cleaning': 'Home Deep Cleaning.webp',
+                            'Sofa / Carpet Cleaning': 'Sofa and Carpet Cleaning.webp',
+                            'Kitchen Cleaning': 'Kitchen Cleaning.webp',
+                            'Furniture Assembly': 'Furniture Assembly.webp',
+                            'Door Repair / Fitting': 'Door Repair.avif',
+                            'Wall Painting': 'Wall Painting.webp',
+                            'Touch-Up Painting': 'Touch-Up Painting.webp',
+                            'AC Service & Cleaning': 'AC Service.avif',
+                            'Refrigerator Repair': 'Referigerator Service.webp',
+                            'Washing Machine Repair': 'Waching Machine.webp',
+                            'Cockroach Treatment': 'Coacroch Treatment.avif',
+                            'Termite Treatment': 'Termite Treatment.webp',
+                            'Lawn Mowing & Trimming': 'Lawn Cleaning.webp',
+                            'Plant Care Package': 'Plant Care.webp'
+                            };
+                            %>
+
+                            <% categoryNames.forEach(catName=> { %>
+                                <div class="mb-5">
+                                    <% if (!selectedCategory) { %>
+                                        <h3
+                                            style="font-size:1rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;">
+                                            <span
+                                                style="width:3px;height:16px;background:var(--accent-green);border-radius:2px;display:inline-block;"></span>
+                                            <%= catName %>
+                                        </h3>
+                                        <% } %>
+                                            <div class="row g-3">
+                                                <% grouped[catName].forEach((service, idx)=> {
+                                                    let displayPrice = service.base_price;
+                                                    if (service.min_price) displayPrice = service.min_price;
+                                                     const iconSvg = svgIcons[catName] || `<circle cx="12" cy="12" r="10" />`;
+                                                     const imgFile = serviceImages[service.service_name] ||
+                                                     serviceImages[service.name];
+                                                    %>
+                                                    <div class="col-6 col-md-4 col-lg-3">
+                                                        <a href="/services/<%= service.service_id %>"
+                                                            style="text-decoration:none;display:block;height:100%;">
+                                                            <div class="service-card h-100">
+                                                                <div class="service-card-image">
+                                                                    <% if (imgFile) { %>
+                                                                        <img src="/images/categories/<%= imgFile %>"
+                                                                            alt="<%= service.service_name %>"
+                                                                            class="img-fluid service-card-img"
+                                                                            loading="lazy">
+                                                                        <% } %>
+                                                                            <div class="service-card-icon-fallback"
+                                                                                style="<%= imgFile ? 'display:none;' : '' %>">
+                                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                    viewBox="0 0 24 24" fill="none"
+                                                                                    stroke="currentColor"
+                                                                                    stroke-width="1.5">
+                                                                                    <%- iconSvg %>
+                                                                                </svg>
+                                                                            </div>
+                                                                </div>
+                                                                <div class="service-card-body">
+                                                                    <div class="service-card-category">
+                                                                        <%= service.category_name %>
+                                                                    </div>
+                                                                    <div class="service-card-title">
+                                                                        <%= service.service_name %>
+                                                                    </div>
+                                                                    <div class="service-card-desc">
+                                                                        <%= service.description %>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="service-card-footer">
+                                                                    <div>
+                                                                        <div class="service-price">
+                                                                            ₹<%= parseFloat(displayPrice).toLocaleString('en-IN')
+                                                                                %>
+                                                                                <% if (service.variant_count> 0) {
+                                                                                    %><span
+                                                                                        style="font-size:0.7rem;color:var(--text-muted);">
+                                                                                        onwards</span>
+                                                                                    <% } %>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="service-duration">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            viewBox="0 0 24 24" fill="none"
+                                                                            stroke="currentColor" stroke-width="2"
+                                                                            style="width:12px;height:12px;margin-right:3px;">
+                                                                            <circle cx="12" cy="12" r="10" />
+                                                                            <polyline points="12 6 12 12 16 14" />
+                                                                        </svg>
+                                                                        <%= service.duration_min %> min
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                    <% }); %>
+                                            </div>
+                                </div>
+                                <% }); %>
+                                    <% } %>
+            </div>
+        </div>
+
+        <!-- GSAP Core Library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+        <%- include('partials/footer') %>
+
+            <script>
+                // Dynamic Category Filtering (AJAX Page Swapping without Page Refresh or Scroll Jumps)
+                document.addEventListener('click', function (e) {
+                    const categoryBtn = e.target.closest('.category-btn');
+                    const heroCard = e.target.closest('.hero-category-card');
+                    
+                    if (categoryBtn || heroCard) {
+                        e.preventDefault();
+                        const targetEl = categoryBtn || heroCard;
+                        const url = targetEl.getAttribute('href');
+
+                        // 1. Start scrolling IMMEDIATELY upon click for instant feedback
+                        if (heroCard) {
+                            const servicesEl = document.getElementById('services');
+                            if (servicesEl) {
+                                const elementPosition = servicesEl.getBoundingClientRect().top + window.pageYOffset;
+                                const offsetPosition = elementPosition - 125; // comfortable eyesight alignment
+
+                                const startY = window.pageYOffset;
+                                const difference = offsetPosition - startY;
+                                const duration = 75; // snappy, smooth scroll duration (450ms)
+                                let startTime = null;
+
+                                function step(timestamp) {
+                                    if (!startTime) startTime = timestamp;
+                                    const progress = timestamp - startTime;
+                                    const percent = Math.min(progress / duration, 1);
+                                    const ease = percent < 0.5 
+                                        ? 2 * percent * percent 
+                                        : -1 + (4 - 2 * percent) * percent;
+
+                                    window.scrollTo(0, startY + difference * ease);
+
+                                    if (progress < duration) {
+                                        window.requestAnimationFrame(step);
+                                    }
+                                }
+                                window.requestAnimationFrame(step);
+                            }
+                        }
+
+                        // 2. Fetch and swap the DOM content in the background in parallel
+                        fetch(url)
+                            .then(res => res.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+
+                                // Replace the services container content
+                                const newServices = doc.getElementById('services');
+                                const oldServices = document.getElementById('services');
+                                if (newServices && oldServices) {
+                                    oldServices.innerHTML = newServices.innerHTML;
+                                }
+
+                                // Replace the filter bar (to update active button state and keep search term)
+                                const newFilter = doc.querySelector('.filter-bar');
+                                const oldFilter = document.querySelector('.filter-bar');
+                                if (newFilter && oldFilter) {
+                                    oldFilter.innerHTML = newFilter.innerHTML;
+                                }
+
+                                // Update the browser address bar URL without reloading
+                                history.pushState({}, '', url);
+                            })
+                            .catch(err => {
+                                // Fallback to traditional refresh if fetch fails
+                                if (!heroCard) window.location.href = url;
+                            });
+                    }
+                });
+
+                // Live Client-Side Search (Event-Delegated so it works on dynamically loaded cards)
+                document.addEventListener('input', function (e) {
+                    if (e.target.id === 'searchInput') {
+                        const q = e.target.value.toLowerCase().trim();
+                        document.querySelectorAll('.service-card').forEach(card => {
+                            const title = card.querySelector('.service-card-title')?.textContent.toLowerCase() || '';
+                            const desc = card.querySelector('.service-card-desc')?.textContent.toLowerCase() || '';
+                            const cat = card.querySelector('.service-card-category')?.textContent.toLowerCase() || '';
+                            const col = card.closest('.col-6, .col-md-4, .col-lg-3');
+                            if (col) col.style.display = (!q || title.includes(q) || desc.includes(q) || cat.includes(q)) ? '' : 'none';
+                        });
+                    }
+                });
+
+                // Mobile menu toggle
+                document.addEventListener('click', function (e) {
+                    const toggle = e.target.closest('#mobileMenuToggle');
+                    if (toggle) {
+                        const menu = document.getElementById('mobileMenu');
+                        if (menu) {
+                            menu.style.display = menu.style.display === 'none' || menu.style.display === '' ? 'block' : 'none';
+                        }
+                    }
+                });
+
+                // CSP compliant image loading error handling
+                document.addEventListener('error', function (e) {
+                    if (e.target.tagName === 'IMG' && e.target.classList.contains('service-card-img')) {
+                        e.target.style.display = 'none';
+                        const fallback = e.target.parentNode.querySelector('.service-card-icon-fallback');
+                        if (fallback) {
+                            fallback.style.display = 'flex';
+                        }
+                    }
+                }, true); // capturing phase because error events don't bubble
+
+                // ── Interactive GSAP Hero Showcase Cards Animations ──
+                document.addEventListener('DOMContentLoaded', () => {
+                    const card1 = document.getElementById('showcaseCard1');
+                    const card2 = document.getElementById('showcaseCard2');
+                    const card3 = document.getElementById('showcaseCard3');
+
+                    if (!card1 || !card2 || !card3) return;
+
+                    // Set initial hidden positions for clean entrance
+                    gsap.set(card1, { opacity: 0, x: 80 });
+                    gsap.set(card2, { opacity: 0, y: 60 });
+                    gsap.set(card3, { opacity: 0, scale: 0.92 });
+
+                    // 1. Entrance Timeline
+                    const tl = gsap.timeline();
+                    tl.to(card1, { opacity: 1, x: 0, duration: 1.1, ease: "power3.out" })
+                      .to(card2, { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" }, "-=0.6")
+                      .to(card3, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, "-=0.5");
+
+                    // 2. Slow continuous float loop (active after entrance completes)
+                    tl.add(() => {
+                        // Card 1 main float
+                        gsap.to(card1, {
+                            y: "+=6",
+                            duration: 3.5,
+                            yoyo: true,
+                            repeat: -1,
+                            ease: "sine.inOut"
+                        });
+                        
+                        // Card 2 float & gentle oscillation
+                        gsap.to(card2, {
+                            y: "-=5",
+                            rotation: 1.5,
+                            duration: 4.2,
+                            yoyo: true,
+                            repeat: -1,
+                            ease: "sine.inOut"
+                        });
+                        
+                        // Card 3 float
+                        gsap.to(card3, {
+                            y: "+=4",
+                            duration: 3.8,
+                            yoyo: true,
+                            repeat: -1,
+                            ease: "sine.inOut"
+                        });
+
+                        // Verified badges soft pulse
+                        gsap.to(['.avatar-check-badge', '.trust-verified-icon'], {
+                            scale: 1.12,
+                            duration: 1.8,
+                            yoyo: true,
+                            repeat: -1,
+                            ease: "sine.inOut",
+                            stagger: 0.6
+                        });
+                    });
+
+                    // 3. Hover scaling and z-index bringing forward
+                    const cards = [card1, card2, card3];
+                    cards.forEach(card => {
+                        const originalZ = window.getComputedStyle(card).zIndex;
+
+                        card.addEventListener('mouseenter', () => {
+                            gsap.to(card, {
+                                scale: 1.05,
+                                zIndex: 15,
+                                duration: 0.3,
+                                ease: "power2.out",
+                                overwrite: "auto"
+                            });
+                        });
+
+                        card.addEventListener('mouseleave', () => {
+                            gsap.to(card, {
+                                scale: 1,
+                                zIndex: originalZ,
+                                duration: 0.3,
+                                ease: "power2.out",
+                                overwrite: "auto"
+                            });
+                        });
+                    });
+                });
+            </script>

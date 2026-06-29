@@ -1,0 +1,511 @@
+<%- include('partials/header') %>
+    <%- include('partials/navbar') %>
+
+        <% const p=dashData.provider; %>
+
+            <div class="page-wrapper">
+                <div class="container-xl">
+
+                    <!-- Page Header -->
+                    <div class="page-header d-flex align-items-center justify-content-between flex-wrap gap-3">
+                        <div>
+                            <h1>
+                                <%= p.provider_name %>'s Dashboard
+                            </h1>
+                            <p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.25rem;margin-bottom:0;">
+                                Provider Management Panel
+                            </p>
+                        </div>
+                        <!-- Provider Selector -->
+                        <div class="d-flex align-items-center gap-2">
+                            <label style="font-size:0.82rem;color:var(--text-muted);">View as:</label>
+                            <form method="GET" action="/provider">
+                                <% let currentProviderName='Select Provider' ; const activeProv=providers.find(p=>
+                                    p.provider_id == currentProvider);
+                                    if (activeProv) {
+                                    currentProviderName = activeProv.name;
+                                    }
+                                    %>
+                                    <div class="custom-dropdown-container">
+                                        <div class="custom-dropdown-trigger">
+                                            <span>
+                                                <%= currentProviderName %>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" stroke-width="2" class="chevron-icon">
+                                                <polyline points="6 9 12 15 18 9" />
+                                            </svg>
+                                        </div>
+                                        <div class="custom-dropdown-menu">
+                                            <% providers.forEach(prov=> { %>
+                                                <div class="custom-dropdown-item <%= currentProvider == prov.provider_id ? 'active' : '' %>"
+                                                    data-value="<%= prov.provider_id %>">
+                                                    <%= prov.name %>
+                                                </div>
+                                                <% }); %>
+                                        </div>
+                                        <select id="provider-select" name="provider_id" style="display: none;">
+                                            <% providers.forEach(prov=> { %>
+                                                <option value="<%= prov.provider_id %>"
+                                                    <%=currentProvider==prov.provider_id ? 'selected' : '' %>>
+                                                    <%= prov.name %>
+                                                </option>
+                                                <% }); %>
+                                        </select>
+                                    </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Alerts -->
+                    <% if (error) { %>
+                        <div class="alert-dark-error mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;">
+                                <circle cx="12" cy="12" r="10" />
+                                <line x1="12" y1="8" x2="12" y2="12" />
+                                <line x1="12" y1="16" x2="12.01" y2="16" />
+                            </svg>
+                            <span>
+                                <%= decodeURIComponent(error) %>
+                            </span>
+                        </div>
+                        <% } %>
+                            <% if (success) { %>
+                                <div class="alert-dark-success mb-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2"
+                                        style="width:18px;height:18px;flex-shrink:0;">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                        <polyline points="22 4 12 14.01 9 11.01" />
+                                    </svg>
+                                    <span>
+                                        <%= decodeURIComponent(success) %>
+                                    </span>
+                                </div>
+                                <% } %>
+
+                                    <!-- KPI Cards -->
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-6 col-md-3">
+                                            <div class="kpi-card green">
+                                                <div class="kpi-icon green">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="none" stroke="currentColor" stroke-width="2">
+                                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                                    </svg>
+                                                </div>
+                                                <div class="kpi-label">Total Bookings</div>
+                                                <div class="kpi-value green">
+                                                    <%= p.total_bookings %>
+                                                </div>
+                                                <div class="kpi-sub">Lifetime orders</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <div class="kpi-card amber">
+                                                <div class="kpi-icon amber">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path
+                                                            d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z" />
+                                                    </svg>
+                                                </div>
+                                                <div class="kpi-label">Avg Rating</div>
+                                                <div class="kpi-value amber">
+                                                    <%= parseFloat(p.avg_rating).toFixed(1) %>★
+                                                </div>
+                                                <div class="kpi-sub">
+                                                    <%= p.total_reviews %> reviews
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <div class="kpi-card blue">
+                                                <div class="kpi-icon blue">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                        <polyline points="22 4 12 14.01 9 11.01" />
+                                                    </svg>
+                                                </div>
+                                                <div class="kpi-label">Completed</div>
+                                                <div class="kpi-value blue">
+                                                    <%= p.completed_bookings %>
+                                                </div>
+                                                <div class="kpi-sub">Successful jobs</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-3">
+                                            <div class="kpi-card purple">
+                                                <div class="kpi-icon purple">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="none" stroke="currentColor" stroke-width="2">
+                                                        <line x1="12" y1="1" x2="12" y2="23" />
+                                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                                    </svg>
+                                                </div>
+                                                <div class="kpi-label">Revenue</div>
+                                                <div class="kpi-value purple">₹<%=
+                                                        parseFloat(p.total_revenue).toLocaleString('en-IN') %>
+                                                </div>
+                                                <div class="kpi-sub">Total earnings</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-4">
+                                        <!-- LEFT: Schedule -->
+                                        <div class="col-lg-7">
+                                            <!-- Booking Schedule Table -->
+                                            <div class="dark-card mb-4" style="padding:0;overflow:hidden;">
+                                                <div
+                                                    style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-color);">
+                                                    <h2 style="font-size:1rem;font-weight:600;margin:0;">Recent Bookings
+                                                    </h2>
+                                                </div>
+                                                <% if (dashData.schedule.length===0) { %>
+                                                    <div class="empty-state" style="padding:3rem;">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                            fill="none" stroke="currentColor" stroke-width="1.5"
+                                                            style="width:48px;height:48px;">
+                                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                                            <line x1="3" y1="10" x2="21" y2="10" />
+                                                        </svg>
+                                                        <h3>No bookings yet</h3>
+                                                    </div>
+                                                    <% } else { %>
+                                                        <div class="table-responsive">
+                                                            <table class="dark-table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>ID</th>
+                                                                        <th>Customer</th>
+                                                                        <th>Services</th>
+                                                                        <th>Date / Time</th>
+                                                                        <th>Amount</th>
+                                                                        <th>Status</th>
+                                                                        <th>Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <% dashData.schedule.forEach(b=> {
+                                                                        const statusClass = {
+                                                                        'Pending':'badge-pending','Confirmed':'badge-confirmed',
+                                                                        'InProgress':'badge-inprogress','Completed':'badge-completed',
+                                                                        'Cancelled':'badge-cancelled'
+                                                                        }[b.status] || 'badge-pending';
+                                                                        %>
+                                                                        <tr>
+                                                                            <td><span class="mono"
+                                                                                    style="color:var(--text-muted);font-size:0.8rem;">#
+                                                                                    <%= b.booking_id %></span></td>
+                                                                            <td>
+                                                                                <div
+                                                                                    style="font-size:0.88rem;font-weight:500;">
+                                                                                    <%= b.customer_name %>
+                                                                                </div>
+                                                                                <div
+                                                                                    style="font-size:0.75rem;color:var(--text-muted);">
+                                                                                    <%= b.city %>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td
+                                                                                style="font-size:0.85rem;color:var(--text-secondary);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                                                                <%= b.services %>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div style="font-size:0.85rem;">
+                                                                                    <%= new
+                                                                                        Date(b.booking_date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})
+                                                                                        %>
+                                                                                </div>
+                                                                                <div
+                                                                                    style="font-size:0.75rem;color:var(--text-muted);">
+                                                                                    <%= b.booking_time ?
+                                                                                        b.booking_time.substring(0,5)
+                                                                                        : '' %>
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="mono"
+                                                                                    style="font-weight:700;color:var(--accent-green);font-size:0.88rem;">
+                                                                                    ₹<%= parseFloat(b.total_amount).toLocaleString('en-IN')
+                                                                                        %>
+                                                                                </span>
+                                                                            </td>
+                                                                            <td><span
+                                                                                    class="badge-status <%= statusClass %>">
+                                                                                    <%= b.status %>
+                                                                                </span></td>
+                                                                            <td>
+                                                                                <% if (b.status==='Pending' ) { %>
+                                                                                    <form method="POST"
+                                                                                        action="/bookings/<%= b.booking_id %>/status"
+                                                                                        style="margin:0;">
+                                                                                        <input type="hidden"
+                                                                                            name="new_status"
+                                                                                            value="Confirmed">
+                                                                                        <input type="hidden"
+                                                                                            name="redirect_to"
+                                                                                            value="/provider?provider_id=<%= currentProvider %>">
+                                                                                        <button type="submit"
+                                                                                            class="btn-green"
+                                                                                            style="font-size:0.75rem;padding:0.3rem 0.7rem;">Confirm</button>
+                                                                                    </form>
+                                                                                    <% } else if (b.status==='Confirmed'
+                                                                                        ) { %>
+                                                                                        <form method="POST"
+                                                                                            action="/bookings/<%= b.booking_id %>/status"
+                                                                                            style="margin:0;">
+                                                                                            <input type="hidden"
+                                                                                                name="new_status"
+                                                                                                value="Completed">
+                                                                                            <input type="hidden"
+                                                                                                name="redirect_to"
+                                                                                                value="/provider?provider_id=<%= currentProvider %>">
+                                                                                            <button type="submit"
+                                                                                                class="btn-green"
+                                                                                                style="font-size:0.75rem;padding:0.3rem 0.7rem;">Done</button>
+                                                                                        </form>
+                                                                                        <% } else { %>
+                                                                                            <span
+                                                                                                style="font-size:0.78rem;color:var(--text-muted);">—</span>
+                                                                                            <% } %>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% }); %>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <% } %>
+                                            </div>
+
+                                            <!-- Revenue Chart -->
+                                            <div class="chart-container">
+                                                <div class="chart-title">
+                                                    <span class="dot"></span>
+                                                    Monthly Revenue (Last 6 Months)
+                                                </div>
+                                                <div class="chart-wrapper">
+                                                    <canvas id="revenueChart"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- RIGHT: Availability + Reviews -->
+                                        <div class="col-lg-5">
+                                            <!-- Availability Management -->
+                                            <div class="dark-card mb-4">
+                                                <h2 style="font-size:1rem;font-weight:600;margin-bottom:1.25rem;">
+                                                    Availability Management</h2>
+
+                                                <!-- Add Slot Form -->
+                                                <form method="POST" action="/provider/availability"
+                                                    class="form-dark mb-3">
+                                                    <input type="hidden" name="provider_id"
+                                                        value="<%= currentProvider %>">
+                                                    <div class="row g-2 align-items-end">
+                                                        <div class="col-12">
+                                                            <label class="form-label">Day</label>
+                                                            <select name="day_of_week" class="form-select" required>
+                                                                <%
+                                                                    ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(d=>
+                                                                    { %>
+                                                                    <option value="<%= d %>">
+                                                                        <%= d %>
+                                                                    </option>
+                                                                    <% }); %>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label">Start</label>
+                                                            <input type="time" name="start_time" class="form-control"
+                                                                value="09:00" required>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <label class="form-label">End</label>
+                                                            <input type="time" name="end_time" class="form-control"
+                                                                value="18:00" required>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <button type="submit" class="btn-green w-100">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 24 24" fill="none"
+                                                                    stroke="currentColor" stroke-width="2"
+                                                                    style="width:15px;height:15px;">
+                                                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                                                </svg>
+                                                                Add Slot
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                                <!-- Existing Slots -->
+                                                <div>
+                                                    <% if (dashData.availability.length===0) { %>
+                                                        <p
+                                                            style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:1rem 0;">
+                                                            No availability slots added yet.</p>
+                                                        <% } else { %>
+                                                            <% dashData.availability.forEach(slot=> { %>
+                                                                <div class="availability-slot">
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <span class="day-badge">
+                                                                            <%= slot.day_of_week.substring(0,3).toUpperCase()
+                                                                                %>
+                                                                        </span>
+                                                                        <span
+                                                                            style="font-size:0.88rem;color:var(--text-secondary);">
+                                                                            <%= slot.start_time %> — <%= slot.end_time
+                                                                                    %>
+                                                                        </span>
+                                                                    </div>
+                                                                    <form method="POST"
+                                                                        action="/provider/availability/<%= slot.avail_id %>/delete"
+                                                                        style="margin:0;"
+                                                                        class="delete-availability-form">
+                                                                        <input type="hidden" name="provider_id"
+                                                                            value="<%= currentProvider %>">
+                                                                        <button type="submit"
+                                                                            class="btn-danger-custom">✕</button>
+                                                                    </form>
+                                                                </div>
+                                                                <% }); %>
+                                                                    <% } %>
+                                                </div>
+                                            </div>
+
+                                            <!-- Recent Reviews -->
+                                            <div class="dark-card">
+                                                <h2 style="font-size:1rem;font-weight:600;margin-bottom:1.25rem;">Recent
+                                                    Reviews</h2>
+                                                <% if (reviews.length===0) { %>
+                                                    <p
+                                                        style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:1rem 0;">
+                                                        No reviews yet.</p>
+                                                    <% } else { %>
+                                                        <% reviews.forEach(r=> { %>
+                                                            <div class="review-card">
+                                                                <div
+                                                                    class="d-flex align-items-center justify-content-between mb-1">
+                                                                    <div class="review-author">
+                                                                        <%= r.customer_name %>
+                                                                    </div>
+                                                                    <div>
+                                                                        <% for(let i=1;i<=5;i++) { %>
+                                                                            <span
+                                                                                class="<%= i<=r.rating ? 'star' : 'star-empty' %>">★</span>
+                                                                            <% } %>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="review-date">
+                                                                    <%= new
+                                                                        Date(r.created_at).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})
+                                                                        %>
+                                                                </div>
+                                                                <% if (r.comment) { %>
+                                                                    <div class="review-comment">
+                                                                        <%= r.comment %>
+                                                                    </div>
+                                                                    <% } %>
+                                                            </div>
+                                                            <% }); %>
+                                                                <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                </div>
+            </div>
+
+            <%- include('partials/footer') %>
+
+                <!-- Chart.js -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+                <script>
+                    // ── Chart.js Global Defaults (Auros Theme) ──
+                    Chart.defaults.color = '#ffffff'; // Pure white for absolute readability
+                    Chart.defaults.font.family = 'Inter';
+                    Chart.defaults.font.size = 11;
+                    Chart.defaults.font.weight = '500';
+
+                    const revenueData = <%- JSON.stringify(dashData.revenue) %>;
+
+                    if (revenueData.length > 0) {
+                        const ctx = document.getElementById('revenueChart').getContext('2d');
+                        
+                        // Create an extremely bright, high-opacity gradient for maximum visibility
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+                        gradient.addColorStop(0, '#cbfffc'); // bright neon cyan
+                        gradient.addColorStop(1, '#00827c'); // saturated teal
+                        
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: revenueData.map(r => r.month),
+                                datasets: [{
+                                    label: 'Revenue (₹)',
+                                    data: revenueData.map(r => parseFloat(r.revenue)),
+                                    backgroundColor: gradient,
+                                    borderColor: '#cbfffc',
+                                    borderWidth: 1.5,
+                                    borderRadius: 4,
+                                    borderSkipped: false,
+                                }]
+                            },
+                            options: {
+                                responsive: true, maintainAspectRatio: false,
+                                plugins: { 
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: '#011d1c',
+                                        borderColor: '#333333',
+                                        borderWidth: 1,
+                                        padding: 10,
+                                        titleColor: '#ffffff',
+                                        bodyColor: '#cbfffc',
+                                        callbacks: {
+                                            label: ctx => ' ₹' + ctx.raw.toLocaleString('en-IN')
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: { 
+                                        grid: { color: 'rgba(255, 255, 255, 0.15)' }, // Brighter grid lines
+                                        ticks: { color: '#ffffff', font: { family: 'Inter', size: 11, weight: '500' } } 
+                                    },
+                                    y: { 
+                                        grid: { color: 'rgba(255, 255, 255, 0.15)' }, // Brighter grid lines
+                                        ticks: { 
+                                            color: '#ffffff', 
+                                            font: { family: 'Inter', size: 11, weight: '500' },
+                                            callback: v => '₹' + v.toLocaleString('en-IN') 
+                                        } 
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // CSP compliant event listeners
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // Provider view selector
+                        document.getElementById('provider-select')?.addEventListener('change', function () {
+                            this.form.submit();
+                        });
+
+                        // Delete availability forms
+                        document.querySelectorAll('.delete-availability-form').forEach(form => {
+                            form.addEventListener('submit', function (e) {
+                                if (!confirm('Remove this slot?')) {
+                                    e.preventDefault();
+                                }
+                            });
+                        });
+                    });
+                </script>

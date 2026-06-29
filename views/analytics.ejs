@@ -1,0 +1,469 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="page-wrapper">
+<div class="container-xl">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <h1>Analytics Dashboard</h1>
+                <p style="color:var(--text-muted);font-size:0.88rem;margin-top:0.25rem;margin-bottom:0;">
+                    Platform-wide insights powered by PostgreSQL views &amp; stored functions
+                </p>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.5rem;background:rgba(0,130,124,0.1);border:1px solid rgba(0,130,124,0.25);border-radius:var(--radius-md);padding:0.5rem 1rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2" style="width:15px;height:15px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span style="font-size:0.8rem;color:var(--accent-green);font-weight:600;">Live Data</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ROW 1: KPI Cards ── -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card green">
+                <div class="kpi-icon green">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div class="kpi-label">Customers</div>
+                <div class="kpi-value green"><%= kpis.total_customers || 0 %></div>
+                <div class="kpi-sub">Registered users</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card blue">
+                <div class="kpi-icon blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="2"/></svg>
+                </div>
+                <div class="kpi-label">Providers</div>
+                <div class="kpi-value blue"><%= kpis.total_providers || 0 %></div>
+                <div class="kpi-sub">Active partners</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card amber">
+                <div class="kpi-icon amber">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="kpi-label">Bookings</div>
+                <div class="kpi-value amber"><%= kpis.total_bookings || 0 %></div>
+                <div class="kpi-sub">Total reservations</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card green">
+                <div class="kpi-icon green">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div class="kpi-label">Completed</div>
+                <div class="kpi-value green"><%= kpis.completed_bookings || 0 %></div>
+                <div class="kpi-sub">Completed jobs</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card purple">
+                <div class="kpi-icon purple">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div class="kpi-label">Revenue</div>
+                <div class="kpi-value purple" style="font-size:1.4rem;">
+                    ₹<%= parseFloat(kpis.total_revenue || 0).toLocaleString('en-IN') %>
+                </div>
+                <div class="kpi-sub">Gross earnings</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="kpi-card amber">
+                <div class="kpi-icon amber">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+                </div>
+                <div class="kpi-label">Avg Rating</div>
+                <div class="kpi-value amber"><%= parseFloat(kpis.avg_platform_rating || 0).toFixed(1) %>★</div>
+                <div class="kpi-sub"><%= kpis.total_reviews || 0 %> reviews</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ROW 2: Charts ── -->
+    <div class="row g-4 mb-4">
+        <!-- Revenue by Month (Line Chart) -->
+        <div class="col-lg-8">
+            <div class="chart-container" style="height:340px;">
+                <div class="chart-title">
+                    <span class="dot"></span>
+                    Monthly Revenue Trend
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="revenueLineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Status Distribution (Doughnut) -->
+        <div class="col-lg-4">
+            <div class="chart-container" style="height:340px;">
+                <div class="chart-title">
+                    <span class="dot" style="background:var(--accent-amber);"></span>
+                    Booking Status
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="statusDoughnutChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ROW 3: Top Services + Revenue by Category ── -->
+    <div class="row g-4 mb-4">
+        <!-- Top Services Bar Chart -->
+        <div class="col-lg-7">
+            <div class="chart-container" style="height:340px;">
+                <div class="chart-title">
+                    <span class="dot" style="background:var(--accent-blue);"></span>
+                    Most Booked Services
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="topServicesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue by Category (Horizontal Bar) -->
+        <div class="col-lg-5">
+            <div class="chart-container" style="height:340px;">
+                <div class="chart-title">
+                    <span class="dot" style="background:var(--accent-purple);"></span>
+                    Revenue by Category
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="categoryRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── ROW 4: Top Rated Providers Table ── -->
+    <div class="dark-card mb-4" style="padding:0;overflow:hidden;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
+            <h2 style="font-size:1rem;font-weight:600;margin:0;">
+                Highest Rated Providers
+            </h2>
+        </div>
+        <div class="table-responsive">
+            <table class="dark-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Provider</th>
+                        <th>Avg Rating</th>
+                        <th>Reviews</th>
+                        <th>Total Bookings</th>
+                        <th>Completed</th>
+                        <th>Revenue</th>
+                        <th>Experience</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% topProviders.forEach((p, i) => { %>
+                    <tr>
+                        <td>
+                            <% const rankColor = i===0 ? '#000000' : i===1 ? '#555555' : i===2 ? '#888888' : 'var(--text-muted)'; %>
+                            <span class="mono" style="font-size:1.1rem;font-weight:700;color:<%= rankColor %>;">
+                                #<%= i+1 %>
+                            </span>
+                        </td>
+                        <td>
+                            <div style="font-weight:600;font-size:0.9rem;color:var(--text-primary);">
+                                <%= p.provider_name %>
+                            </div>
+                            <div style="font-size:0.75rem;color:var(--text-muted);">
+                                <%= p.experience_yrs %> yrs exp
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:4px;">
+                                <span style="color:var(--accent-amber);font-weight:700;"><%= parseFloat(p.avg_rating).toFixed(2) %></span>
+                                <div style="display:flex;gap:1px;">
+                                    <% const rating = parseFloat(p.avg_rating); %>
+                                    <% for(let s=1;s<=5;s++) { %>
+                                    <span style="font-size:0.7rem;color:<%=s<=Math.round(rating)?'var(--accent-amber)':'var(--text-muted)'%>;">★</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="color:var(--text-secondary);"><%= p.total_reviews %></td>
+                        <td>
+                            <span class="mono" style="color:var(--text-primary);">
+                                <%= p.total_bookings %>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge-status badge-completed"><%= p.completed_bookings %></span>
+                        </td>
+                        <td>
+                            <span class="mono" style="color:var(--accent-green);font-weight:700;">
+                                ₹<%= parseFloat(p.total_revenue).toLocaleString('en-IN') %>
+                            </span>
+                        </td>
+                        <td style="color:var(--text-muted);"><%= p.experience_yrs %> years</td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── ROW 5: Top Services Table ── -->
+    <div class="dark-card" style="padding:0;overflow:hidden;">
+        <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
+            <h2 style="font-size:1rem;font-weight:600;margin:0;">Most Booked Services</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="dark-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Service</th>
+                        <th>Category</th>
+                        <th>Bookings</th>
+                        <th>Popularity</th>
+                        <th>Avg Price</th>
+                        <th>Total Revenue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% const maxBookings = topServices[0]?.booking_count || 1; %>
+                    <% topServices.forEach((s, i) => { %>
+                    <tr>
+                        <td>
+                            <span class="mono" style="color:var(--text-muted);">#<%= i+1 %></span>
+                        </td>
+                        <td>
+                            <div style="font-weight:600;font-size:0.88rem;color:var(--text-primary);">
+                                <%= s.service_name %>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="font-size:0.78rem;color:var(--accent-green);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">
+                                <%= s.category_name %>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="mono" style="font-weight:700;"><%= s.booking_count %></span>
+                        </td>
+                        <td style="min-width:100px;">
+                            <div style="height:6px;background:var(--bg-primary);border-radius:3px;overflow:hidden;">
+                                <div style="height:100%;width:<%=Math.round((s.booking_count/maxBookings)*100)%>%;background:var(--gradient-green);border-radius:3px;"></div>
+                            </div>
+                        </td>
+                        <td style="color:var(--text-secondary);">
+                            ₹<%= parseFloat(s.avg_price).toLocaleString('en-IN') %>
+                        </td>
+                        <td>
+                            <span class="mono" style="color:var(--accent-green);font-weight:700;">
+                                ₹<%= parseFloat(s.total_revenue).toLocaleString('en-IN') %>
+                            </span>
+                        </td>
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+<%- include('partials/footer') %>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ── Chart.js Global Defaults (Auros Theme) ──
+Chart.defaults.color = '#bbc7c6';
+Chart.defaults.font.family = 'Inter';
+Chart.defaults.font.size = 11;
+
+const gridColor = 'rgba(51, 51, 51, 0.6)';
+
+// ── 1. Revenue Line Chart ──
+const revenueData = <%- JSON.stringify(revenueByMonth) %>;
+if (document.getElementById('revenueLineChart') && revenueData.length > 0) {
+    const ctx = document.getElementById('revenueLineChart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 280);
+    gradient.addColorStop(0, 'rgba(0, 130, 124, 0.25)');
+    gradient.addColorStop(1, 'rgba(0, 130, 124, 0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: revenueData.map(r => r.month_label),
+            datasets: [{
+                label: 'Revenue (₹)',
+                data: revenueData.map(r => parseFloat(r.total_revenue)),
+                borderColor: '#00827c',
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#cbfffc',
+                pointBorderColor: '#00827c',
+                pointRadius: 4,
+                pointHoverRadius: 7,
+                borderWidth: 2,
+            }, {
+                label: 'Bookings',
+                data: revenueData.map(r => parseFloat(r.total_bookings)),
+                borderColor: '#fde9ff',
+                backgroundColor: 'transparent',
+                tension: 0.4,
+                pointBackgroundColor: '#fde9ff',
+                pointRadius: 3,
+                pointHoverRadius: 6,
+                borderWidth: 1.5,
+                yAxisID: 'y2',
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: { color: '#bbc7c6', padding: 16, boxWidth: 12, boxHeight: 12 }
+                },
+                tooltip: {
+                    backgroundColor: '#011d1c',
+                    borderColor: '#333333',
+                    borderWidth: 1,
+                    padding: 10,
+                    titleColor: '#ffffff',
+                    bodyColor: '#bbc7c6',
+                    callbacks: {
+                        label: ctx => ctx.datasetIndex === 0
+                            ? ' ₹' + ctx.raw.toLocaleString('en-IN')
+                            : ' ' + ctx.raw + ' bookings'
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { color: gridColor } },
+                y: { grid: { color: gridColor }, ticks: { callback: v => '₹' + (v/1000).toFixed(0)+'k' } },
+                y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#bbc7c6' } }
+            }
+        }
+    });
+}
+
+// ── 2. Status Doughnut Chart ──
+const statusData = <%- JSON.stringify(statusDist) %>;
+if (document.getElementById('statusDoughnutChart') && statusData.length > 0) {
+    const colorMap = {
+        Pending:    '#003734',
+        Confirmed:  '#00827c',
+        InProgress: '#cbfffc',
+        Completed:  '#ffffff',
+        Cancelled:  '#333333',
+    };
+    new Chart(document.getElementById('statusDoughnutChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+            labels: statusData.map(s => s.status),
+            datasets: [{
+                data: statusData.map(s => parseInt(s.count)),
+                backgroundColor: statusData.map(s => (colorMap[s.status] || '#333333') + 'cc'),
+                borderColor:     statusData.map(s => colorMap[s.status] || '#333333'),
+                borderWidth: 2,
+                hoverBorderWidth: 3,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#bbc7c6', padding: 12, boxWidth: 10, boxHeight: 10, font: { size: 11 } }
+                },
+                tooltip: {
+                    backgroundColor: '#011d1c', borderColor: '#333333', borderWidth: 1, padding: 10,
+                    titleColor: '#ffffff', bodyColor: '#bbc7c6',
+                    callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} bookings` }
+                }
+            }
+        }
+    });
+}
+
+// ── 3. Top Services Bar Chart ──
+const servicesData = <%- JSON.stringify(topServices) %>;
+if (document.getElementById('topServicesChart') && servicesData.length > 0) {
+    const colors = ['#00827c', '#4dd4cf', '#cbfffc', '#edfffe', '#fde9ff', '#003734', '#005753', '#bbc7c6'];
+    new Chart(document.getElementById('topServicesChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: servicesData.map(s => s.service_name.length > 20 ? s.service_name.substring(0,18)+'…' : s.service_name),
+            datasets: [{
+                label: 'Bookings',
+                data: servicesData.map(s => parseInt(s.booking_count)),
+                backgroundColor: servicesData.map((_, i) => colors[i % colors.length] + '33'),
+                borderColor:     servicesData.map((_, i) => colors[i % colors.length]),
+                borderWidth: 1.5,
+                borderRadius: 4,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#011d1c', borderColor: '#333333', borderWidth: 1, padding: 10,
+                    titleColor: '#ffffff', bodyColor: '#bbc7c6',
+                    callbacks: { label: ctx => ` ${ctx.raw} bookings` }
+                }
+            },
+            scales: {
+                x: { grid: { color: gridColor }, ticks: { maxRotation: 30, font: { size: 10 } } },
+                y: { grid: { color: gridColor }, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+}
+
+// ── 4. Category Revenue Horizontal Bar ──
+const catData = <%- JSON.stringify(revenueByCategory) %>;
+if (document.getElementById('categoryRevenueChart') && catData.length > 0) {
+    new Chart(document.getElementById('categoryRevenueChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: catData.map(c => c.category_name),
+            datasets: [{
+                label: 'Revenue (₹)',
+                data: catData.map(c => parseFloat(c.total_revenue)),
+                backgroundColor: 'rgba(0, 130, 124, 0.15)',
+                borderColor: '#00827c',
+                borderWidth: 1.5,
+                borderRadius: 4,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#011d1c', borderColor: '#333333', borderWidth: 1, padding: 10,
+                    titleColor: '#ffffff', bodyColor: '#bbc7c6',
+                    callbacks: { label: ctx => ' ₹' + ctx.raw.toLocaleString('en-IN') }
+                }
+            },
+            scales: {
+                x: { grid: { color: gridColor }, ticks: { callback: v => '₹'+(v/1000).toFixed(0)+'k' } },
+                y: { grid: { color: gridColor } }
+            }
+        }
+    });
+}
+</script>
+

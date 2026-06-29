@@ -1,0 +1,30 @@
+{
+  "name": "home-service-booking-platform",
+  "version": "1.0.0",
+  "description": "Full-stack Home Service Booking Platform using Node.js, Express, PostgreSQL, EJS, Bootstrap",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "db:schema": "psql -U postgres -d home_services -f database/schema.sql",
+    "db:indexes": "psql -U postgres -d home_services -f database/indexes.sql",
+    "db:views": "psql -U postgres -d home_services -f database/views.sql",
+    "db:triggers": "psql -U postgres -d home_services -f database/triggers.sql",
+    "db:procedures": "psql -U postgres -d home_services -f database/procedures.sql",
+    "db:seed": "psql -U postgres -d home_services -f database/seed.sql"
+  },
+  "keywords": ["nodejs", "express", "postgresql", "ejs", "bootstrap", "booking"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "ejs": "^3.1.10",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

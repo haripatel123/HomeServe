@@ -14,7 +14,7 @@ const poolConfig = process.env.DATABASE_URL
 // Add connection limits/timeouts
 poolConfig.max = 10;
 poolConfig.idleTimeoutMillis = 30000;
-poolConfig.connectionTimeoutMillis = 2000;
+poolConfig.connectionTimeoutMillis = 15000;
 
 // Render/Neon require SSL connection in production
 if (process.env.DATABASE_URL || process.env.DB_SSL === 'true') {

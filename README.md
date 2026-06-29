@@ -1,10 +1,10 @@
-# 🏠 HomeServe — Home Service Booking Platform
+#  HomeServe — Home Service Booking Platform
 
 A premium, production-ready full-stack **Home Service Booking Platform** built with a modern **Node.js/Express.js MVC** backend, **PostgreSQL** relational database, **EJS** Server-Side Rendering (SSR), and **Bootstrap 5**. Designed with a high-end abyssal dark theme, this project serves as a showcase of robust database architecture, MVC design pattern, and interactive user experiences.
 
 ---
 
-## 🗄️ Database Schema (ER Diagram)
+##  Database Schema (ER Diagram)
 
 This entity-relationship model showcases a highly optimized relational database structure:
 
@@ -88,7 +88,7 @@ erDiagram
 
 ---
 
-## 🚀 Key DBMS Features
+##  Key DBMS Features
 
 This platform emphasizes database-level performance, data integrity, and strict constraints:
 
@@ -110,7 +110,7 @@ Instead of running heavy relational joins on the server, analytical queries are 
 
 ---
 
-## 🛠️ Tech Stack & Token System
+##  Tech Stack & Token System
 
 - **Backend:** Node.js, Express.js (MVC)
 - **Database:** PostgreSQL (Client Pool, SSL enabled)
@@ -120,7 +120,7 @@ Instead of running heavy relational joins on the server, analytical queries are 
 
 ---
 
-## 📦 Getting Started
+##  Getting Started
 
 ### 1. Prerequisites
 - **Node.js** (v18+)
@@ -170,7 +170,7 @@ Open **http://localhost:3000** in your browser.
 
 ---
 
-## 🌐 API Reference
+##  API Reference
 
 | Endpoint | Method | Role |
 |:---|:---|:---|
@@ -186,7 +186,7 @@ Open **http://localhost:3000** in your browser.
 
 ---
 
-## 🔐 Security & Production Validation
+##  Security & Production Validation
 
 - **Content Security Policy:** Configured via Helmet.js to secure scripts, styles, and fonts origins.
 - **Atomic Isolation:** All multi-step bookings utilize database transactions ensuring data rollback on network failure.

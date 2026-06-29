@@ -4,14 +4,6 @@ A premium, production-ready full-stack **Home Service Booking Platform** built w
 
 ---
 
-## 🌟 Visual Showcase
-
-| Landing Page & Trust Showcase | Booking & Provider Management | Platform Analytics Dashboard |
-|:---:|:---:|:---:|
-| ![Hero Showcase](README-assets/hero.png) | ![Booking Flow](README-assets/booking.png) | ![Analytics Dashboard](README-assets/analytics.png) |
-
----
-
 ## 🗄️ Database Schema (ER Diagram)
 
 This entity-relationship model showcases a highly optimized relational database structure:

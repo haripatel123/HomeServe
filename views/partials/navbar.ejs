@@ -10,11 +10,13 @@
             </a>
 
             <!-- Desktop Nav -->
-            <div class="d-none d-md-flex align-items-center gap-1">
-                <a href="/" class="nav-link-custom">Services</a>
-                <a href="/bookings" class="nav-link-custom">My Bookings</a>
-                <a href="/provider" class="nav-link-custom">Provider</a>
-                <a href="/analytics" class="nav-link-custom">Analytics</a>
+            <div class="d-none d-md-flex align-items-center">
+                <div class="nav-menu-capsule">
+                    <a href="/" class="nav-link-capsule <%= currentUrl === '/' ? 'active' : '' %>">Services</a>
+                    <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>" class="nav-link-capsule <%= currentUrl === '/bookings' ? 'active' : '' %>">My Bookings</a>
+                    <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>" class="nav-link-capsule <%= currentUrl === '/provider' ? 'active' : '' %>">Provider</a>
+                    <a href="/analytics" class="nav-cta-capsule">Analytics</a>
+                </div>
             </div>
 
             <!-- Mobile Toggle -->

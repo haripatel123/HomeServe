@@ -43,8 +43,13 @@ app.use(express.json({ limit: '10kb' }));
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
+// Global variables middleware
+app.use((req, res, next) => {
+    res.locals.currentUrl = req.path;
+    next();
+});
 
+// Routes
 app.use('/',          indexRoutes);
 app.use('/services',  serviceRoutes);
 app.use('/',          bookingRoutes);

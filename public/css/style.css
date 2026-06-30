@@ -198,6 +198,65 @@ a:hover {
     left: 20%;
 }
 
+/* Floating Menu Capsule Layout */
+.nav-menu-capsule {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 30px;
+    padding: 3px 3px 3px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-link-capsule {
+    color: var(--text-secondary) !important;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.9rem !important;
+    border-radius: 20px;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.nav-link-capsule:hover {
+    color: var(--text-primary) !important;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.nav-link-capsule.active {
+    color: var(--text-primary) !important;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* Nav CTA button inside capsule */
+.nav-cta-capsule {
+    background: #142824 !important;
+    border: 1px solid rgba(0, 130, 124, 0.3) !important;
+    color: var(--accent-green) !important;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.45rem 1.1rem !important;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.nav-cta-capsule:hover {
+    background: var(--color-current-teal) !important;
+    color: #fff !important;
+    border-color: var(--color-current-teal) !important;
+    box-shadow: 0 0 12px rgba(0, 130, 124, 0.25);
+}
+
 /* ============================================================
    HERO SECTION
    ============================================================ */

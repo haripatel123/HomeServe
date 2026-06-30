@@ -846,16 +846,16 @@ a:hover {
 }
 
 .badge-completed {
-    background: var(--color-snow-sheet);
-    color: var(--color-midnight-current);
-    border: 1px solid var(--color-snow-sheet);
+    background: rgba(0, 130, 124, 0.15);
+    color: #00ffb7;
+    border: 1px solid rgba(0, 255, 183, 0.3);
 }
 
 .badge-cancelled {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--color-ash-gray);
-    text-decoration: line-through;
+    background: rgba(255, 107, 107, 0.12);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    text-decoration: none;
 }
 
 /* ============================================================

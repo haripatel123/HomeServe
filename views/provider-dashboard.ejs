@@ -255,7 +255,11 @@
                                                                             </td>
                                                                             <td><%= b.services %></td>
                                                                             <td style="color:var(--accent-green);font-weight:600;">₹<%= parseFloat(b.total_amount).toLocaleString('en-IN') %></td>
-                                                                            <td><span class="badge-status <%= statusClass %>"><%= b.status %></span></td>
+                                                                            <td>
+                                                                                <span class="badge-status <%= statusClass %>" title="<%= b.status %>" style="min-width: 28px; justify-content: center;">
+                                                                                    <% if (b.status === 'Completed') { %>✔<% } else if (b.status === 'Cancelled') { %>✖<% } else { %><%= b.status %><% } %>
+                                                                                </span>
+                                                                            </td>
                                                                             <td>
                                                                                 <% if (b.status === 'Pending') { %>
                                                                                     <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
@@ -364,10 +368,11 @@
                                                                                         %>
                                                                                 </span>
                                                                             </td>
-                                                                            <td><span
-                                                                                    class="badge-status <%= statusClass %>">
-                                                                                    <%= b.status %>
-                                                                                </span></td>
+                                                                            <td>
+                                                                                <span class="badge-status <%= statusClass %>" title="<%= b.status %>" style="min-width: 28px; justify-content: center;">
+                                                                                    <% if (b.status === 'Completed') { %>✔<% } else if (b.status === 'Cancelled') { %>✖<% } else { %><%= b.status %><% } %>
+                                                                                </span>
+                                                                            </td>
                                                                             <td>
                                                                                 <% if (b.status==='Pending' ) { %>
                                                                                     <form method="POST"

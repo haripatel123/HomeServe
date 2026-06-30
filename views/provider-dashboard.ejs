@@ -58,6 +58,12 @@
                     </div>
 
                     <!-- Alerts -->
+                    <% if (role === 'user') { %>
+                        <div class="alert-dark-info mb-4" style="border-color: rgba(203, 255, 252, 0.4); display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.1rem; line-height: 1;">🔒</span>
+                            <span><strong>Read-Only Mode:</strong> You are viewing this dashboard as a User. Switch your role in the navbar above to enable editing capabilities.</span>
+                        </div>
+                    <% } %>
                     <% if (error) { %>
                         <div class="alert-dark-error mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -264,14 +270,16 @@
                                                                                 <% if (b.status === 'Pending') { %>
                                                                                     <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
                                                                                         <input type="hidden" name="new_status" value="Confirmed">
+                                                                                        <input type="hidden" name="role" value="<%= role %>">
                                                                                         <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
-                                                                                        <button type="submit" class="btn-green" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Confirm</button>
+                                                                                        <button type="submit" class="btn-green" style="font-size:0.7rem;padding:0.25rem 0.6rem;" <%= role === 'user' ? 'disabled' : '' %>>Confirm</button>
                                                                                     </form>
                                                                                 <% } else if (b.status === 'Confirmed') { %>
                                                                                     <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
                                                                                         <input type="hidden" name="new_status" value="Completed">
+                                                                                        <input type="hidden" name="role" value="<%= role %>">
                                                                                         <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
-                                                                                        <button type="submit" class="btn-green" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Done</button>
+                                                                                        <button type="submit" class="btn-green" style="font-size:0.7rem;padding:0.25rem 0.6rem;" <%= role === 'user' ? 'disabled' : '' %>>Done</button>
                                                                                     </form>
                                                                                 <% } else { %>
                                                                                     <span style="font-size:0.78rem;color:var(--text-muted);">—</span>
@@ -381,12 +389,13 @@
                                                                                         <input type="hidden"
                                                                                             name="new_status"
                                                                                             value="Confirmed">
+                                                                                        <input type="hidden" name="role" value="<%= role %>">
                                                                                         <input type="hidden"
                                                                                             name="redirect_to"
                                                                                             value="/provider?provider_id=<%= currentProvider %>">
                                                                                         <button type="submit"
                                                                                             class="btn-green"
-                                                                                            style="font-size:0.75rem;padding:0.3rem 0.7rem;">Confirm</button>
+                                                                                            style="font-size:0.75rem;padding:0.3rem 0.7rem;" <%= role === 'user' ? 'disabled' : '' %>>Confirm</button>
                                                                                     </form>
                                                                                     <% } else if (b.status==='Confirmed'
                                                                                         ) { %>
@@ -396,12 +405,13 @@
                                                                                             <input type="hidden"
                                                                                                 name="new_status"
                                                                                                 value="Completed">
+                                                                                            <input type="hidden" name="role" value="<%= role %>">
                                                                                             <input type="hidden"
                                                                                                 name="redirect_to"
                                                                                                 value="/provider?provider_id=<%= currentProvider %>">
                                                                                             <button type="submit"
                                                                                                 class="btn-green"
-                                                                                                style="font-size:0.75rem;padding:0.3rem 0.7rem;">Done</button>
+                                                                                                style="font-size:0.75rem;padding:0.3rem 0.7rem;" <%= role === 'user' ? 'disabled' : '' %>>Done</button>
                                                                                         </form>
                                                                                         <% } else { %>
                                                                                             <span
@@ -433,17 +443,16 @@
                                             <!-- Availability Management -->
                                             <div class="dark-card mb-4">
                                                 <h2 style="font-size:1rem;font-weight:600;margin-bottom:1.25rem;">
-                                                    Availability Management</h2>
-
-                                                <!-- Add Slot Form -->
+                                                                                         <!-- Add Slot Form -->
                                                 <form method="POST" action="/provider/availability"
                                                     class="form-dark mb-3">
                                                     <input type="hidden" name="provider_id"
                                                         value="<%= currentProvider %>">
+                                                    <input type="hidden" name="role" value="<%= role %>">
                                                     <div class="row g-2 align-items-end">
                                                         <div class="col-12">
                                                             <label class="form-label">Day</label>
-                                                            <select name="day_of_week" class="form-select" required>
+                                                            <select name="day_of_week" class="form-select" required <%= role === 'user' ? 'disabled' : '' %>>
                                                                 <%
                                                                     ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(d=>
                                                                     { %>
@@ -456,28 +465,32 @@
                                                         <div class="col-6">
                                                             <label class="form-label">Start</label>
                                                             <input type="time" name="start_time" class="form-control"
-                                                                value="09:00" required>
+                                                                value="09:00" required <%= role === 'user' ? 'disabled' : '' %>>
                                                         </div>
                                                         <div class="col-6">
                                                             <label class="form-label">End</label>
                                                             <input type="time" name="end_time" class="form-control"
-                                                                value="18:00" required>
+                                                                value="18:00" required <%= role === 'user' ? 'disabled' : '' %>>
                                                         </div>
                                                         <div class="col-12">
-                                                            <button type="submit" class="btn-green w-100">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 24 24" fill="none"
-                                                                    stroke="currentColor" stroke-width="2"
-                                                                    style="width:15px;height:15px;">
-                                                                    <line x1="12" y1="5" x2="12" y2="19" />
-                                                                    <line x1="5" y1="12" x2="19" y2="12" />
-                                                                </svg>
-                                                                Add Slot
+                                                            <button type="submit" class="btn-green w-100" <%= role === 'user' ? 'disabled' : '' %>>
+                                                                <% if (role === 'user') { %>
+                                                                    🔒 Read Only
+                                                                <% } else { %>
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        viewBox="0 0 24 24" fill="none"
+                                                                        stroke="currentColor" stroke-width="2"
+                                                                        style="width:15px;height:15px;">
+                                                                        <line x1="12" y1="5" x2="12" y2="19" />
+                                                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                                                    </svg>
+                                                                    Add Slot
+                                                                <% } %>
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </form>
-
+ 
                                                 <!-- Existing Slots -->
                                                 <div>
                                                     <% if (dashData.availability.length===0) { %>
@@ -504,8 +517,9 @@
                                                                         class="delete-availability-form">
                                                                         <input type="hidden" name="provider_id"
                                                                             value="<%= currentProvider %>">
+                                                                        <input type="hidden" name="role" value="<%= role %>">
                                                                         <button type="submit"
-                                                                            class="btn-danger-custom">✕</button>
+                                                                            class="btn-danger-custom" <%= role === 'user' ? 'disabled style="opacity:0.3;cursor:not-allowed;"' : '' %>>✕</button>
                                                                     </form>
                                                                 </div>
                                                                 <% }); %>

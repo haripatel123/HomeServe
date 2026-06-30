@@ -1,78 +1,184 @@
-<nav class="navbar-dark-custom">
-    <div class="container-xl">
-        <div class="d-flex align-items-center justify-content-between w-100">
-            <!-- Brand -->
-            <a href="/" class="navbar-brand-text">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:22px;height:22px;color:#00827c;margin-right:6px;vertical-align:-4px;">
-                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                Home<span>Serve</span>
-            </a>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-            <!-- Desktop Nav -->
-            <div class="d-none d-md-flex align-items-center">
-                <div class="nav-menu-capsule">
-                    <div class="nav-sliding-highlight"></div>
-                    <a href="/" class="nav-link-capsule <%= currentUrl === '/' ? 'active' : '' %>">Services</a>
-                    <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>" class="nav-link-capsule <%= currentUrl === '/bookings' ? 'active' : '' %>">My Bookings</a>
-                    <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>" class="nav-link-capsule <%= currentUrl === '/provider' ? 'active' : '' %>">Provider</a>
-                    <a href="/analytics" class="nav-cta-capsule">Analytics</a>
-                </div>
-            </div>
-
-            <!-- Mobile Toggle -->
-            <button class="d-md-none btn-outline-custom" id="mobileMenuToggle" aria-label="Menu">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;">
-                    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-                </svg>
-            </button>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div class="d-md-none" id="mobileMenu" style="display:none;padding-top:1rem;margin-top:0.75rem;">
-            <a href="/"          class="nav-link-custom d-block mb-1">Services</a>
-            <a href="/bookings"  class="nav-link-custom d-block mb-1">My Bookings</a>
-            <a href="/provider"  class="nav-link-custom d-block mb-1">Provider</a>
-            <a href="/analytics" class="nav-link-custom d-block">Analytics</a>
-        </div>
+<nav class="navbar-floating-capsule">
+    <!-- Brand/Logo -->
+    <a href="/" class="navbar-brand-pill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;color:#00827c;margin-right:2px;vertical-align:-3px;">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Home<span>Serve</span>
+    </a>
+    
+    <!-- Divider -->
+    <div class="nav-divider d-none d-md-block"></div>
+    
+    <!-- Desktop Links Capsule -->
+    <div class="nav-links-pill d-none d-md-flex">
+        <div class="nav-active-capsule"></div>
+        <a href="/" class="nav-item-pill <%= currentUrl === '/' ? 'active' : '' %>">Services</a>
+        <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>" class="nav-item-pill <%= currentUrl === '/bookings' ? 'active' : '' %>">Bookings</a>
+        <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>" class="nav-item-pill <%= currentUrl === '/provider' ? 'active' : '' %>">Providers</a>
+        <a href="/analytics" class="nav-item-pill <%= currentUrl === '/analytics' ? 'active' : '' %>">Analytics</a>
     </div>
+
+    <!-- Mobile Menu Toggle Button inside Navbar Capsule -->
+    <button class="d-md-none" id="mobileMenuToggle" aria-label="Menu" style="border:none;background:none;padding:2px 8px;margin-left:4px;color:rgba(255,255,255,0.75);">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
 </nav>
+
+<!-- Mobile Floating Dropdown Capsule Menu -->
+<div class="mobile-menu-floating d-md-none" id="mobileMenu" style="display:none;">
+    <a href="/" class="nav-item-pill <%= currentUrl === '/' ? 'active' : '' %>">Services</a>
+    <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>" class="nav-item-pill <%= currentUrl === '/bookings' ? 'active' : '' %>">Bookings</a>
+    <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>" class="nav-item-pill <%= currentUrl === '/provider' ? 'active' : '' %>">Providers</a>
+    <a href="/analytics" class="nav-item-pill <%= currentUrl === '/analytics' ? 'active' : '' %>">Analytics</a>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const capsule = document.querySelector('.nav-menu-capsule');
-    if (!capsule) return;
+    // 1. Entrance animation on load
+    gsap.fromTo(".navbar-floating-capsule", 
+        { opacity: 0, y: -20, scale: 0.95 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" }
+    );
+
+    // 2. Mobile Menu Toggle logic
+    const toggleBtn = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (toggleBtn && mobileMenu) {
+        toggleBtn.addEventListener('click', function() {
+            if (mobileMenu.style.display === 'none' || !mobileMenu.style.display) {
+                mobileMenu.style.display = 'flex';
+                gsap.fromTo(mobileMenu, 
+                    { opacity: 0, y: -10, scale: 0.95 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "power3.out" }
+                );
+            } else {
+                gsap.to(mobileMenu, {
+                    opacity: 0,
+                    y: -10,
+                    scale: 0.95,
+                    duration: 0.25,
+                    ease: "power3.in",
+                    onComplete: () => { mobileMenu.style.display = 'none'; }
+                });
+            }
+        });
+    }
+
+    // 3. Active Sliding Capsule Glide with GSAP
+    const activeBg = document.querySelector('.nav-active-capsule');
+    const linksContainer = document.querySelector('.nav-links-pill');
+    const navItems = document.querySelectorAll('.nav-links-pill .nav-item-pill');
     
-    const highlight = capsule.querySelector('.nav-sliding-highlight');
-    const links = capsule.querySelectorAll('.nav-link-capsule, .nav-cta-capsule');
-    
-    function moveHighlight(target) {
-        if (!target) return;
-        highlight.style.left = target.offsetLeft + 'px';
-        highlight.style.top = target.offsetTop + 'px';
-        highlight.style.width = target.offsetWidth + 'px';
-        highlight.style.height = target.offsetHeight + 'px';
-        highlight.style.opacity = '1';
+    function positionCapsule(target, animate = true) {
+        if (!target || !activeBg) return;
+        
+        const targetRect = target.getBoundingClientRect();
+        const parentRect = target.parentElement.getBoundingClientRect();
+        
+        const leftPos = targetRect.left - parentRect.left;
+        const topPos = targetRect.top - parentRect.top;
+        const widthVal = targetRect.width;
+        const heightVal = targetRect.height;
+        
+        if (animate) {
+            gsap.to(activeBg, {
+                left: leftPos,
+                top: topPos,
+                width: widthVal,
+                height: heightVal,
+                opacity: 1,
+                duration: 0.38,
+                ease: "power3.out" // maps to cubic-bezier(.22,1,.36,1)
+            });
+        } else {
+            gsap.set(activeBg, {
+                left: leftPos,
+                top: topPos,
+                width: widthVal,
+                height: heightVal,
+                opacity: 1
+            });
+        }
     }
     
-    // Position highlight initially over active link
-    const activeLink = capsule.querySelector('.nav-link-capsule.active');
+    // Set initial position on active page link
+    const activeLink = document.querySelector('.nav-links-pill .nav-item-pill.active');
     if (activeLink) {
-        moveHighlight(activeLink);
+        // Wait minor delay for render layout math
+        setTimeout(() => {
+            positionCapsule(activeLink, false);
+        }, 80);
     }
     
-    links.forEach(link => {
-        link.addEventListener('mouseenter', function() {
-            moveHighlight(this);
+    // Bind mouseover glide events
+    navItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            positionCapsule(this, true);
         });
     });
     
-    capsule.addEventListener('mouseleave', function() {
-        const currentActive = capsule.querySelector('.nav-link-capsule.active');
-        if (currentActive) {
-            moveHighlight(currentActive);
+    // Return glide back to active item on container mouseleave
+    if (linksContainer) {
+        linksContainer.addEventListener('mouseleave', function() {
+            const currentActive = document.querySelector('.nav-links-pill .nav-item-pill.active');
+            if (currentActive) {
+                positionCapsule(currentActive, true);
+            } else {
+                gsap.to(activeBg, { opacity: 0, duration: 0.25 });
+            }
+        });
+    }
+
+    // 4. Subtle Magnetic cursor pulling
+    navItems.forEach(item => {
+        item.addEventListener('mousemove', function(e) {
+            const rect = this.getBoundingClientRect();
+            const relX = e.clientX - rect.left - rect.width / 2;
+            const relY = e.clientY - rect.top - rect.height / 2;
+            
+            gsap.to(this, {
+                x: relX * 0.15,
+                y: relY * 0.15,
+                duration: 0.35,
+                ease: "power2.out"
+            });
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            gsap.to(this, {
+                x: 0,
+                y: 0,
+                duration: 0.45,
+                ease: "power3.out"
+            });
+        });
+    });
+
+    // 5. Scroll layout styling overrides
+    window.addEventListener('scroll', function() {
+        const scrollPos = window.scrollY;
+        const nav = document.querySelector('.navbar-floating-capsule');
+        if (!nav) return;
+        
+        if (scrollPos > 40) {
+            gsap.to(nav, {
+                backgroundColor: "rgba(8, 18, 18, 0.85)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                boxShadow: "0 15px 40px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.15)",
+                duration: 0.35
+            });
         } else {
-            highlight.style.opacity = '0';
+            gsap.to(nav, {
+                backgroundColor: "rgba(8, 18, 18, 0.65)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1)",
+                duration: 0.35
+            });
         }
     });
 });

@@ -73,6 +73,50 @@
         </div>
     </div>
     <% } else { %>
+    <% 
+    // Helper function to format booking ID deterministically
+    function formatBookingId(id) {
+        const code = ((id * 173) % 9000) + 1000;
+        return `BK-${code}`;
+    }
+
+    // Helper function to compute initials from provider name
+    function getInitials(name) {
+        const parts = (name || '').trim().split(/\s+/);
+        if (parts.length === 0 || !parts[0]) return 'P';
+        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    // Helper function to format relative date strings
+    function getRelativeDateStr(dateVal, timeVal) {
+        const dateObj = new Date(dateVal);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
+        const bookingDate = new Date(dateVal);
+        bookingDate.setHours(0,0,0,0);
+        
+        const diffTime = today.getTime() - bookingDate.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+        const formattedTime = timeVal ? timeVal.substring(0, 5) : '';
+        
+        if (diffDays === 0) {
+            return `Today, ${formattedTime}`;
+        } else if (diffDays === 1) {
+            return `Yesterday, ${formattedTime}`;
+        } else if (diffDays === -1) {
+            return `Tomorrow, ${formattedTime}`;
+        } else if (diffDays > 1 && diffDays < 7) {
+            return `${diffDays} days ago`;
+        } else if (diffDays >= 7 && diffDays < 30) {
+            const weeks = Math.floor(diffDays / 7);
+            return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+        } else {
+            return dateObj.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+        }
+    }
+    %>
     <div class="dark-card" style="padding:0;overflow:hidden;">
         <div class="table-responsive">
             <table class="dark-table">
@@ -89,7 +133,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% bookings.forEach(b => {
+                    <% bookings.forEach((b, idx) => {
                         const statusClass = {
                             'Pending':    'badge-pending',
                             'Confirmed':  'badge-confirmed',
@@ -104,62 +148,83 @@
                             'Refunded': 'badge-inprogress',
                             'Failed':   'badge-cancelled',
                         }[b.payment_status] || 'badge-pending';
+
+                        // Row density padding - Top 3 recent entries get more breathing room
+                        const cellPadding = idx < 3 ? 'padding: 1.15rem 1rem;' : 'padding: 0.65rem 1rem;';
+                        
+                        // Cancelled row styling: 55% opacity
+                        const isCancelled = b.status === 'Cancelled';
+                        const rowStyle = isCancelled ? 'opacity: 0.55;' : '';
+                        
+                        // Service name strikethrough for cancelled rows
+                        const serviceStyle = isCancelled ? 'text-decoration: line-through;' : '';
+
+                        // Amount color: flag pending, active, or large (>= 1000) transactions in teal; make completed/cancelled plain grey/white
+                        const isHighValueOrActive = b.status === 'Pending' || b.status === 'Confirmed' || parseFloat(b.total_amount) >= 1000;
+                        const amountColor = (isHighValueOrActive && !isCancelled) ? 'color: var(--accent-green); font-weight: 700;' : 'color: var(--text-secondary); font-weight: 500;';
                     %>
-                    <tr>
-                        <td>
-                            <span class="mono" style="color:var(--text-muted);font-size:0.82rem;">#<%= b.booking_id %></span>
+                    <tr style="<%= rowStyle %>">
+                        <td style="<%= cellPadding %>">
+                            <span class="mono" style="color:var(--text-muted);font-size:0.82rem;"><%= formatBookingId(b.booking_id) %></span>
                         </td>
-                        <td>
-                            <div style="font-weight:600;font-size:0.88rem;color:var(--text-primary);">
+                        <td style="<%= cellPadding %>">
+                            <div style="font-weight:600;font-size:0.88rem;color:var(--text-primary);<%= serviceStyle %>">
                                 <%= b.services || 'N/A' %>
                             </div>
                             <div style="font-size:0.75rem;color:var(--text-muted);">
                                 at <%= b.city %>
                             </div>
                         </td>
-                        <td>
-                            <div style="font-size:0.88rem;color:var(--text-secondary);"><%= b.provider_name %></div>
+                        <td style="<%= cellPadding %>">
+                            <!-- Initials-based Avatar + Provider Name -->
+                            <div style="display:flex;align-items:center;gap:0.65rem;">
+                                <div style="width:26px;height:26px;border-radius:50%;background:rgba(0,130,124,0.12);border:1px solid rgba(0,130,124,0.3);color:var(--accent-green);display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0;letter-spacing:0;">
+                                    <%= getInitials(b.provider_name) %>
+                                </div>
+                                <div style="font-size:0.88rem;color:var(--text-secondary);"><%= b.provider_name %></div>
+                            </div>
                         </td>
-                        <td>
+                        <td style="<%= cellPadding %>">
                             <div style="font-size:0.88rem;font-weight:500;">
-                                <%= new Date(b.booking_date).toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'}) %>
-                            </div>
-                            <div style="font-size:0.78rem;color:var(--text-muted);">
-                                <%= b.booking_time ? b.booking_time.substring(0,5) : '' %>
+                                <%= getRelativeDateStr(b.booking_date, b.booking_time) %>
                             </div>
                         </td>
-                        <td>
-                            <span class="mono" style="font-weight:700;color:var(--accent-green);">
+                        <td style="<%= cellPadding %>">
+                            <span class="mono" style="<%= amountColor %>">
                                 ₹<%= parseFloat(b.total_amount).toLocaleString('en-IN') %>
                             </span>
                         </td>
-                        <td>
-                            <span class="badge-status <%= payStatusClass %>" style="font-size:0.7rem;">
+                        <td style="<%= cellPadding %>">
+                            <!-- Soft, text-based payment tag with reduced visual weight -->
+                            <span class="badge-status <%= payStatusClass %>" style="font-size:0.65rem; padding: 0.15rem 0.45rem; border-radius: 4px; letter-spacing: 0.5px; opacity: 0.85;">
                                 <%= b.payment_status || 'Pending' %>
                             </span>
                         </td>
-                        <td>
+                        <td style="<%= cellPadding %>">
                             <span class="badge-status <%= statusClass %>">
                                 <%= b.status %>
                             </span>
                         </td>
-                        <td>
+                        <td style="<%= cellPadding %>">
                             <% if (b.status === 'Completed' && !b.has_review) { %>
                             <% const safeName = (b.provider_name || ''); %>
-                            <button class="btn-outline-custom write-review-btn"
-                                    style="font-size:0.78rem;padding:0.3rem 0.7rem;"
+                            <a href="javascript:void(0)" class="write-review-btn"
+                                    style="font-size:0.8rem;color:var(--color-current-teal);font-weight:600;display:inline-flex;align-items:center;gap:0.25rem;text-decoration:none;"
                                     data-booking-id="<%= b.booking_id %>"
                                     data-provider-id="<%= b.provider_id %>"
                                     data-provider-name="<%= safeName %>">
-                                ★ Review
-                            </button>
+                                Leave a review →
+                            </a>
                             <% } else if (b.status === 'Completed' && b.has_review) { %>
-                            <span style="font-size:0.78rem;color:var(--accent-green);">✓ Reviewed</span>
+                            <span style="font-size:0.8rem;color:var(--text-muted);display:inline-flex;align-items:center;gap:0.25rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" style="width:12px;height:12px;"><polyline points="20 6 9 17 4 12"/></svg>
+                                Reviewed
+                            </span>
                             <% } else if (b.status === 'Pending' || b.status === 'Confirmed') { %>
                             <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;" class="cancel-booking-form">
                                 <input type="hidden" name="new_status" value="Cancelled">
                                 <input type="hidden" name="redirect_to" value="/bookings?customer_id=<%= currentCustomer %>">
-                                <button type="submit" class="btn-danger-custom">Cancel</button>
+                                <button type="submit" class="btn-danger-custom" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;">Cancel</button>
                             </form>
                             <% } else { %>
                             <span style="font-size:0.78rem;color:var(--text-muted);">—</span>

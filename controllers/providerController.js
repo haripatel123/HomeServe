@@ -39,16 +39,10 @@ exports.addAvailability = async (req, res, next) => {
     try {
         const providerId = parseInt(req.body.provider_id);
         const { day_of_week, start_time, end_time } = req.body;
-        const role = res.locals.role || 'user';
 
         if (!Number.isInteger(providerId) || providerId <= 0) {
             return res.redirect('/provider?error=Invalid+provider+ID');
         }
-
-        if (role === 'user') {
-            return res.redirect(`/provider?provider_id=${providerId}&role=user&error=Permission+denied:+Users+are+in+read-only+mode`);
-        }
-
         if (!VALID_DAYS.includes(day_of_week)) {
             return res.redirect(`/provider?provider_id=${providerId}&error=Invalid+day+of+week`);
         }
@@ -76,17 +70,12 @@ exports.deleteAvailability = async (req, res, next) => {
     try {
         const availId    = parseInt(req.params.id);
         const providerId = parseInt(req.body.provider_id);
-        const role = res.locals.role || 'user';
 
         if (!Number.isInteger(availId) || availId <= 0) {
             return res.redirect(`/provider?provider_id=${providerId}&error=Invalid+slot+ID`);
         }
         if (!Number.isInteger(providerId) || providerId <= 0) {
             return res.redirect('/provider?error=Invalid+provider+ID');
-        }
-
-        if (role === 'user') {
-            return res.redirect(`/provider?provider_id=${providerId}&role=user&error=Permission+denied:+Users+are+in+read-only+mode`);
         }
 
         await providerModel.deleteAvailability(availId, providerId);

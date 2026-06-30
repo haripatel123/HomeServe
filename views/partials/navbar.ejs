@@ -11,18 +11,10 @@
 
             <!-- Desktop Nav -->
             <div class="d-none d-md-flex align-items-center gap-1">
-                <a href="/?role=<%= role %>" class="nav-link-custom">Services</a>
-                <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>&role=<%= role %>" class="nav-link-custom">My Bookings</a>
-                <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>&role=<%= role %>" class="nav-link-custom">Provider</a>
-                <a href="/analytics?role=<%= role %>" class="nav-link-custom">Analytics</a>
-                
-                <!-- Role Selector Dropdown -->
-                <div class="ms-2">
-                    <select class="form-select search-input-dark" style="font-size:0.75rem;padding:0.25rem 1.8rem 0.25rem 0.6rem;min-width:110px;height:30px;background-color:rgba(0,130,124,0.08) !important;border-color:rgba(0,130,124,0.3) !important;color:var(--text-primary) !important;" onchange="switchRole(this.value)">
-                        <option value="admin" <%= role === 'admin' ? 'selected' : '' %>>Admin 🛠️</option>
-                        <option value="user" <%= role === 'user' ? 'selected' : '' %>>User 🔒</option>
-                    </select>
-                </div>
+                <a href="/" class="nav-link-custom">Services</a>
+                <a href="/bookings" class="nav-link-custom">My Bookings</a>
+                <a href="/provider" class="nav-link-custom">Provider</a>
+                <a href="/analytics" class="nav-link-custom">Analytics</a>
             </div>
 
             <!-- Mobile Toggle -->
@@ -35,39 +27,10 @@
 
         <!-- Mobile Menu -->
         <div class="d-md-none" id="mobileMenu" style="display:none;padding-top:1rem;border-top:1px solid var(--border-color);margin-top:0.75rem;">
-            <a href="/?role=<%= role %>"          class="nav-link-custom d-block mb-1">Services</a>
-            <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>&role=<%= role %>"  class="nav-link-custom d-block mb-1">My Bookings</a>
-            <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>&role=<%= role %>"  class="nav-link-custom d-block mb-1">Provider</a>
-            <a href="/analytics?role=<%= role %>" class="nav-link-custom d-block mb-2">Analytics</a>
-            
-            <div class="px-3 py-1" style="border-top: 1px dashed var(--border-color); margin-top: 0.5rem; padding-top: 0.75rem;">
-                <label style="font-size:0.75rem;color:var(--text-muted);display:block;margin-bottom:0.25rem;">Role Mode:</label>
-                <select class="form-select search-input-dark w-100" style="font-size:0.8rem;padding:0.4rem 1.8rem 0.4rem 0.75rem;background-color:rgba(0,130,124,0.08) !important;border-color:rgba(0,130,124,0.3) !important;color:var(--text-primary) !important;" onchange="switchRole(this.value)">
-                    <option value="admin" <%= role === 'admin' ? 'selected' : '' %>>Admin 🛠️ (Full Access)</option>
-                    <option value="user" <%= role === 'user' ? 'selected' : '' %>>User 🔒 (Read-Only)</option>
-                </select>
-            </div>
+            <a href="/"          class="nav-link-custom d-block mb-1">Services</a>
+            <a href="/bookings"  class="nav-link-custom d-block mb-1">My Bookings</a>
+            <a href="/provider"  class="nav-link-custom d-block mb-1">Provider</a>
+            <a href="/analytics" class="nav-link-custom d-block">Analytics</a>
         </div>
     </div>
 </nav>
-
-<script>
-    function switchRole(newRole) {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (newRole === 'admin') {
-            const secret = prompt("Enter Admin Passcode to enable write access:");
-            if (secret === null) {
-                // Cancelled, reload or redirect to user
-                urlParams.set('role', 'user');
-                urlParams.delete('admin_secret');
-                window.location.search = urlParams.toString();
-                return;
-            }
-            urlParams.set('admin_secret', secret);
-        } else {
-            urlParams.delete('admin_secret');
-        }
-        urlParams.set('role', newRole);
-        window.location.search = urlParams.toString();
-    }
-</script>

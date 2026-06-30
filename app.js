@@ -43,25 +43,8 @@ app.use(express.json({ limit: '10kb' }));
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Global variables middleware
-app.use((req, res, next) => {
-    res.locals.currentUrl = req.path;
-    res.locals.currentQuery = req.query;
-    
-    const secretInput = req.query.admin_secret || req.body.admin_secret || '';
-    const expectedSecret = process.env.ADMIN_SECRET || 'admin123';
-    const roleInput = req.query.role || req.body.role || 'admin';
-
-    if (roleInput === 'admin' && secretInput !== expectedSecret) {
-        res.locals.role = 'user';
-    } else {
-        res.locals.role = roleInput;
-    }
-    res.locals.adminSecret = secretInput;
-    next();
-});
-
 // Routes
+
 app.use('/',          indexRoutes);
 app.use('/services',  serviceRoutes);
 app.use('/',          bookingRoutes);

@@ -205,16 +205,9 @@ exports.updateStatus = async (req, res, next) => {
     try {
         const bookingId = parseInt(req.params.id);
         const { new_status, notes, redirect_to } = req.body;
-        const role = res.locals.role || 'user';
 
         if (!Number.isInteger(bookingId) || bookingId <= 0) {
             return res.status(400).json({ error: 'Invalid booking ID.' });
-        }
-
-        if (role === 'user') {
-            const redirectUrl = redirect_to || '/provider';
-            const separator = redirectUrl.includes('?') ? '&' : '?';
-            return res.redirect(`${redirectUrl}${separator}role=user&error=Permission+denied:+Users+are+in+read-only+mode`);
         }
 
         const validStatuses = ['Pending', 'Confirmed', 'InProgress', 'Completed', 'Cancelled'];

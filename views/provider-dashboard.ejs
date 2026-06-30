@@ -157,6 +157,133 @@
                                         </div>
                                     </div>
 
+                                    <!-- ── Today's Work & Summary (Human Overview) ── -->
+                                    <div class="row g-4 mb-4">
+                                        <!-- Left Side: Today's Summary Card -->
+                                        <div class="col-lg-4">
+                                            <div class="dark-card h-100" style="padding: 1.5rem;">
+                                                <h2 style="font-size:1rem;font-weight:600;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.5rem;">
+                                                    <span style="width:3px;height:16px;background:var(--accent-green);border-radius:2px;display:inline-block;"></span>
+                                                    Today's Overview
+                                                </h2>
+                                                
+                                                <% 
+                                                const todayJobs = dashData.todaySchedule || [];
+                                                const completedToday = todayJobs.filter(j => j.status === 'Completed').length;
+                                                const activeToday = todayJobs.filter(j => j.status !== 'Completed' && j.status !== 'Cancelled').length;
+                                                const earningsToday = todayJobs
+                                                    .filter(j => j.status === 'Completed')
+                                                    .reduce((acc, curr) => acc + parseFloat(curr.total_amount), 0);
+                                                
+                                                // Find next pending job
+                                                const nextJob = todayJobs.find(j => j.status === 'Pending' || j.status === 'Confirmed' || j.status === 'InProgress');
+                                                %>
+
+                                                <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1rem;margin-bottom:1.25rem;text-align:center;">
+                                                    <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:0.25rem;">Earnings Today</div>
+                                                    <div style="font-size:1.8rem;font-weight:700;color:var(--accent-green);">₹<%= earningsToday.toLocaleString('en-IN') %></div>
+                                                </div>
+
+                                                <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;">
+                                                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;">
+                                                        <span style="color:var(--text-muted);">Scheduled Jobs:</span>
+                                                        <span style="font-weight:600;color:var(--text-primary);"><%= todayJobs.length %></span>
+                                                    </div>
+                                                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;">
+                                                        <span style="color:var(--text-muted);">Checklist Progress:</span>
+                                                        <span style="font-weight:600;color:var(--text-primary);"><%= completedToday %> of <%= todayJobs.length %> completed</span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Humanized Prompt -->
+                                                <div style="background:rgba(0,130,124,0.05);border:1px solid rgba(0,130,124,0.2);border-radius:var(--radius-md);padding:0.85rem 1rem;font-size:0.82rem;color:var(--color-fog-veil);line-height:1.45;">
+                                                    <% if (todayJobs.length === 0) { %>
+                                                        🌿 You have a clean slate today! Take some rest or manage availability slots below.
+                                                    <% } else if (activeToday === 0) { %>
+                                                        🎉 All caught up! 100% of today's scheduled jobs are completed. Great work!
+                                                    <% } else { %>
+                                                        ⚡ You have active appointments today. Next service time: <strong><%= nextJob.booking_time.substring(0,5) %></strong> (<%= nextJob.customer_name %>).
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Side: Today's Work List -->
+                                        <div class="col-lg-8">
+                                            <div class="dark-card h-100" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
+                                                <div style="padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;">
+                                                    <h2 style="font-size:1rem;font-weight:600;margin:0;">Today's Focus</h2>
+                                                    <span class="badge-status <%= todayJobs.length > 0 ? 'badge-confirmed' : 'badge-pending' %>">
+                                                        <%= todayJobs.length %> Job<%= todayJobs.length !== 1 ? 's' : '' %>
+                                                    </span>
+                                                </div>
+                                                
+                                                <div style="flex:1;overflow-y:auto;max-height:280px;padding:1.25rem 1.5rem;">
+                                                    <% if (todayJobs.length === 0) { %>
+                                                        <div class="empty-state" style="padding:2rem;">
+                                                            <h3>No slots booked today</h3>
+                                                            <p>Any bookings made for today will show up here immediately.</p>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <div class="table-responsive">
+                                                            <table class="dark-table" style="font-size:0.85rem;">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Time</th>
+                                                                        <th>Customer</th>
+                                                                        <th>Service Details</th>
+                                                                        <th>Amount</th>
+                                                                        <th>Status</th>
+                                                                        <th>Checklist</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <% todayJobs.forEach(b => { 
+                                                                        const statusClass = {
+                                                                            'Pending': 'badge-pending',
+                                                                            'Confirmed': 'badge-confirmed',
+                                                                            'InProgress': 'badge-inprogress',
+                                                                            'Completed': 'badge-completed',
+                                                                            'Cancelled': 'badge-cancelled'
+                                                                        }[b.status] || 'badge-pending';
+                                                                    %>
+                                                                        <tr>
+                                                                            <td style="font-weight:600;color:var(--text-primary);"><%= b.booking_time.substring(0,5) %></td>
+                                                                            <td>
+                                                                                <div style="font-weight:500;"><%= b.customer_name %></div>
+                                                                                <div style="font-size:0.75rem;color:var(--text-muted);"><%= b.customer_phone %></div>
+                                                                            </td>
+                                                                            <td><%= b.services %></td>
+                                                                            <td style="color:var(--accent-green);font-weight:600;">₹<%= parseFloat(b.total_amount).toLocaleString('en-IN') %></td>
+                                                                            <td><span class="badge-status <%= statusClass %>"><%= b.status %></span></td>
+                                                                            <td>
+                                                                                <% if (b.status === 'Pending') { %>
+                                                                                    <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
+                                                                                        <input type="hidden" name="new_status" value="Confirmed">
+                                                                                        <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
+                                                                                        <button type="submit" class="btn-green" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Confirm</button>
+                                                                                    </form>
+                                                                                <% } else if (b.status === 'Confirmed') { %>
+                                                                                    <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
+                                                                                        <input type="hidden" name="new_status" value="Completed">
+                                                                                        <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
+                                                                                        <button type="submit" class="btn-green" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Done</button>
+                                                                                    </form>
+                                                                                <% } else { %>
+                                                                                    <span style="font-size:0.78rem;color:var(--text-muted);">—</span>
+                                                                                <% } %>
+                                                                            </td>
+                                                                        </tr>
+                                                                    <% }); %>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="row g-4">
                                         <!-- LEFT: Schedule -->
                                         <div class="col-lg-7">

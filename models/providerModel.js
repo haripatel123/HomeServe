@@ -59,11 +59,19 @@ async function getProviderDashboard(providerId) {
         [providerId]
     );
 
+    const todayScheduleResult = await pool.query(
+        `SELECT * FROM vw_provider_schedule
+         WHERE provider_id = $1 AND booking_date = CURRENT_DATE
+         ORDER BY booking_time ASC`,
+        [providerId]
+    );
+
     return {
-        provider:     providerResult.rows[0],
-        schedule:     scheduleResult.rows,
-        availability: availResult.rows,
-        revenue:      revenueResult.rows,
+        provider:      providerResult.rows[0],
+        schedule:      scheduleResult.rows,
+        availability:  availResult.rows,
+        revenue:       revenueResult.rows,
+        todaySchedule: todayScheduleResult.rows,
     };
 }
 

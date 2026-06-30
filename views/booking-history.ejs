@@ -74,18 +74,23 @@
     </div>
     <% } else { %>
     <% 
-    // Helper function to format booking ID deterministically
-    function formatBookingId(id) {
-        const code = ((id * 173) % 9000) + 1000;
-        return `BK-${code}`;
-    }
-
     // Helper function to compute initials from provider name
     function getInitials(name) {
         const parts = (name || '').trim().split(/\s+/);
         if (parts.length === 0 || !parts[0]) return 'P';
         if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
         return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    // Helper function to assign dynamic provider colors
+    function getProviderAvatarStyle(providerId) {
+        const palettes = {
+            1: 'background: rgba(0, 130, 124, 0.15); color: #00ffb7; border-color: rgba(0, 255, 183, 0.3);',
+            2: 'background: rgba(186, 85, 211, 0.15); color: #e0aaff; border-color: rgba(224, 170, 255, 0.3);',
+            3: 'background: rgba(255, 165, 0, 0.12); color: #ffb703; border-color: rgba(255, 183, 3, 0.3);',
+            4: 'background: rgba(70, 130, 180, 0.15); color: #8ecae6; border-color: rgba(142, 202, 230, 0.3);',
+        };
+        return palettes[providerId] || 'background: rgba(255, 255, 255, 0.08); color: var(--text-primary); border-color: var(--border-color);';
     }
 
     // Helper function to format relative date strings
@@ -134,21 +139,6 @@
                 </thead>
                 <tbody>
                     <% bookings.forEach((b, idx) => {
-                        const statusClass = {
-                            'Pending':    'badge-pending',
-                            'Confirmed':  'badge-confirmed',
-                            'InProgress': 'badge-inprogress',
-                            'Completed':  'badge-completed',
-                            'Cancelled':  'badge-cancelled',
-                        }[b.status] || 'badge-pending';
-
-                        const payStatusClass = {
-                            'Paid':     'badge-completed',
-                            'Pending':  'badge-pending',
-                            'Refunded': 'badge-inprogress',
-                            'Failed':   'badge-cancelled',
-                        }[b.payment_status] || 'badge-pending';
-
                         // Row density padding - Top 3 recent entries get more breathing room
                         const cellPadding = idx < 3 ? 'padding: 1.15rem 1rem;' : 'padding: 0.65rem 1rem;';
                         
@@ -162,10 +152,27 @@
                         // Amount color: flag pending, active, or large (>= 1000) transactions in teal; make completed/cancelled plain grey/white
                         const isHighValueOrActive = b.status === 'Pending' || b.status === 'Confirmed' || parseFloat(b.total_amount) >= 1000;
                         const amountColor = (isHighValueOrActive && !isCancelled) ? 'color: var(--accent-green); font-weight: 700;' : 'color: var(--text-secondary); font-weight: 500;';
+
+                        // Glow indicator configuration for Booking Status
+                        const statusDotConfig = {
+                            'Pending':    { dotColor: '#ffd000', borderColor: 'rgba(255, 208, 0, 0.25)', textColor: '#ffd000' },
+                            'Confirmed':  { dotColor: '#00ffb7', borderColor: 'rgba(0, 255, 183, 0.25)', textColor: '#00ffb7' },
+                            'InProgress': { dotColor: '#3a86ff', borderColor: 'rgba(58, 134, 255, 0.25)', textColor: '#8ecae6' },
+                            'Completed':  { dotColor: '#ffffff', borderColor: 'rgba(255, 255, 255, 0.2)', textColor: '#ffffff' },
+                            'Cancelled':  { dotColor: '#ff6b6b', borderColor: 'rgba(255, 107, 107, 0.2)', textColor: '#ff6b6b' }
+                        }[b.status] || { dotColor: '#ffffff', borderColor: 'rgba(255, 255, 255, 0.1)', textColor: 'var(--text-secondary)' };
+
+                        // Minimalist text configuration for Payment Status
+                        const payConfig = {
+                            'Paid':     { icon: '✓', color: '#00ffb7', label: 'Paid' },
+                            'Pending':  { icon: '◷', color: '#ffd000', label: 'Unpaid' },
+                            'Refunded': { icon: '↺', color: '#4dd4cf', label: 'Refunded' },
+                            'Failed':   { icon: '⚠', color: '#ff6b6b', label: 'Failed' }
+                        }[b.payment_status || 'Pending'] || { icon: '◷', color: 'var(--text-muted)', label: b.payment_status || 'Pending' };
                     %>
                     <tr style="<%= rowStyle %>">
                         <td style="<%= cellPadding %>">
-                            <span class="mono" style="color:var(--text-muted);font-size:0.82rem;"><%= formatBookingId(b.booking_id) %></span>
+                            <span class="mono" style="color:var(--text-muted);font-size:0.82rem;">#<%= b.booking_id %></span>
                         </td>
                         <td style="<%= cellPadding %>">
                             <div style="font-weight:600;font-size:0.88rem;color:var(--text-primary);<%= serviceStyle %>">
@@ -178,7 +185,7 @@
                         <td style="<%= cellPadding %>">
                             <!-- Initials-based Avatar + Provider Name -->
                             <div style="display:flex;align-items:center;gap:0.65rem;">
-                                <div style="width:26px;height:26px;border-radius:50%;background:rgba(0,130,124,0.12);border:1px solid rgba(0,130,124,0.3);color:var(--accent-green);display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0;letter-spacing:0;">
+                                <div style="width:26px;height:26px;border-radius:50%;<%= getProviderAvatarStyle(b.provider_id) %>display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0;letter-spacing:0;border:1px solid;">
                                     <%= getInitials(b.provider_name) %>
                                 </div>
                                 <div style="font-size:0.88rem;color:var(--text-secondary);"><%= b.provider_name %></div>
@@ -196,14 +203,17 @@
                         </td>
                         <td style="<%= cellPadding %>">
                             <!-- Soft, text-based payment tag with reduced visual weight -->
-                            <span class="badge-status <%= payStatusClass %>" style="font-size:0.65rem; padding: 0.15rem 0.45rem; border-radius: 4px; letter-spacing: 0.5px; opacity: 0.85;">
-                                <%= b.payment_status || 'Pending' %>
+                            <span style="font-size:0.8rem;color:<%= payConfig.color %>;font-weight:500;display:inline-flex;align-items:center;gap:0.3rem;">
+                                <span style="font-family:monospace;font-size:0.9rem;font-weight:bold;"><%= payConfig.icon %></span>
+                                <%= payConfig.label %>
                             </span>
                         </td>
                         <td style="<%= cellPadding %>">
-                            <span class="badge-status <%= statusClass %>">
+                            <!-- Handcrafted glowing dot status tag -->
+                            <div style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.25rem 0.6rem;background:rgba(255,255,255,0.02);border:1px solid <%= statusDotConfig.borderColor %>;border-left:3px solid <%= statusDotConfig.dotColor %>;border-radius:4px;font-size:0.72rem;font-weight:600;color:<%= statusDotConfig.textColor %>;letter-spacing:0.3px;text-transform:uppercase;">
+                                <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:<%= statusDotConfig.dotColor %>;box-shadow: 0 0 6px <%= statusDotConfig.dotColor %>;"></span>
                                 <%= b.status %>
-                            </span>
+                            </div>
                         </td>
                         <td style="<%= cellPadding %>">
                             <% if (b.status === 'Completed' && !b.has_review) { %>

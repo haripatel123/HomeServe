@@ -698,7 +698,7 @@ a:hover {
     margin-bottom: 1.5rem;
     position: relative;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: none;
     letter-spacing: -0.47px;
 }
 
@@ -1213,7 +1213,7 @@ a:hover {
 
 .page-header {
     padding: 2rem 0 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: none;
     margin-bottom: 2rem;
 }
 

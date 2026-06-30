@@ -12,6 +12,7 @@
             <!-- Desktop Nav -->
             <div class="d-none d-md-flex align-items-center">
                 <div class="nav-menu-capsule">
+                    <div class="nav-sliding-highlight"></div>
                     <a href="/" class="nav-link-capsule <%= currentUrl === '/' ? 'active' : '' %>">Services</a>
                     <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>" class="nav-link-capsule <%= currentUrl === '/bookings' ? 'active' : '' %>">My Bookings</a>
                     <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>" class="nav-link-capsule <%= currentUrl === '/provider' ? 'active' : '' %>">Provider</a>
@@ -28,7 +29,7 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div class="d-md-none" id="mobileMenu" style="display:none;padding-top:1rem;border-top:1px solid var(--border-color);margin-top:0.75rem;">
+        <div class="d-md-none" id="mobileMenu" style="display:none;padding-top:1rem;margin-top:0.75rem;">
             <a href="/"          class="nav-link-custom d-block mb-1">Services</a>
             <a href="/bookings"  class="nav-link-custom d-block mb-1">My Bookings</a>
             <a href="/provider"  class="nav-link-custom d-block mb-1">Provider</a>
@@ -36,3 +37,43 @@
         </div>
     </div>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const capsule = document.querySelector('.nav-menu-capsule');
+    if (!capsule) return;
+    
+    const highlight = capsule.querySelector('.nav-sliding-highlight');
+    const links = capsule.querySelectorAll('.nav-link-capsule, .nav-cta-capsule');
+    
+    function moveHighlight(target) {
+        if (!target) return;
+        highlight.style.left = target.offsetLeft + 'px';
+        highlight.style.top = target.offsetTop + 'px';
+        highlight.style.width = target.offsetWidth + 'px';
+        highlight.style.height = target.offsetHeight + 'px';
+        highlight.style.opacity = '1';
+    }
+    
+    // Position highlight initially over active link
+    const activeLink = capsule.querySelector('.nav-link-capsule.active');
+    if (activeLink) {
+        moveHighlight(activeLink);
+    }
+    
+    links.forEach(link => {
+        link.addEventListener('mouseenter', function() {
+            moveHighlight(this);
+        });
+    });
+    
+    capsule.addEventListener('mouseleave', function() {
+        const currentActive = capsule.querySelector('.nav-link-capsule.active');
+        if (currentActive) {
+            moveHighlight(currentActive);
+        } else {
+            highlight.style.opacity = '0';
+        }
+    });
+});
+</script>

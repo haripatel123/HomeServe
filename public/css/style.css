@@ -141,11 +141,16 @@ a:hover {
    ============================================================ */
 .navbar-dark-custom {
     background: var(--bg-primary);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: none;
     padding: 0.75rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
+}
+
+.navbar-dark-custom:hover {
+    transform: scale(1.012);
 }
 
 .navbar-brand-text {
@@ -203,12 +208,33 @@ a:hover {
     background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: none;
     border-radius: 30px;
     padding: 3px 3px 3px 12px;
     display: inline-flex;
     align-items: center;
     gap: 4px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Sliding background capsule */
+.nav-sliding-highlight {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    transition: left 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                top 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                height 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                opacity 0.25s ease;
+    pointer-events: none;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    opacity: 0;
 }
 
 .nav-link-capsule {
@@ -219,25 +245,22 @@ a:hover {
     text-transform: uppercase;
     padding: 0.45rem 0.9rem !important;
     border-radius: 20px;
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition: color 0.2s ease;
     text-decoration: none;
     display: inline-block;
+    position: relative;
+    z-index: 2;
 }
 
-.nav-link-capsule:hover {
-    color: var(--text-primary) !important;
-    background: rgba(255, 255, 255, 0.04);
-}
-
+.nav-link-capsule:hover,
 .nav-link-capsule.active {
     color: var(--text-primary) !important;
-    background: rgba(255, 255, 255, 0.06);
 }
 
 /* Nav CTA button inside capsule */
 .nav-cta-capsule {
     background: #142824 !important;
-    border: 1px solid rgba(0, 130, 124, 0.3) !important;
+    border: none !important;
     color: var(--accent-green) !important;
     font-size: 0.72rem;
     font-weight: 700;
@@ -248,12 +271,13 @@ a:hover {
     transition: all 0.2s ease;
     text-decoration: none;
     display: inline-block;
+    position: relative;
+    z-index: 2;
 }
 
 .nav-cta-capsule:hover {
     background: var(--color-current-teal) !important;
     color: #fff !important;
-    border-color: var(--color-current-teal) !important;
     box-shadow: 0 0 12px rgba(0, 130, 124, 0.25);
 }
 

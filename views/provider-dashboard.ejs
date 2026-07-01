@@ -179,7 +179,7 @@
                                                 const nextJob = todayJobs.find(j => j.status === 'Pending' || j.status === 'Confirmed' || j.status === 'InProgress');
                                                 %>
 
-                                                <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1rem;margin-bottom:1.25rem;text-align:center;">
+                                                <div style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1rem;margin-bottom:1.25rem;text-align:center;">
                                                     <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:0.25rem;">Earnings Today</div>
                                                     <div style="font-size:1.8rem;font-weight:700;color:var(--accent-green);">₹<%= earningsToday.toLocaleString('en-IN') %></div>
                                                 </div>
@@ -196,7 +196,7 @@
                                                 </div>
 
                                                 <!-- Humanized Prompt -->
-                                                <div style="background:rgba(0,130,124,0.05);border:1px solid rgba(0,130,124,0.2);border-radius:var(--radius-md);padding:0.85rem 1rem;font-size:0.82rem;color:var(--color-fog-veil);line-height:1.45;">
+                                                <div style="background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:0.85rem 1rem;font-size:0.82rem;color:var(--text-secondary);line-height:1.45;">
                                                     <% if (todayJobs.length === 0) { %>
                                                         🌿 You have a clean slate today! Take some rest or manage availability slots below.
                                                     <% } else if (activeToday === 0) { %>

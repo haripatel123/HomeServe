@@ -85,12 +85,12 @@
     // Helper function to assign dynamic provider colors
     function getProviderAvatarStyle(providerId) {
         const palettes = {
-            1: 'background: rgba(0, 130, 124, 0.15); color: #00ffb7; border-color: rgba(0, 255, 183, 0.3);',
-            2: 'background: rgba(186, 85, 211, 0.15); color: #e0aaff; border-color: rgba(224, 170, 255, 0.3);',
-            3: 'background: rgba(255, 165, 0, 0.12); color: #ffb703; border-color: rgba(255, 183, 3, 0.3);',
-            4: 'background: rgba(70, 130, 180, 0.15); color: #8ecae6; border-color: rgba(142, 202, 230, 0.3);',
+            1: 'background: #d1fae5; color: #065f46; border-color: #a7f3d0;',
+            2: 'background: #f3e8ff; color: #6b21a8; border-color: #e9d5ff;',
+            3: 'background: #ffedd5; color: #9a3412; border-color: #fed7aa;',
+            4: 'background: #dbeafe; color: #1e40af; border-color: #bfdbfe;',
         };
-        return palettes[providerId] || 'background: rgba(255, 255, 255, 0.08); color: var(--text-primary); border-color: var(--border-color);';
+        return palettes[providerId] || 'background: var(--color-ash); color: var(--text-primary); border-color: var(--border-color);';
     }
 
     // Helper function to format relative date strings
@@ -103,8 +103,16 @@
         bookingDate.setHours(0,0,0,0);
         
         const diffTime = today.getTime() - bookingDate.getTime();
-        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-        const formattedTime = timeVal ? timeVal.substring(0, 5) : '';
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        // Format time to 12h format
+        const timeParts = timeVal.split(':');
+        let hours = parseInt(timeParts[0]);
+        const minutes = timeParts[1];
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 0 should be 12
+        const formattedTime = `${hours}:${minutes} ${ampm}`;
         
         if (diffDays === 0) {
             return `Today, ${formattedTime}`;
@@ -122,7 +130,7 @@
         }
     }
     %>
-    <div class="dark-card" style="padding:0;overflow:hidden;">
+    <div class="dark-card" style="padding:0;overflow:hidden;box-shadow:var(--shadow-card);background:var(--bg-card);border:1px solid var(--border-color);">
         <div class="table-responsive">
             <table class="dark-table">
                 <thead>
@@ -155,19 +163,19 @@
 
                         // Glow indicator configuration for Booking Status
                         const statusDotConfig = {
-                            'Pending':    { dotColor: '#ffd000', borderColor: 'rgba(255, 208, 0, 0.25)', textColor: '#ffd000' },
-                            'Confirmed':  { dotColor: '#00ffb7', borderColor: 'rgba(0, 255, 183, 0.25)', textColor: '#00ffb7' },
-                            'InProgress': { dotColor: '#3a86ff', borderColor: 'rgba(58, 134, 255, 0.25)', textColor: '#8ecae6' },
-                            'Completed':  { dotColor: '#ffffff', borderColor: 'rgba(255, 255, 255, 0.2)', textColor: '#ffffff' },
-                            'Cancelled':  { dotColor: '#ff6b6b', borderColor: 'rgba(255, 107, 107, 0.2)', textColor: '#ff6b6b' }
-                        }[b.status] || { dotColor: '#ffffff', borderColor: 'rgba(255, 255, 255, 0.1)', textColor: 'var(--text-secondary)' };
+                            'Pending':    { dotColor: '#705500', borderColor: 'rgba(112, 85, 0, 0.15)', textColor: '#705500' },
+                            'Confirmed':  { dotColor: '#407ff2', borderColor: 'rgba(64, 127, 242, 0.15)', textColor: '#407ff2' },
+                            'InProgress': { dotColor: '#407ff2', borderColor: 'rgba(64, 127, 242, 0.15)', textColor: '#407ff2' },
+                            'Completed':  { dotColor: '#075a39', borderColor: 'rgba(7, 90, 57, 0.15)', textColor: '#075a39' },
+                            'Cancelled':  { dotColor: '#772322', borderColor: 'rgba(119, 35, 34, 0.15)', textColor: '#772322' }
+                        }[b.status] || { dotColor: '#505967', borderColor: 'rgba(80, 89, 103, 0.1)', textColor: 'var(--text-secondary)' };
 
                         // Minimalist text configuration for Payment Status
                         const payConfig = {
-                            'Paid':     { icon: '✓', color: '#00ffb7', label: 'Paid' },
-                            'Pending':  { icon: '◷', color: '#ffd000', label: 'Unpaid' },
-                            'Refunded': { icon: '↺', color: '#4dd4cf', label: 'Refunded' },
-                            'Failed':   { icon: '⚠', color: '#ff6b6b', label: 'Failed' }
+                            'Paid':     { icon: '✓', color: '#075a39', label: 'Paid' },
+                            'Pending':  { icon: '◷', color: '#705500', label: 'Unpaid' },
+                            'Refunded': { icon: '↺', color: '#407ff2', label: 'Refunded' },
+                            'Failed':   { icon: '⚠', color: '#772322', label: 'Failed' }
                         }[b.payment_status || 'Pending'] || { icon: '◷', color: 'var(--text-muted)', label: b.payment_status || 'Pending' };
                     %>
                     <tr style="<%= rowStyle %>">
@@ -210,8 +218,8 @@
                         </td>
                         <td style="<%= cellPadding %>">
                             <!-- Handcrafted glowing dot status tag -->
-                            <div style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.25rem 0.6rem;background:rgba(255,255,255,0.02);border:1px solid <%= statusDotConfig.borderColor %>;border-left:3px solid <%= statusDotConfig.dotColor %>;border-radius:4px;font-size:0.72rem;font-weight:600;color:<%= statusDotConfig.textColor %>;letter-spacing:0.3px;text-transform:uppercase;">
-                                <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:<%= statusDotConfig.dotColor %>;box-shadow: 0 0 6px <%= statusDotConfig.dotColor %>;"></span>
+                            <div style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.25rem 0.6rem;background:var(--bg-secondary);border:1px solid <%= statusDotConfig.borderColor %>;border-left:3px solid <%= statusDotConfig.dotColor %>;border-radius:4px;font-size:0.72rem;font-weight:600;color:<%= statusDotConfig.textColor %>;letter-spacing:0.3px;text-transform:uppercase;">
+                                <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:<%= statusDotConfig.dotColor %>;box-shadow: 0 0 3px <%= statusDotConfig.dotColor %>;"></span>
                                 <%= b.status %>
                             </div>
                         </td>
@@ -219,7 +227,7 @@
                             <% if (b.status === 'Completed' && !b.has_review) { %>
                             <% const safeName = (b.provider_name || ''); %>
                             <a href="javascript:void(0)" class="write-review-btn"
-                                    style="font-size:0.8rem;color:var(--color-current-teal);font-weight:600;display:inline-flex;align-items:center;gap:0.25rem;text-decoration:none;"
+                                    style="font-size:0.8rem;color:var(--color-action-blue);font-weight:600;display:inline-flex;align-items:center;gap:0.25rem;text-decoration:none;"
                                     data-booking-id="<%= b.booking_id %>"
                                     data-provider-id="<%= b.provider_id %>"
                                     data-provider-name="<%= safeName %>">

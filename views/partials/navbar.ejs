@@ -3,7 +3,7 @@
 <nav class="navbar-floating-capsule">
     <!-- Brand/Logo -->
     <a href="/" class="navbar-brand-pill">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;color:#00827c;margin-right:2px;vertical-align:-3px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px;color:var(--color-ink);margin-right:2px;vertical-align:-3px;">
             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
         Home<span>Serve</span>
@@ -22,7 +22,7 @@
     </div>
 
     <!-- Mobile Menu Toggle Button inside Navbar Capsule -->
-    <button class="d-md-none" id="mobileMenuToggle" aria-label="Menu" style="border:none;background:none;padding:2px 8px;margin-left:4px;color:rgba(255,255,255,0.75);">
+    <button class="d-md-none" id="mobileMenuToggle" aria-label="Menu" style="border:none;background:none;padding:2px 8px;margin-left:4px;color:var(--color-ink);">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;">
             <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
         </svg>
@@ -167,16 +167,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (scrollPos > 40) {
             gsap.to(nav, {
-                backgroundColor: "rgba(8, 18, 18, 0.85)",
-                border: "1px solid rgba(255, 255, 255, 0.12)",
-                boxShadow: "0 15px 40px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.15)",
+                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                border: "1px solid rgba(28, 29, 31, 0.15)",
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
                 duration: 0.35
             });
         } else {
             gsap.to(nav, {
-                backgroundColor: "rgba(8, 18, 18, 0.65)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.1)",
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                border: "1px solid rgba(28, 29, 31, 0.08)",
+                boxShadow: "0 8px 30px rgba(0, 0, 0, 0.08)",
                 duration: 0.35
             });
         }

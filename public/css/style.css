@@ -731,7 +731,6 @@ a:hover {
     padding: 8px 16px;
     border-radius: var(--radius-buttons);
     cursor: pointer;
-    transition: all var(--transition-fast);
     font-family: var(--font-body);
     font-size: 14px;
     display: inline-flex;
@@ -739,14 +738,6 @@ a:hover {
     gap: 0.5rem;
     letter-spacing: -0.14px;
     text-transform: none;
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-green:hover {
-    background: #000000;
-    border-color: #000000;
-    color: var(--color-white) !important;
 }
 
 .btn-green:active {
@@ -767,7 +758,6 @@ a:hover {
     padding: 8px 16px;
     border-radius: var(--radius-buttons);
     cursor: pointer;
-    transition: all var(--transition-fast);
     font-family: var(--font-body);
     font-size: 14px;
     letter-spacing: -0.14px;
@@ -775,12 +765,6 @@ a:hover {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-}
-
-.btn-outline-custom:hover {
-    border-color: var(--color-metal);
-    background: var(--color-ash);
-    color: var(--color-ink) !important;
 }
 
 .btn-danger-custom {
@@ -791,18 +775,12 @@ a:hover {
     border-radius: var(--radius-buttons);
     cursor: pointer;
     font-size: 13px;
-    transition: all var(--transition-fast);
     font-family: var(--font-body);
     letter-spacing: -0.1px;
     text-transform: none;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-}
-
-.btn-danger-custom:hover {
-    background: #fef2f2;
-    border-color: var(--color-danger-red);
 }
 
 /* ============================================================
@@ -1759,53 +1737,87 @@ footer {
     font-weight: 500;
 }
 
+/* Unified premium button hover slide/skew animations */
 .btn-green,
-.btn-outline-custom {
+.btn-outline-custom,
+.btn-danger-custom,
+.btn-showcase-cta {
     position: relative;
     z-index: 1;
     overflow: hidden;
+    transition: color 0.5s, border-color 0.5s;
 }
 
-/* Teal bioluminescent cursor track layer */
-.btn-outline-custom::before {
-    content: '';
+/* 1. Dark buttons (Green/Showcase) -> white sweep, dark text on hover */
+.btn-green:hover,
+.btn-showcase-cta:hover {
+    color: var(--color-ink) !important;
+    border-color: var(--color-ink);
+}
+
+.btn-green::after,
+.btn-showcase-cta::after {
+    content: "";
+    background: var(--color-white);
     position: absolute;
-    width: 160px;
-    height: 160px;
-    top: 0;
-    left: 0;
-    background: radial-gradient(circle, rgba(0, 130, 124, 0.5) 0%, transparent 60%);
-    border-radius: 50%;
     z-index: -1;
-    pointer-events: none;
-    opacity: 0;
-    transform: translate(calc(var(--mouse-x, -999px) - 80px), calc(var(--mouse-y, -999px) - 80px));
-    transition: transform 0.24s cubic-bezier(0.1, 0.75, 0.5, 0.95), opacity 0.3s ease;
+    left: -20%;
+    right: -20%;
+    top: 0;
+    bottom: 0;
+    transform: skewX(-45deg) scale(0, 1);
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.btn-outline-custom:hover::before {
-    opacity: 1;
+.btn-green:hover::after,
+.btn-showcase-cta:hover::after {
+    transform: skewX(-45deg) scale(1.2, 1);
 }
 
-/* CTA button cyan glow cursor track */
-.btn-green::before {
-    content: '';
+/* 2. Light outline button -> dark sweep, white text on hover */
+.btn-outline-custom:hover {
+    color: var(--color-white) !important;
+    border-color: var(--color-ink);
+}
+
+.btn-outline-custom::after {
+    content: "";
+    background: var(--color-ink);
     position: absolute;
-    width: 200px;
-    height: 200px;
-    top: 0;
-    left: 0;
-    background: radial-gradient(circle, rgba(203, 255, 252, 0.35) 0%, transparent 60%);
-    border-radius: 50%;
     z-index: -1;
-    pointer-events: none;
-    opacity: 0;
-    transform: translate(calc(var(--mouse-x, -999px) - 100px), calc(var(--mouse-y, -999px) - 100px));
-    transition: transform 0.24s cubic-bezier(0.1, 0.75, 0.5, 0.95), opacity 0.3s ease;
+    left: -20%;
+    right: -20%;
+    top: 0;
+    bottom: 0;
+    transform: skewX(-45deg) scale(0, 1);
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.btn-green:hover::before {
-    opacity: 1;
+.btn-outline-custom:hover::after {
+    transform: skewX(-45deg) scale(1.2, 1);
+}
+
+/* 3. Danger outline button -> red sweep, white text on hover */
+.btn-danger-custom:hover {
+    color: var(--color-white) !important;
+    border-color: var(--color-danger-red);
+}
+
+.btn-danger-custom::after {
+    content: "";
+    background: var(--color-danger-red);
+    position: absolute;
+    z-index: -1;
+    left: -20%;
+    right: -20%;
+    top: 0;
+    bottom: 0;
+    transform: skewX(-45deg) scale(0, 1);
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.btn-danger-custom:hover::after {
+    transform: skewX(-45deg) scale(1.2, 1);
 }
 
 .hero-showcase-wrapper {

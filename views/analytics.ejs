@@ -279,20 +279,20 @@
 <!-- Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script>
-// ── Chart.js Global Defaults (Auros Theme) ──
-Chart.defaults.color = '#bbc7c6';
+// ── Chart.js Global Defaults (Attio Theme) ──
+Chart.defaults.color = '#505967';
 Chart.defaults.font.family = 'Inter';
 Chart.defaults.font.size = 11;
 
-const gridColor = 'rgba(51, 51, 51, 0.6)';
+const gridColor = '#e4e7ec';
 
 // ── 1. Revenue Line Chart ──
 const revenueData = <%- JSON.stringify(revenueByMonth) %>;
 if (document.getElementById('revenueLineChart') && revenueData.length > 0) {
     const ctx = document.getElementById('revenueLineChart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 280);
-    gradient.addColorStop(0, 'rgba(0, 130, 124, 0.25)');
-    gradient.addColorStop(1, 'rgba(0, 130, 124, 0)');
+    gradient.addColorStop(0, 'rgba(64, 127, 242, 0.25)');
+    gradient.addColorStop(1, 'rgba(64, 127, 242, 0)');
 
     new Chart(ctx, {
         type: 'line',
@@ -301,22 +301,22 @@ if (document.getElementById('revenueLineChart') && revenueData.length > 0) {
             datasets: [{
                 label: 'Revenue (₹)',
                 data: revenueData.map(r => parseFloat(r.total_revenue)),
-                borderColor: '#00827c',
+                borderColor: '#407ff2',
                 backgroundColor: gradient,
                 fill: true,
                 tension: 0.4,
-                pointBackgroundColor: '#cbfffc',
-                pointBorderColor: '#00827c',
+                pointBackgroundColor: '#94b9ff',
+                pointBorderColor: '#407ff2',
                 pointRadius: 4,
                 pointHoverRadius: 7,
                 borderWidth: 2,
             }, {
                 label: 'Bookings',
                 data: revenueData.map(r => parseFloat(r.total_bookings)),
-                borderColor: '#fde9ff',
+                borderColor: '#8f99a8',
                 backgroundColor: 'transparent',
                 tension: 0.4,
-                pointBackgroundColor: '#fde9ff',
+                pointBackgroundColor: '#8f99a8',
                 pointRadius: 3,
                 pointHoverRadius: 6,
                 borderWidth: 1.5,
@@ -329,15 +329,15 @@ if (document.getElementById('revenueLineChart') && revenueData.length > 0) {
             plugins: {
                 legend: {
                     display: true,
-                    labels: { color: '#bbc7c6', padding: 16, boxWidth: 12, boxHeight: 12 }
+                    labels: { color: '#505967', padding: 16, boxWidth: 12, boxHeight: 12 }
                 },
                 tooltip: {
-                    backgroundColor: '#011d1c',
-                    borderColor: '#333333',
+                    backgroundColor: '#1c1d1f',
+                    borderColor: 'rgba(255, 255, 255, 0.08)',
                     borderWidth: 1,
                     padding: 10,
                     titleColor: '#ffffff',
-                    bodyColor: '#bbc7c6',
+                    bodyColor: '#8f99a8',
                     callbacks: {
                         label: ctx => ctx.datasetIndex === 0
                             ? ' ₹' + ctx.raw.toLocaleString('en-IN')
@@ -346,9 +346,9 @@ if (document.getElementById('revenueLineChart') && revenueData.length > 0) {
                 }
             },
             scales: {
-                x: { grid: { color: gridColor } },
-                y: { grid: { color: gridColor }, ticks: { callback: v => '₹' + (v/1000).toFixed(0)+'k' } },
-                y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#bbc7c6' } }
+                x: { grid: { color: gridColor }, ticks: { color: '#505967' } },
+                y: { grid: { color: gridColor }, ticks: { color: '#505967', callback: v => '₹' + (v/1000).toFixed(0)+'k' } },
+                y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#505967' } }
             }
         }
     });
@@ -358,11 +358,11 @@ if (document.getElementById('revenueLineChart') && revenueData.length > 0) {
 const statusData = <%- JSON.stringify(statusDist) %>;
 if (document.getElementById('statusDoughnutChart') && statusData.length > 0) {
     const colorMap = {
-        Pending:    '#003734',
-        Confirmed:  '#00827c',
-        InProgress: '#cbfffc',
-        Completed:  '#ffffff',
-        Cancelled:  '#333333',
+        Pending:    '#705500',
+        Confirmed:  '#407ff2',
+        InProgress: '#94b9ff',
+        Completed:  '#075a39',
+        Cancelled:  '#772322',
     };
     new Chart(document.getElementById('statusDoughnutChart').getContext('2d'), {
         type: 'doughnut',
@@ -370,8 +370,8 @@ if (document.getElementById('statusDoughnutChart') && statusData.length > 0) {
             labels: statusData.map(s => s.status),
             datasets: [{
                 data: statusData.map(s => parseInt(s.count)),
-                backgroundColor: statusData.map(s => (colorMap[s.status] || '#333333') + 'cc'),
-                borderColor:     statusData.map(s => colorMap[s.status] || '#333333'),
+                backgroundColor: statusData.map(s => (colorMap[s.status] || '#505967') + 'cc'),
+                borderColor:     statusData.map(s => colorMap[s.status] || '#505967'),
                 borderWidth: 2,
                 hoverBorderWidth: 3,
             }]
@@ -382,11 +382,11 @@ if (document.getElementById('statusDoughnutChart') && statusData.length > 0) {
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { color: '#bbc7c6', padding: 12, boxWidth: 10, boxHeight: 10, font: { size: 11 } }
+                    labels: { color: '#505967', padding: 12, boxWidth: 10, boxHeight: 10, font: { size: 11 } }
                 },
                 tooltip: {
-                    backgroundColor: '#011d1c', borderColor: '#333333', borderWidth: 1, padding: 10,
-                    titleColor: '#ffffff', bodyColor: '#bbc7c6',
+                    backgroundColor: '#1c1d1f', borderColor: 'rgba(255, 255, 255, 0.08)', borderWidth: 1, padding: 10,
+                    titleColor: '#ffffff', bodyColor: '#8f99a8',
                     callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} bookings` }
                 }
             }
@@ -397,7 +397,7 @@ if (document.getElementById('statusDoughnutChart') && statusData.length > 0) {
 // ── 3. Top Services Bar Chart ──
 const servicesData = <%- JSON.stringify(topServices) %>;
 if (document.getElementById('topServicesChart') && servicesData.length > 0) {
-    const colors = ['#00827c', '#4dd4cf', '#cbfffc', '#edfffe', '#fde9ff', '#003734', '#005753', '#bbc7c6'];
+    const colors = ['#1c1d1f', '#407ff2', '#70a1f0', '#8f99a8', '#6f7988', '#505967', '#dca3a5', '#b5bdc9'];
     new Chart(document.getElementById('topServicesChart').getContext('2d'), {
         type: 'bar',
         data: {
@@ -417,14 +417,14 @@ if (document.getElementById('topServicesChart') && servicesData.length > 0) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#011d1c', borderColor: '#333333', borderWidth: 1, padding: 10,
-                    titleColor: '#ffffff', bodyColor: '#bbc7c6',
+                    backgroundColor: '#1c1d1f', borderColor: 'rgba(255, 255, 255, 0.08)', borderWidth: 1, padding: 10,
+                    titleColor: '#ffffff', bodyColor: '#8f99a8',
                     callbacks: { label: ctx => ` ${ctx.raw} bookings` }
                 }
             },
             scales: {
-                x: { grid: { color: gridColor }, ticks: { maxRotation: 30, font: { size: 10 } } },
-                y: { grid: { color: gridColor }, ticks: { stepSize: 1 } }
+                x: { grid: { color: gridColor }, ticks: { color: '#505967', maxRotation: 30, font: { size: 10 } } },
+                y: { grid: { color: gridColor }, ticks: { color: '#505967', stepSize: 1 } }
             }
         }
     });
@@ -440,8 +440,8 @@ if (document.getElementById('categoryRevenueChart') && catData.length > 0) {
             datasets: [{
                 label: 'Revenue (₹)',
                 data: catData.map(c => parseFloat(c.total_revenue)),
-                backgroundColor: 'rgba(0, 130, 124, 0.15)',
-                borderColor: '#00827c',
+                backgroundColor: 'rgba(64, 127, 242, 0.15)',
+                borderColor: '#407ff2',
                 borderWidth: 1.5,
                 borderRadius: 4,
                 borderSkipped: false,
@@ -453,14 +453,14 @@ if (document.getElementById('categoryRevenueChart') && catData.length > 0) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#011d1c', borderColor: '#333333', borderWidth: 1, padding: 10,
-                    titleColor: '#ffffff', bodyColor: '#bbc7c6',
+                    backgroundColor: '#1c1d1f', borderColor: 'rgba(255, 255, 255, 0.08)', borderWidth: 1, padding: 10,
+                    titleColor: '#ffffff', bodyColor: '#8f99a8',
                     callbacks: { label: ctx => ' ₹' + ctx.raw.toLocaleString('en-IN') }
                 }
             },
             scales: {
-                x: { grid: { color: gridColor }, ticks: { callback: v => '₹'+(v/1000).toFixed(0)+'k' } },
-                y: { grid: { color: gridColor } }
+                x: { grid: { color: gridColor }, ticks: { color: '#505967', callback: v => '₹'+(v/1000).toFixed(0)+'k' } },
+                y: { grid: { color: gridColor }, ticks: { color: '#505967' } }
             }
         }
     });

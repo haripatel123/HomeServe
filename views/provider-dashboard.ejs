@@ -560,8 +560,8 @@
                 <!-- Chart.js -->
                 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
                 <script>
-                    // ── Chart.js Global Defaults (Auros Theme) ──
-                    Chart.defaults.color = '#ffffff'; // Pure white for absolute readability
+                    // ── Chart.js Global Defaults (Attio Theme) ──
+                    Chart.defaults.color = '#505967';
                     Chart.defaults.font.family = 'Inter';
                     Chart.defaults.font.size = 11;
                     Chart.defaults.font.weight = '500';
@@ -571,10 +571,10 @@
                     if (revenueData.length > 0) {
                         const ctx = document.getElementById('revenueChart').getContext('2d');
                         
-                        // Create an extremely bright, high-opacity gradient for maximum visibility
+                        // Create a clean Action Blue gradient
                         const gradient = ctx.createLinearGradient(0, 0, 0, 250);
-                        gradient.addColorStop(0, '#cbfffc'); // bright neon cyan
-                        gradient.addColorStop(1, '#00827c'); // saturated teal
+                        gradient.addColorStop(0, 'rgba(64, 127, 242, 0.45)');
+                        gradient.addColorStop(1, 'rgba(64, 127, 242, 0.08)');
                         
                         new Chart(ctx, {
                             type: 'bar',
@@ -584,7 +584,7 @@
                                     label: 'Revenue (₹)',
                                     data: revenueData.map(r => parseFloat(r.revenue)),
                                     backgroundColor: gradient,
-                                    borderColor: '#cbfffc',
+                                    borderColor: '#407ff2',
                                     borderWidth: 1.5,
                                     borderRadius: 4,
                                     borderSkipped: false,
@@ -595,12 +595,12 @@
                                 plugins: { 
                                     legend: { display: false },
                                     tooltip: {
-                                        backgroundColor: '#011d1c',
-                                        borderColor: '#333333',
+                                        backgroundColor: '#1c1d1f',
+                                        borderColor: 'rgba(255, 255, 255, 0.08)',
                                         borderWidth: 1,
                                         padding: 10,
                                         titleColor: '#ffffff',
-                                        bodyColor: '#cbfffc',
+                                        bodyColor: '#8f99a8',
                                         callbacks: {
                                             label: ctx => ' ₹' + ctx.raw.toLocaleString('en-IN')
                                         }
@@ -608,13 +608,13 @@
                                 },
                                 scales: {
                                     x: { 
-                                        grid: { color: 'rgba(255, 255, 255, 0.15)' }, // Brighter grid lines
-                                        ticks: { color: '#ffffff', font: { family: 'Inter', size: 11, weight: '500' } } 
+                                        grid: { color: '#e4e7ec' },
+                                        ticks: { color: '#505967', font: { family: 'Inter', size: 11, weight: '500' } } 
                                     },
                                     y: { 
-                                        grid: { color: 'rgba(255, 255, 255, 0.15)' }, // Brighter grid lines
+                                        grid: { color: '#e4e7ec' },
                                         ticks: { 
-                                            color: '#ffffff', 
+                                            color: '#505967', 
                                             font: { family: 'Inter', size: 11, weight: '500' },
                                             callback: v => '₹' + v.toLocaleString('en-IN') 
                                         } 

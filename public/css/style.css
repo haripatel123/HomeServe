@@ -459,6 +459,7 @@ a:hover {
     margin-top: 2.5rem;
     padding-top: 2rem;
     border-top: 1px solid var(--color-ash-gray);
+    color: #000000;
 }
 
 .hero-stat-item .stat-number {

@@ -444,7 +444,7 @@ a:hover {
 
 .hero-subtitle {
     font-size: 16px;
-    color: var(--color-fog-veil);
+    color: var(--color-carbon);
     margin-bottom: 2rem;
     max-width: 500px;
     font-weight: 400;
@@ -458,25 +458,72 @@ a:hover {
     flex-wrap: wrap;
     margin-top: 2.5rem;
     padding-top: 2rem;
-    border-top: 1px solid var(--color-ash-gray);
-    color: #000000;
+    border-top: 1px solid var(--color-stone);
+    color: var(--color-ink);
 }
 
 .hero-stat-item .stat-number {
     font-family: var(--font-heading);
-    font-size: 1.8rem;
-    font-weight: 500;
-    background: var(--gradient-current);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--color-ink);
 }
 
 .hero-stat-item .stat-label {
     font-size: 10px;
-    color: var(--text-muted);
+    color: var(--color-metal);
     text-transform: uppercase;
     letter-spacing: 2.4px;
+}
+
+/* Custom Floating Label Search Services inputGroup */
+.search-input-group {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    font-family: var(--font-body);
+}
+
+.search-input-group input {
+    font-size: 14px;
+    padding: 0.8rem 1rem;
+    outline: none;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-inputs, 7px);
+    width: 100%;
+    color: var(--text-primary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.search-input-group label {
+    font-size: 14px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 0.5rem;
+    margin-left: 0.8rem;
+    pointer-events: none;
+    transition: all var(--transition-fast);
+    color: var(--text-muted);
+    background-color: transparent;
+    border-radius: 4px;
+}
+
+/* Float label when focused or prefilled (valid/not empty) */
+.search-input-group :is(input:focus, input:not(:placeholder-shown))~label {
+    transform: translateY(-130%) scale(0.85);
+    margin-left: 0.6rem;
+    padding: 0.1rem 0.4rem;
+    background-color: var(--bg-secondary);
+    color: var(--color-action-blue);
+    font-weight: 500;
+}
+
+.search-input-group :is(input:focus, input:not(:placeholder-shown)) {
+    border-color: var(--color-action-blue);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-focus-blue) 45%, transparent);
 }
 
 /* ============================================================

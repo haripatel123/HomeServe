@@ -129,8 +129,10 @@
                 <form method="GET" action="/" class="d-flex align-items-center gap-2 flex-wrap">
                     <!-- Search -->
                     <div style="flex:1;min-width:200px;">
-                        <input type="text" name="search" value="<%= searchQuery %>"
-                            class="form-control search-input-dark" placeholder="Search services..." id="searchInput">
+                        <div class="search-input-group">
+                            <input type="text" name="search" value="<%= searchQuery %>" id="searchInput" placeholder=" " autocomplete="off">
+                            <label for="searchInput">Search services...</label>
+                        </div>
                     </div>
                     <!-- Category buttons -->
                     <div class="d-flex gap-2 flex-wrap align-items-center">

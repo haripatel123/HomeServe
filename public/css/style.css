@@ -933,11 +933,12 @@ a:hover {
 }
 
 .dark-table th {
-    font-family: var(--font-heading);
-    font-size: 10px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 2.4px;
-    color: var(--color-fog-veil);
+    letter-spacing: 1.5px;
+    color: var(--color-metal);
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
     text-align: left;

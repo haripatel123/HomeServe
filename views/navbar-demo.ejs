@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    
+    <!-- Fonts & Bootstrap CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Legacy Style variables mapping -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* ============================================================
+           PREVIEW PLAYGROUND WRAPPERS & DEMO STYLING
+           ============================================================ */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fafafa;
+            color: var(--color-ink);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            transition: background-color var(--transition-medium);
+        }
+
+        .demo-layout-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .demo-content-area {
+            flex: 1;
+            padding: 7rem 2rem 4rem 2rem;
+            transition: padding var(--transition-medium);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar variant active padding adjust */
+        body.sidebar-layout-active .demo-content-area {
+            padding-top: 3rem;
+            margin-left: 260px;
+            max-width: calc(100% - 280px);
+        }
+
+        body.sidebar-layout-active.sidebar-collapsed .demo-content-area {
+            margin-left: 90px;
+            max-width: calc(100% - 110px);
+        }
+
+        .playground-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+            margin-bottom: 2rem;
+        }
+
+        /* Control Panel Styles */
+        .option-selector-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-lg);
+            text-align: left;
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .option-selector-btn:hover, .option-selector-btn.active {
+            border-color: var(--color-lead);
+            background: #ffffff;
+            box-shadow: var(--shadow-card);
+            transform: translateY(-2px);
+        }
+
+        .option-selector-btn.active {
+            border-left: 4px solid var(--color-action-blue);
+        }
+
+        .option-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            color: var(--color-lead);
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .option-selector-btn.active .option-icon {
+            background: rgba(64, 127, 242, 0.08);
+            color: var(--color-action-blue);
+        }
+
+        /* ============================================================
+           OPTION 1: VERCEL-STYLE MAGNETIC DOCK
+           ============================================================ */
+        .vercel-dock-nav {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 99px;
+            padding: 0.4rem 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03), 0 1px 3px rgba(0,0,0,0.02);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .vercel-dock-nav.scrolled {
+            top: 0.8rem;
+            transform: translateX(-50%) scale(0.96);
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.06);
+        }
+
+        .vercel-nav-link {
+            position: relative;
+            color: var(--color-metal);
+            font-size: 13.5px;
+            font-weight: 500;
+            padding: 0.45rem 1rem;
+            border-radius: 99px;
+            text-decoration: none;
+            transition: color 0.25s ease;
+            z-index: 1;
+        }
+
+        .vercel-nav-link.active, .vercel-nav-link:hover {
+            color: var(--color-ink);
+        }
+
+        .vercel-brand {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--color-ink);
+            padding: 0.45rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            text-decoration: none;
+        }
+
+        /* Magnetic slide highlight underlay */
+        .vercel-slide-highlight {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.04);
+            border-radius: 99px;
+            z-index: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            height: 0;
+            width: 0;
+        }
+
+        /* ============================================================
+           OPTION 2: LINEAR-STYLE SIDEBAR NAV
+           ============================================================ */
+        .linear-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 240px;
+            background: #ffffff;
+            border-right: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: width var(--transition-medium);
+        }
+
+        .sidebar-collapsed .linear-sidebar {
+            width: 72px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+
+        .sidebar-brand-text {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--color-ink);
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-collapsed .sidebar-brand-text {
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            flex: 1;
+        }
+
+        .sidebar-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.65rem 0.85rem;
+            color: var(--color-metal);
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast);
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--color-ink);
+            background: var(--bg-secondary);
+        }
+
+        .sidebar-link-label {
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-collapsed .sidebar-link-label {
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            overflow: hidden;
+        }
+
+        /* Active sliding vertical line indicator */
+        .sidebar-active-indicator {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 16px;
+            background: var(--color-action-blue);
+            border-radius: 99px;
+            opacity: 0;
+            transition: all var(--transition-fast);
+        }
+
+        .sidebar-link.active .sidebar-active-indicator {
+            opacity: 1;
+        }
+
+        .sidebar-collapsed .sidebar-link {
+            justify-content: center;
+            padding: 0.65rem 0;
+        }
+
+        /* Profile footer in sidebar */
+        .sidebar-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-collapsed .sidebar-footer {
+            justify-content: center;
+        }
+
+        .sidebar-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--color-action-blue);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-user-details {
+            transition: opacity 0.2s ease;
+        }
+
+        .sidebar-collapsed .sidebar-user-details {
+            opacity: 0;
+            pointer-events: none;
+            width: 0;
+            overflow: hidden;
+        }
+
+        /* ============================================================
+           OPTION 3: COMMAND BAR INTEGRATED TOP NAV
+           ============================================================ */
+        .command-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        .command-search-trigger {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.4rem 0.85rem;
+            font-size: 12.5px;
+            color: var(--color-metal);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            min-width: 260px;
+        }
+
+        .command-search-trigger:hover {
+            border-color: var(--color-lead);
+            background: #ffffff;
+        }
+
+        .kb-shortcut {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 0.05rem 0.25rem;
+            font-size: 10px;
+            font-family: monospace;
+            font-weight: 600;
+            color: var(--color-metal);
+        }
+
+        /* Command Palette Modal overlay */
+        .cmd-palette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(28, 29, 31, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 15vh;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .cmd-palette-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cmd-palette-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 30px 90px rgba(0,0,0,0.18);
+            transform: translateY(-20px) scale(0.97);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+
+        .cmd-palette-overlay.open .cmd-palette-box {
+            transform: translateY(0) scale(1);
+        }
+
+        .cmd-input-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.15rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .cmd-search-input {
+            border: none;
+            outline: none;
+            font-size: 15px;
+            font-family: inherit;
+            color: var(--color-ink);
+            width: 100%;
+        }
+
+        .cmd-search-input::placeholder {
+            color: var(--color-metal);
+        }
+
+        .cmd-results-list {
+            max-height: 280px;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .cmd-item {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+
+        .cmd-item:hover, .cmd-item.active {
+            background: var(--bg-secondary);
+        }
+
+        .cmd-item-label {
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--color-ink);
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .cmd-item-cat {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--color-metal);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+       OPTION 1: VERCEL MAGNETIC DOCK LAYOUT
+       ============================================================ -->
+    <nav class="vercel-dock-nav" id="vercelNav" style="display: none;">
+        <div class="vercel-slide-highlight" id="vercelGlide"></div>
+        <a href="javascript:void(0)" class="vercel-brand">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            HomeServe
+        </a>
+        <a href="javascript:void(0)" class="vercel-nav-link active">Services</a>
+        <a href="javascript:void(0)" class="vercel-nav-link">Bookings</a>
+        <a href="javascript:void(0)" class="vercel-nav-link">Providers</a>
+        <a href="javascript:void(0)" class="vercel-nav-link">Analytics</a>
+    </nav>
+
+    <!-- ============================================================
+       OPTION 2: LINEAR SIDEBAR LAYOUT
+       ============================================================ -->
+    <aside class="linear-sidebar" id="linearSidebar" style="display: none;">
+        <div>
+            <div class="sidebar-header">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--color-action-blue)" stroke-width="2.5" style="width:20px;height:20px;">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                    <span class="sidebar-brand-text">HomeServe</span>
+                </div>
+                <button id="toggleSidebarBtn" style="border:none;background:none;color:var(--color-metal);font-size:16px;cursor:pointer;">
+                    ◂
+                </button>
+            </div>
+            
+            <div class="sidebar-links">
+                <a href="javascript:void(0)" class="sidebar-link active">
+                    <span class="sidebar-active-indicator"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    <span class="sidebar-link-label">Services</span>
+                </a>
+                <a href="javascript:void(0)" class="sidebar-link">
+                    <span class="sidebar-active-indicator"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    <span class="sidebar-link-label">Bookings</span>
+                </a>
+                <a href="javascript:void(0)" class="sidebar-link">
+                    <span class="sidebar-active-indicator"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <span class="sidebar-link-label">Providers</span>
+                </a>
+                <a href="javascript:void(0)" class="sidebar-link">
+                    <span class="sidebar-active-indicator"></span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span class="sidebar-link-label">Analytics</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-avatar">RA</div>
+            <div class="sidebar-user-details">
+                <div style="font-weight:600;font-size:12.5px;color:var(--color-ink);">Rahul Sharma</div>
+                <div style="font-size:10.5px;color:var(--color-metal);">Customer Panel</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ============================================================
+       OPTION 3: COMMAND-BAR TOP NAV
+       ============================================================ */
+    <nav class="command-nav" id="commandNav" style="display: none;">
+        <a href="javascript:void(0)" class="vercel-brand" style="padding:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px;">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            </svg>
+            HomeServe
+        </a>
+
+        <!-- Middle search bar -->
+        <div class="command-search-trigger" id="cmdTriggerBtn">
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <span>Search or run actions...</span>
+            </div>
+            <span class="kb-shortcut">⌘K</span>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:1.25rem;">
+            <a href="javascript:void(0)" class="vercel-nav-link">Bookings</a>
+            <a href="javascript:void(0)" class="vercel-nav-link">Analytics</a>
+            <div class="sidebar-avatar" style="width:28px; height:28px; font-size:9.5px;">RA</div>
+        </div>
+    </nav>
+
+    <!-- Spotlight Command Modal Overlay (for Option 3) -->
+    <div class="cmd-palette-overlay" id="cmdOverlay">
+        <div class="cmd-palette-box">
+            <div class="cmd-input-container">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--color-lead)" stroke-width="2" style="width:18px;height:18px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="cmd-search-input" id="cmdSearchInput" placeholder="Type a service, provider name, or page link..." autofocus>
+            </div>
+            <div class="cmd-results-list" id="cmdList">
+                <div class="cmd-item">
+                    <span class="cmd-item-label">
+                        🛠️ AC Repair & Service
+                    </span>
+                    <span class="cmd-item-cat">Services</span>
+                </div>
+                <div class="cmd-item">
+                    <span class="cmd-item-label">
+                        🧹 Deep Home Cleaning
+                    </span>
+                    <span class="cmd-item-cat">Services</span>
+                </div>
+                <div class="cmd-item">
+                    <span class="cmd-item-label">
+                        👤 CoolAir Services (Provider)
+                    </span>
+                    <span class="cmd-item-cat">Providers</span>
+                </div>
+                <div class="cmd-item">
+                    <span class="cmd-item-label">
+                        📊 View Revenue Analytics
+                    </span>
+                    <span class="cmd-item-cat">Navigation</span>
+                </div>
+                <div class="cmd-item">
+                    <span class="cmd-item-label">
+                        📅 Check My Booking Status
+                    </span>
+                    <span class="cmd-item-cat">Navigation</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ============================================================
+       SANDBOX PAGE MAIN WORKSPACE
+       ============================================================ */
+    <div class="demo-layout-container">
+        <main class="demo-content-area">
+            
+            <!-- Intro Panel & Selector Control Panel -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-5">
+                    <div class="playground-card h-100">
+                        <h2 style="font-size: 1.25rem; font-weight:700; margin-bottom:0.5rem;">Navbar Layout Controls</h2>
+                        <p style="color:var(--color-metal); font-size:13.5px; margin-bottom:1.5rem;">Select a design option below to switch the navigation layout and test animations live on the screen.</p>
+                        
+                        <div class="option-selector-btn active" data-option="1">
+                            <div class="option-icon">✨</div>
+                            <div>
+                                <div style="font-weight:600; font-size:14px; color:var(--color-ink);">Option 1: Vercel Magnetic Dock</div>
+                                <div style="font-size:11.5px; color:var(--color-metal); margin-top:0.15rem;">Frosted glass floating pill with relative glide underlay hover.</div>
+                            </div>
+                        </div>
+
+                        <div class="option-selector-btn" data-option="2">
+                            <div class="option-icon">📁</div>
+                            <div>
+                                <div style="font-weight:600; font-size:14px; color:var(--color-ink);">Option 2: Linear Sidebar</div>
+                                <div style="font-size:11.5px; color:var(--color-metal); margin-top:0.15rem;">Desktop-style vertical sidebar with toggle collapse animation.</div>
+                            </div>
+                        </div>
+
+                        <div class="option-selector-btn" data-option="3">
+                            <div class="option-icon">🔍</div>
+                            <div>
+                                <div style="font-weight:600; font-size:14px; color:var(--color-ink);">Option 3: Command Nav</div>
+                                <div style="font-size:11.5px; color:var(--color-metal); margin-top:0.15rem;">Spotlight Cmd+K input field integrated directly into top bar.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="playground-card h-100" style="display:flex; flex-direction:column; justify-content:center;">
+                        <h2 style="font-size: 1.15rem; font-weight:700; margin-bottom:0.75rem;">Layout Description & Details</h2>
+                        <div id="layoutDetailsBox">
+                            <div class="alert alert-info" style="font-size:13px; margin:0; line-height:1.5;">
+                                <strong>Vercel Floating Dock Details:</strong><br>
+                                • Pinned at the top of the viewport with a frosted glass backdrop filter.<br>
+                                • Houses a slide highlight underlay which moves smoothly to the hovered link.<br>
+                                • Scales and opacity adjusts dynamically as the page scrolls down.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content Placeholder to test scrolling effects -->
+            <div class="playground-card">
+                <h3 style="font-size: 1.05rem; font-weight:600; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+                    <span style="width:3px; height:16px; background:var(--color-action-blue); border-radius:1px; display:inline-block;"></span>
+                    Dashboard Preview Content
+                </h3>
+                <p style="font-size:13.5px; color:var(--color-metal); line-height:1.6;">
+                    This page serves as a sandbox environment. When you select a navbar option, it renders live in your browser window. 
+                    Scroll down this page to see how the top navigations adjust (Option 1 shrinks slightly, Option 3 stays locked), or hover over 
+                    the left panel toggles to see Option 2 collapse.
+                </p>
+
+                <!-- Long content to force scrolling -->
+                <div style="border-top:1px dashed var(--border-color); margin:1.5rem 0; padding-top:1.5rem;">
+                    <div style="font-size:13px; color:var(--color-metal); display:flex; flex-direction:column; gap:1rem;">
+                        <p>🔹 <strong>Scroll test item 1:</strong> HomeServe platform integration requires robust navigation options that are accessible across devices. The horizontal capsule dock fits customer scenarios, whereas sidebars align perfectly with administrative roles.</p>
+                        <p>🔹 <strong>Scroll test item 2:</strong> Analytics data points are best viewed with wide screen real estate. The collapsible sidebar provides maximum width for charts and visual grids when collapsed.</p>
+                        <p>🔹 <strong>Scroll test item 3:</strong> The command bar palette lets users query and access service categories (plumbing, carpentry, appliance maintenance) directly from their keyboard without clicking navigation tags.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- GSAP for smooth animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // ────────────────────────────────────────────────────────
+            // Navbar Layout Switching Logic
+            // ────────────────────────────────────────────────────────
+            const buttons = document.querySelectorAll('.option-selector-btn');
+            const body = document.body;
+            const detailsBox = document.getElementById('layoutDetailsBox');
+
+            const layouts = {
+                1: {
+                    name: 'vercelNav',
+                    details: `<div class="alert alert-info" style="font-size:13px; margin:0; line-height:1.5;">
+                        <strong>Vercel Floating Dock Details:</strong><br>
+                        • Pinned at the top of the viewport with a frosted glass backdrop filter.<br>
+                        • Houses a slide highlight underlay which moves smoothly to the hovered link.<br>
+                        • Scales and opacity adjusts dynamically as the page scrolls down.
+                      </div>`
+                },
+                2: {
+                    name: 'linearSidebar',
+                    details: `<div class="alert alert-info" style="font-size:13px; margin:0; line-height:1.5; border-color: rgba(64,127,242,0.1); background-color: rgba(64,127,242,0.02); color: var(--color-ink);">
+                        <strong>Linear Left Sidebar Details:</strong><br>
+                        • Vertical panel pinned on the left, keeping header space completely clear.<br>
+                        • Click the collapsible arrow next to brand label to collapse the menu into icon-only mode.<br>
+                        • Active items display a subtle sliding vertical line indicator bar.
+                      </div>`
+                },
+                3: {
+                    name: 'commandNav',
+                    details: `<div class="alert alert-info" style="font-size:13px; margin:0; line-height:1.5;">
+                        <strong>Command Nav Details:</strong><br>
+                        • Houses a search bar in the navbar that triggers a command palette.<br>
+                        • Click search or press <strong>Cmd + K</strong> (or <strong>/</strong>) on your keyboard.<br>
+                        • Instantly pops up a spotlight modal to search and run platform actions.
+                      </div>`
+                }
+            };
+
+            function activateLayout(id) {
+                // Hide all nav elements
+                document.getElementById('vercelNav').style.display = 'none';
+                document.getElementById('linearSidebar').style.display = 'none';
+                document.getElementById('commandNav').style.display = 'none';
+
+                // Reset layout classes on body
+                body.classList.remove('sidebar-layout-active');
+
+                // Activate matching layout
+                const layout = layouts[id];
+                const navElement = document.getElementById(layout.name);
+                
+                if (id === 2) {
+                    body.classList.add('sidebar-layout-active');
+                    navElement.style.display = 'flex';
+                    gsap.fromTo(navElement, { x: -20, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power3.out" });
+                } else {
+                    navElement.style.display = 'flex';
+                    gsap.fromTo(navElement, { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" });
+                }
+
+                // Update text details
+                detailsBox.innerHTML = layout.details;
+            }
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const optionId = parseInt(this.getAttribute('data-option'));
+                    activateLayout(optionId);
+                });
+            });
+
+            // Set initial default layout (Option 1)
+            activateLayout(1);
+
+            // ────────────────────────────────────────────────────────
+            // Option 1: Magnetic Glide Animation
+            // ────────────────────────────────────────────────────────
+            const vercelGlide = document.getElementById('vercelGlide');
+            const vercelLinks = document.querySelectorAll('.vercel-nav-link');
+            const vercelNav = document.getElementById('vercelNav');
+
+            function glideHighlight(target, animate = true) {
+                if (!target || !vercelGlide) return;
+                const rect = target.getBoundingClientRect();
+                const parentRect = target.parentElement.getBoundingClientRect();
+
+                const leftPos = rect.left - parentRect.left;
+                const topPos = rect.top - parentRect.top;
+                const widthVal = rect.width;
+                const heightVal = rect.height;
+
+                if (animate) {
+                    gsap.to(vercelGlide, {
+                        left: leftPos,
+                        top: topPos,
+                        width: widthVal,
+                        height: heightVal,
+                        opacity: 1,
+                        duration: 0.35,
+                        ease: "power2.out"
+                    });
+                } else {
+                    gsap.set(vercelGlide, {
+                        left: leftPos,
+                        top: topPos,
+                        width: widthVal,
+                        height: heightVal,
+                        opacity: 1
+                    });
+                }
+            }
+
+            vercelLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    glideHighlight(this, true);
+                });
+                
+                link.addEventListener('click', function() {
+                    vercelLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            vercelNav.addEventListener('mouseleave', function() {
+                const activeLink = document.querySelector('.vercel-nav-link.active');
+                if (activeLink) {
+                    glideHighlight(activeLink, true);
+                } else {
+                    gsap.to(vercelGlide, { opacity: 0, duration: 0.25 });
+                }
+            });
+
+            // Set initial highlight position on active tab
+            setTimeout(() => {
+                const initialActive = document.querySelector('.vercel-nav-link.active');
+                if (initialActive) glideHighlight(initialActive, false);
+            }, 100);
+
+            // Option 1: Scroll shrinking effect
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    vercelNav.classList.add('scrolled');
+                } else {
+                    vercelNav.classList.remove('scrolled');
+                }
+            });
+
+            // ────────────────────────────────────────────────────────
+            // Option 2: Sidebar Collapsing Animation
+            // ────────────────────────────────────────────────────────
+            const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+            toggleSidebarBtn.addEventListener('click', function() {
+                body.classList.toggle('sidebar-collapsed');
+                if (body.classList.contains('sidebar-collapsed')) {
+                    toggleSidebarBtn.innerHTML = '▸';
+                } else {
+                    toggleSidebarBtn.innerHTML = '◂';
+                }
+            });
+
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // ────────────────────────────────────────────────────────
+            // Option 3: Spotlight / Command Modal Operations
+            // ────────────────────────────────────────────────────────
+            const cmdOverlay = document.getElementById('cmdOverlay');
+            const cmdSearchInput = document.getElementById('cmdSearchInput');
+            const cmdTriggerBtn = document.getElementById('cmdTriggerBtn');
+
+            function openCmdPalette() {
+                cmdOverlay.classList.add('open');
+                cmdSearchInput.focus();
+            }
+
+            function closeCmdPalette() {
+                cmdOverlay.classList.remove('open');
+            }
+
+            cmdTriggerBtn.addEventListener('click', openCmdPalette);
+
+            cmdOverlay.addEventListener('click', function(e) {
+                if (e.target === cmdOverlay) {
+                    closeCmdPalette();
+                }
+            });
+
+            // Trigger on "/" or "Cmd+K" / "Ctrl+K" keyboard events
+            window.addEventListener('keydown', function(e) {
+                if (e.key === '/' && document.activeElement !== cmdSearchInput) {
+                    e.preventDefault();
+                    openCmdPalette();
+                }
+                if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                    e.preventDefault();
+                    openCmdPalette();
+                }
+                if (e.key === 'Escape') {
+                    closeCmdPalette();
+                }
+            });
+
+            // Spotlight search filter emulation
+            const items = document.querySelectorAll('.cmd-item');
+            cmdSearchInput.addEventListener('input', function() {
+                const val = this.value.toLowerCase().trim();
+                items.forEach(item => {
+                    const labelText = item.querySelector('.cmd-item-label').textContent.toLowerCase();
+                    if (labelText.includes(val)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+
+            items.forEach(item => {
+                item.addEventListener('click', function() {
+                    const label = this.querySelector('.cmd-item-label').textContent.trim();
+                    alert(`Selected Action: ${label}`);
+                    closeCmdPalette();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

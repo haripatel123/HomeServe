@@ -130,129 +130,86 @@
         }
     }
     %>
-    <div class="dark-card" style="padding:0;overflow:hidden;box-shadow:var(--shadow-card);background:var(--bg-card);border:1px solid var(--border-color);">
-        <div class="table-responsive">
-            <table class="dark-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Services</th>
-                        <th>Provider</th>
-                        <th>Date & Time</th>
-                        <th>Amount</th>
-                        <th>Payment</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% bookings.forEach((b, idx) => {
-                        // Row density padding - Top 3 recent entries get more breathing room
-                        const cellPadding = idx < 3 ? 'padding: 1.15rem 1rem;' : 'padding: 0.65rem 1rem;';
-                        
-                        // Cancelled row styling: 55% opacity
-                        const isCancelled = b.status === 'Cancelled';
-                        const rowStyle = isCancelled ? 'opacity: 0.55;' : '';
-                        
-                        // Service name strikethrough for cancelled rows
-                        const serviceStyle = isCancelled ? 'text-decoration: line-through;' : '';
+    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+        <% bookings.forEach((b, idx) => {
+            const isCancelled = b.status === 'Cancelled';
+            
+            // Minimalist text configuration for Payment Status
+            const payConfig = {
+                'Paid':     { icon: '✓', color: '#075a39', label: 'Paid' },
+                'Pending':  { icon: '◷', color: '#705500', label: 'Unpaid' },
+                'Refunded': { icon: '↺', color: '#407ff2', label: 'Refunded' },
+                'Failed':   { icon: '⚠', color: '#772322', label: 'Failed' }
+            }[b.payment_status || 'Pending'] || { icon: '◷', color: 'var(--text-muted)', label: b.payment_status || 'Pending' };
+        %>
+        <div class="feed-card <%= isCancelled ? 'cancelled-card' : '' %>" style="box-shadow: var(--shadow-card); background: var(--bg-card); border: 1px solid var(--border-color);">
+            <div class="feed-main">
+                <!-- ID & Service & Provider Section -->
+                <div class="feed-provider-section">
+                    <div class="feed-avatar" style="<%= getProviderAvatarStyle(b.provider_id) %>">
+                        <%= getInitials(b.provider_name) %>
+                    </div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="mono" style="color:var(--text-muted); font-size:0.8rem;">#<%= b.booking_id %></span>
+                            <div class="feed-service-name"><%= b.services || 'N/A' %></div>
+                        </div>
+                        <div class="feed-provider-name">by <%= b.provider_name %> &bull; <span class="feed-city">at <%= b.city %></span></div>
+                    </div>
+                </div>
+                
+                <!-- Date & Time -->
+                <div class="feed-meta-section">
+                    <div class="feed-meta-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--color-metal);"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <span><%= getRelativeDateStr(b.booking_date, b.booking_time) %></span>
+                    </div>
+                </div>
 
-                        // Amount color: flag pending, active, or large (>= 1000) transactions in teal; make completed/cancelled plain grey/white
-                        const isHighValueOrActive = b.status === 'Pending' || b.status === 'Confirmed' || parseFloat(b.total_amount) >= 1000;
-                        const amountColor = (isHighValueOrActive && !isCancelled) ? 'color: var(--accent-green); font-weight: 700;' : 'color: var(--text-secondary); font-weight: 500;';
+                <!-- Price & Payment State -->
+                <div class="feed-payment-section">
+                    <div class="feed-amount">₹<%= parseFloat(b.total_amount).toLocaleString('en-IN') %></div>
+                    <span style="font-size:0.75rem; color:<%= payConfig.color %>; font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">
+                        <%= payConfig.label %>
+                    </span>
+                </div>
 
-                        // Glow indicator configuration for Booking Status
-                        const statusDotConfig = {
-                            'Pending':    { dotColor: '#705500', borderColor: 'rgba(112, 85, 0, 0.15)', textColor: '#705500' },
-                            'Confirmed':  { dotColor: '#407ff2', borderColor: 'rgba(64, 127, 242, 0.15)', textColor: '#407ff2' },
-                            'InProgress': { dotColor: '#407ff2', borderColor: 'rgba(64, 127, 242, 0.15)', textColor: '#407ff2' },
-                            'Completed':  { dotColor: '#075a39', borderColor: 'rgba(7, 90, 57, 0.15)', textColor: '#075a39' },
-                            'Cancelled':  { dotColor: '#772322', borderColor: 'rgba(119, 35, 34, 0.15)', textColor: '#772322' }
-                        }[b.status] || { dotColor: '#505967', borderColor: 'rgba(80, 89, 103, 0.1)', textColor: 'var(--text-secondary)' };
-
-                        // Minimalist text configuration for Payment Status
-                        const payConfig = {
-                            'Paid':     { icon: '✓', color: '#075a39', label: 'Paid' },
-                            'Pending':  { icon: '◷', color: '#705500', label: 'Unpaid' },
-                            'Refunded': { icon: '↺', color: '#407ff2', label: 'Refunded' },
-                            'Failed':   { icon: '⚠', color: '#772322', label: 'Failed' }
-                        }[b.payment_status || 'Pending'] || { icon: '◷', color: 'var(--text-muted)', label: b.payment_status || 'Pending' };
-                    %>
-                    <tr style="<%= rowStyle %>">
-                        <td style="<%= cellPadding %>">
-                            <span class="mono" style="color:var(--text-muted);font-size:0.82rem;">#<%= b.booking_id %></span>
-                        </td>
-                        <td style="<%= cellPadding %>">
-                            <div style="font-weight:600;font-size:0.88rem;color:var(--text-primary);<%= serviceStyle %>">
-                                <%= b.services || 'N/A' %>
-                            </div>
-                            <div style="font-size:0.75rem;color:var(--text-muted);">
-                                at <%= b.city %>
-                            </div>
-                        </td>
-                        <td style="<%= cellPadding %>">
-                            <!-- Initials-based Avatar + Provider Name -->
-                            <div style="display:flex;align-items:center;gap:0.65rem;">
-                                <div style="width:26px;height:26px;border-radius:50%;<%= getProviderAvatarStyle(b.provider_id) %>display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0;letter-spacing:0;border:1px solid;">
-                                    <%= getInitials(b.provider_name) %>
-                                </div>
-                                <div style="font-size:0.88rem;color:var(--text-secondary);"><%= b.provider_name %></div>
-                            </div>
-                        </td>
-                        <td style="<%= cellPadding %>">
-                            <div style="font-size:0.88rem;font-weight:500;">
-                                <%= getRelativeDateStr(b.booking_date, b.booking_time) %>
-                            </div>
-                        </td>
-                        <td style="<%= cellPadding %>">
-                            <span class="mono" style="<%= amountColor %>">
-                                ₹<%= parseFloat(b.total_amount).toLocaleString('en-IN') %>
-                            </span>
-                        </td>
-                        <td style="<%= cellPadding %>">
-                            <!-- Soft, text-based payment tag with reduced visual weight -->
-                            <span style="font-size:0.8rem;color:<%= payConfig.color %>;font-weight:500;display:inline-flex;align-items:center;gap:0.3rem;">
-                                <span style="font-family:monospace;font-size:0.9rem;font-weight:bold;"><%= payConfig.icon %></span>
-                                <%= payConfig.label %>
-                            </span>
-                        </td>
-                        <td style="<%= cellPadding %>">
-                            <!-- Handcrafted glowing dot status tag -->
-                            <div style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.25rem 0.6rem;background:var(--bg-secondary);border:1px solid <%= statusDotConfig.borderColor %>;border-left:3px solid <%= statusDotConfig.dotColor %>;border-radius:4px;font-size:0.72rem;font-weight:600;color:<%= statusDotConfig.textColor %>;letter-spacing:0.3px;text-transform:uppercase;">
-                                <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:<%= statusDotConfig.dotColor %>;box-shadow: 0 0 3px <%= statusDotConfig.dotColor %>;"></span>
-                                <%= b.status %>
-                            </div>
-                        </td>
-                        <td style="<%= cellPadding %>">
-                            <% if (b.status === 'Completed' && !b.has_review) { %>
-                            <% const safeName = (b.provider_name || ''); %>
-                            <a href="javascript:void(0)" class="write-review-btn"
-                                    style="font-size:0.8rem;color:var(--color-action-blue);font-weight:600;display:inline-flex;align-items:center;gap:0.25rem;text-decoration:none;"
-                                    data-booking-id="<%= b.booking_id %>"
-                                    data-provider-id="<%= b.provider_id %>"
-                                    data-provider-name="<%= safeName %>">
-                                Leave a review →
-                            </a>
-                            <% } else if (b.status === 'Completed' && b.has_review) { %>
-                            <span style="font-size:0.8rem;color:var(--text-muted);display:inline-flex;align-items:center;gap:0.25rem;">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" style="width:12px;height:12px;"><polyline points="20 6 9 17 4 12"/></svg>
-                                Reviewed
-                            </span>
-                            <% } else if (b.status === 'Pending' || b.status === 'Confirmed') { %>
-                            <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;" class="cancel-booking-form">
-                                <input type="hidden" name="new_status" value="Cancelled">
-                                <input type="hidden" name="redirect_to" value="/bookings?customer_id=<%= currentCustomer %>">
-                                <button type="submit" class="btn-danger-custom" style="font-size: 0.75rem; padding: 0.25rem 0.65rem;">Cancel</button>
-                            </form>
-                            <% } else { %>
-                            <span style="font-size:0.78rem;color:var(--text-muted);">—</span>
-                            <% } %>
-                        </td>
-                    </tr>
-                    <% }); %>
-                </tbody>
-            </table>
+                <!-- Status & Action column -->
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start;">
+                    <!-- Status Badge -->
+                    <span class="status-pill status-<%= b.status.toLowerCase() %>">
+                        <span class="status-dot"></span>
+                        <%= b.status %>
+                    </span>
+                    
+                    <!-- Action Link/Form -->
+                    <div style="margin-top: 0.25rem;">
+                        <% if (b.status === 'Completed' && !b.has_review) { %>
+                        <% const safeName = (b.provider_name || ''); %>
+                        <a href="javascript:void(0)" class="write-review-btn"
+                                style="font-size:0.8rem;color:var(--color-action-blue);font-weight:600;display:inline-flex;align-items:center;gap:0.25rem;text-decoration:none;"
+                                data-booking-id="<%= b.booking_id %>"
+                                data-provider-id="<%= b.provider_id %>"
+                                data-provider-name="<%= safeName %>">
+                            Leave a review →
+                        </a>
+                        <% } else if (b.status === 'Completed' && b.has_review) { %>
+                        <span style="font-size:0.8rem;color:var(--text-muted);display:inline-flex;align-items:center;gap:0.25rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-green)" stroke-width="2.5" style="width:12px;height:12px;"><polyline points="20 6 9 17 4 12"/></svg>
+                            Reviewed
+                        </span>
+                        <% } else if (b.status === 'Pending' || b.status === 'Confirmed') { %>
+                        <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;" class="cancel-booking-form">
+                            <input type="hidden" name="new_status" value="Cancelled">
+                            <input type="hidden" name="redirect_to" value="/bookings?customer_id=<%= currentCustomer %>">
+                            <button type="submit" class="btn-danger-custom" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; line-height:1.2;">Cancel</button>
+                        </form>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
         </div>
+        <% }); %>
     </div>
 
     <!-- Pagination -->

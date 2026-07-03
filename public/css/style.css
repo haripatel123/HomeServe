@@ -2214,3 +2214,176 @@ footer {
 .apricot-wash {
     background: rgba(253, 233, 255, 0.03) !important;
 }
+
+/* ============================================================
+   OPTION 1: LIST FEED STYLES
+   ============================================================ */
+.feed-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    transition: all var(--transition-fast);
+}
+
+.feed-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--color-lead);
+}
+
+.feed-card.cancelled-card {
+    opacity: 0.65;
+    background: var(--bg-secondary);
+}
+
+.feed-card.cancelled-card .feed-service-name {
+    text-decoration: line-through;
+}
+
+.feed-main {
+    display: grid;
+    grid-template-columns: 2.2fr 1.2fr 1fr 1.2fr;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.feed-provider-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.feed-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 13px;
+    flex-shrink: 0;
+    border: 1px solid var(--border-color);
+}
+
+.feed-service-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+}
+
+.feed-provider-name {
+    font-size: 0.8rem;
+    color: var(--color-metal);
+    margin-top: 0.15rem;
+}
+
+.feed-city {
+    color: var(--color-lead);
+}
+
+.feed-meta-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.feed-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 13px;
+    color: var(--color-metal);
+}
+
+.feed-payment-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.feed-amount {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-ink);
+}
+
+.feed-pay-status {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+.badge-paid {
+    color: var(--color-success-green);
+}
+
+.badge-pending {
+    color: var(--color-warning-yellow);
+}
+
+.badge-failed {
+    color: var(--color-danger-red);
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 99px;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid;
+    align-self: flex-start;
+}
+
+.status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+/* Status variants */
+.status-completed {
+    background: rgba(7, 90, 57, 0.05);
+    color: var(--color-success-green);
+    border-color: rgba(7, 90, 57, 0.15);
+}
+.status-completed .status-dot {
+    background: var(--color-success-green);
+}
+
+.status-confirmed, .status-inprogress {
+    background: rgba(64, 127, 242, 0.05);
+    color: var(--color-action-blue);
+    border-color: rgba(64, 127, 242, 0.15);
+}
+.status-confirmed .status-dot, .status-inprogress .status-dot {
+    background: var(--color-action-blue);
+}
+
+.status-pending {
+    background: rgba(112, 85, 0, 0.05);
+    color: var(--color-warning-yellow);
+    border-color: rgba(112, 85, 0, 0.15);
+}
+.status-pending .status-dot {
+    background: var(--color-warning-yellow);
+}
+
+.status-cancelled {
+    background: rgba(119, 35, 34, 0.05);
+    color: var(--color-danger-red);
+    border-color: rgba(119, 35, 34, 0.15);
+}
+.status-cancelled .status-dot {
+    background: var(--color-danger-red);
+}

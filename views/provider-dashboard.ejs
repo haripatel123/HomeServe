@@ -225,63 +225,70 @@
                                                             <p>Any bookings made for today will show up here immediately.</p>
                                                         </div>
                                                     <% } else { %>
-                                                        <div class="table-responsive">
-                                                            <table class="dark-table" style="font-size:0.85rem;">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>Time</th>
-                                                                        <th>Customer</th>
-                                                                        <th>Service Details</th>
-                                                                        <th>Amount</th>
-                                                                        <th>Status</th>
-                                                                        <th>Checklist</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <% todayJobs.forEach(b => { 
-                                                                        const statusClass = {
-                                                                            'Pending': 'badge-pending',
-                                                                            'Confirmed': 'badge-confirmed',
-                                                                            'InProgress': 'badge-inprogress',
-                                                                            'Completed': 'badge-completed',
-                                                                            'Cancelled': 'badge-cancelled'
-                                                                        }[b.status] || 'badge-pending';
-                                                                    %>
-                                                                        <tr>
-                                                                            <td style="font-weight:600;color:var(--text-primary);"><%= b.booking_time.substring(0,5) %></td>
-                                                                            <td>
-                                                                                <div style="font-weight:500;"><%= b.customer_name %></div>
-                                                                                <div style="font-size:0.75rem;color:var(--text-muted);"><%= b.customer_phone %></div>
-                                                                            </td>
-                                                                            <td><%= b.services %></td>
-                                                                            <td style="color:var(--accent-green);font-weight:600;">₹<%= parseFloat(b.total_amount).toLocaleString('en-IN') %></td>
-                                                                            <td>
-                                                                                <span class="badge-status <%= statusClass %>" title="<%= b.status %>" style="min-width: 28px; justify-content: center;">
-                                                                                    <% if (b.status === 'Completed') { %>✔<% } else if (b.status === 'Cancelled') { %>✖<% } else { %><%= b.status %><% } %>
-                                                                                </span>
-                                                                            </td>
-                                                                            <td>
-                                                                                <% if (b.status === 'Pending') { %>
-                                                                                    <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
-                                                                                        <input type="hidden" name="new_status" value="Confirmed">
-                                                                                        <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
-                                                                                        <button type="submit" class="btn-green" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Confirm</button>
-                                                                                    </form>
-                                                                                <% } else if (b.status === 'Confirmed') { %>
-                                                                                    <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
-                                                                                        <input type="hidden" name="new_status" value="Completed">
-                                                                                        <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
-                                                                                        <button type="submit" class="btn-green" style="font-size:0.7rem;padding:0.25rem 0.6rem;">Done</button>
-                                                                                    </form>
-                                                                                <% } else { %>
-                                                                                    <span style="font-size:0.78rem;color:var(--text-muted);">—</span>
-                                                                                <% } %>
-                                                                            </td>
-                                                                        </tr>
-                                                                    <% }); %>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <% todayJobs.forEach(b => { 
+                                const statusClass = {
+                                    'Pending': 'status-pending',
+                                    'Confirmed': 'status-confirmed',
+                                    'InProgress': 'status-inprogress',
+                                    'Completed': 'status-completed',
+                                    'Cancelled': 'status-cancelled'
+                                }[b.status] || 'status-pending';
+                            %>
+                                <div class="feed-card" style="box-shadow: var(--shadow-card); background: var(--bg-card); border: 1px solid var(--border-color); margin-bottom: 0.5rem;">
+                                    <div class="feed-main" style="grid-template-columns: 2fr 1fr 1fr 1.2fr;">
+                                        <!-- Customer & Service details -->
+                                        <div style="display: flex; align-items: center; gap: 1rem;">
+                                            <div style="font-size: 1.15rem; font-weight: 700; color: var(--color-ink); flex-shrink: 0; min-width: 50px;">
+                                                <%= b.booking_time.substring(0,5) %>
+                                            </div>
+                                            <div>
+                                                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                                    <span class="mono" style="color:var(--text-muted); font-size:0.75rem;">#<%= b.booking_id %></span>
+                                                    <div class="feed-service-name"><%= b.services %></div>
+                                                </div>
+                                                <div class="feed-provider-name" style="font-weight: 500;">
+                                                    <%= b.customer_name %> &bull; <span class="feed-city" style="color: var(--color-metal);"><%= b.customer_phone %></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Amount -->
+                                        <div class="feed-payment-section">
+                                            <div class="feed-amount" style="color: var(--accent-green);">₹<%= parseFloat(b.total_amount).toLocaleString('en-IN') %></div>
+                                            <span style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Service Amount</span>
+                                        </div>
+
+                                        <!-- Status -->
+                                        <div>
+                                            <span class="status-pill <%= statusClass %>">
+                                                <span class="status-dot"></span>
+                                                <%= b.status %>
+                                            </span>
+                                        </div>
+
+                                        <!-- Checklist Actions -->
+                                        <div>
+                                            <% if (b.status === 'Pending') { %>
+                                                <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
+                                                    <input type="hidden" name="new_status" value="Confirmed">
+                                                    <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
+                                                    <button type="submit" class="btn-green btn-skew-hover" style="font-size:0.75rem; padding:0.3rem 0.8rem; border-radius: var(--radius-sm); border: none;">Confirm Booking</button>
+                                                </form>
+                                            <% } else if (b.status === 'Confirmed') { %>
+                                                <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
+                                                    <input type="hidden" name="new_status" value="Completed">
+                                                    <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
+                                                    <button type="submit" class="btn-green btn-skew-hover" style="font-size:0.75rem; padding:0.3rem 0.8rem; border-radius: var(--radius-sm); border: none;">Mark Completed</button>
+                                                </form>
+                                            <% } else { %>
+                                                <span style="font-size:0.8rem; color:var(--text-muted); font-weight: 500;">✓ Work done</span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
                                                     <% } %>
                                                 </div>
                                             </div>
@@ -309,109 +316,71 @@
                                                         <h3>No bookings yet</h3>
                                                     </div>
                                                     <% } else { %>
-                                                        <div class="table-responsive">
-                                                            <table class="dark-table">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th>ID</th>
-                                                                        <th>Customer</th>
-                                                                        <th>Services</th>
-                                                                        <th>Date / Time</th>
-                                                                        <th>Amount</th>
-                                                                        <th>Status</th>
-                                                                        <th>Action</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <% dashData.schedule.forEach(b=> {
-                                                                        const statusClass = {
-                                                                        'Pending':'badge-pending','Confirmed':'badge-confirmed',
-                                                                        'InProgress':'badge-inprogress','Completed':'badge-completed',
-                                                                        'Cancelled':'badge-cancelled'
-                                                                        }[b.status] || 'badge-pending';
-                                                                        %>
-                                                                        <tr>
-                                                                            <td><span class="mono"
-                                                                                    style="color:var(--text-muted);font-size:0.8rem;">#
-                                                                                    <%= b.booking_id %></span></td>
-                                                                            <td>
-                                                                                <div
-                                                                                    style="font-size:0.88rem;font-weight:500;">
-                                                                                    <%= b.customer_name %>
-                                                                                </div>
-                                                                                <div
-                                                                                    style="font-size:0.75rem;color:var(--text-muted);">
-                                                                                    <%= b.city %>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td
-                                                                                style="font-size:0.85rem;color:var(--text-secondary);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                                                                                <%= b.services %>
-                                                                            </td>
-                                                                            <td>
-                                                                                <div style="font-size:0.85rem;">
-                                                                                    <%= new
-                                                                                        Date(b.booking_date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})
-                                                                                        %>
-                                                                                </div>
-                                                                                <div
-                                                                                    style="font-size:0.75rem;color:var(--text-muted);">
-                                                                                    <%= b.booking_time ?
-                                                                                        b.booking_time.substring(0,5)
-                                                                                        : '' %>
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>
-                                                                                <span class="mono"
-                                                                                    style="font-weight:700;color:var(--accent-green);font-size:0.88rem;">
-                                                                                    ₹<%= parseFloat(b.total_amount).toLocaleString('en-IN')
-                                                                                        %>
-                                                                                </span>
-                                                                            </td>
-                                                                            <td>
-                                                                                <span class="badge-status <%= statusClass %>" title="<%= b.status %>" style="min-width: 28px; justify-content: center;">
-                                                                                    <% if (b.status === 'Completed') { %>✔<% } else if (b.status === 'Cancelled') { %>✖<% } else { %><%= b.status %><% } %>
-                                                                                </span>
-                                                                            </td>
-                                                                            <td>
-                                                                                <% if (b.status==='Pending' ) { %>
-                                                                                    <form method="POST"
-                                                                                        action="/bookings/<%= b.booking_id %>/status"
-                                                                                        style="margin:0;">
-                                                                                        <input type="hidden"
-                                                                                            name="new_status"
-                                                                                            value="Confirmed">
-                                                                                        <input type="hidden"
-                                                                                            name="redirect_to"
-                                                                                            value="/provider?provider_id=<%= currentProvider %>">
-                                                                                        <button type="submit"
-                                                                                            class="btn-green"
-                                                                                            style="font-size:0.75rem;padding:0.3rem 0.7rem;">Confirm</button>
+                                                        <div style="display: flex; flex-direction: column; gap: 0.5rem; padding: 1.25rem 1.5rem;">
+                                                            <% dashData.schedule.forEach(b=> {
+                                                                const statusClass = {
+                                                                    'Pending': 'status-pending',
+                                                                    'Confirmed': 'status-confirmed',
+                                                                    'InProgress': 'status-inprogress',
+                                                                    'Completed': 'status-completed',
+                                                                    'Cancelled': 'status-cancelled'
+                                                                }[b.status] || 'status-pending';
+                                                            %>
+                                                                <div class="feed-card" style="box-shadow: var(--shadow-card); background: var(--bg-card); border: 1px solid var(--border-color); margin-bottom: 0.25rem; padding: 1rem 1.25rem;">
+                                                                    <div class="feed-main" style="grid-template-columns: 2fr 1fr 1fr 1.2fr;">
+                                                                        <!-- Customer Info -->
+                                                                        <div>
+                                                                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                                                                <span class="mono" style="color:var(--text-muted); font-size:0.8rem;">#<%= b.booking_id %></span>
+                                                                                <div class="feed-service-name"><%= b.services %></div>
+                                                                            </div>
+                                                                            <div class="feed-provider-name" style="font-weight: 500;">
+                                                                                <%= b.customer_name %> &bull; <span class="feed-city" style="color: var(--color-metal);"><%= b.city %></span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Appointment Time -->
+                                                                        <div class="feed-meta-section">
+                                                                            <div class="feed-meta-item">
+                                                                                <span>📅 <%= new Date(b.booking_date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}) %></span>
+                                                                            </div>
+                                                                            <div class="feed-meta-item" style="font-size: 11.5px; color: var(--color-metal);">
+                                                                                <span>⏰ <%= b.booking_time ? b.booking_time.substring(0,5) : '' %></span>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <!-- Total Amount -->
+                                                                        <div class="feed-payment-section">
+                                                                            <div class="feed-amount" style="color: var(--color-ink);">₹<%= parseFloat(b.total_amount).toLocaleString('en-IN') %></div>
+                                                                            <span style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Paid Amount</span>
+                                                                        </div>
+
+                                                                        <!-- Status & Action buttons -->
+                                                                        <div style="display: flex; flex-direction: column; gap: 0.4rem; align-items: flex-start;">
+                                                                            <span class="status-pill <%= statusClass %>">
+                                                                                <span class="status-dot"></span>
+                                                                                <%= b.status %>
+                                                                            </span>
+                                                                            
+                                                                            <div style="margin-top: 0.15rem;">
+                                                                                <% if (b.status === 'Pending') { %>
+                                                                                    <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
+                                                                                        <input type="hidden" name="new_status" value="Confirmed">
+                                                                                        <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
+                                                                                        <button type="submit" class="btn-green btn-skew-hover" style="font-size:0.7rem; padding:0.25rem 0.6rem; border-radius: var(--radius-sm); border: none;">Confirm</button>
                                                                                     </form>
-                                                                                    <% } else if (b.status==='Confirmed'
-                                                                                        ) { %>
-                                                                                        <form method="POST"
-                                                                                            action="/bookings/<%= b.booking_id %>/status"
-                                                                                            style="margin:0;">
-                                                                                            <input type="hidden"
-                                                                                                name="new_status"
-                                                                                                value="Completed">
-                                                                                            <input type="hidden"
-                                                                                                name="redirect_to"
-                                                                                                value="/provider?provider_id=<%= currentProvider %>">
-                                                                                            <button type="submit"
-                                                                                                class="btn-green"
-                                                                                                style="font-size:0.75rem;padding:0.3rem 0.7rem;">Done</button>
-                                                                                        </form>
-                                                                                        <% } else { %>
-                                                                                            <span
-                                                                                                style="font-size:0.78rem;color:var(--text-muted);">—</span>
-                                                                                            <% } %>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <% }); %>
-                                                                </tbody>
-                                                            </table>
+                                                                                <% } else if (b.status === 'Confirmed') { %>
+                                                                                    <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;">
+                                                                                        <input type="hidden" name="new_status" value="Completed">
+                                                                                        <input type="hidden" name="redirect_to" value="/provider?provider_id=<%= currentProvider %>">
+                                                                                        <button type="submit" class="btn-green btn-skew-hover" style="font-size:0.7rem; padding:0.25rem 0.6rem; border-radius: var(--radius-sm); border: none;">Done</button>
+                                                                                    </form>
+                                                                                <% } %>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            <% }); %>
                                                         </div>
                                                         <% } %>
                                             </div>

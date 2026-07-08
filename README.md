@@ -1,37 +1,94 @@
-#  HomeServe — Home Service Booking Platform
+# HomeServe — Home Service Booking Platform
 
-A premium, production-ready full-stack **Home Service Booking Platform** built with a modern **Node.js/Express.js MVC** backend, **PostgreSQL** relational database, **EJS** Server-Side Rendering (SSR), and **Bootstrap 5**. Designed with a high-end abyssal dark theme, this project serves as a showcase of robust database architecture, MVC design pattern, and interactive user experiences.
+**Live Demo:** [homeserve-e1pi.onrender.com](https://homeserve-e1pi.onrender.com/)
+> Note: hosted on Render's free tier — the app may take a few seconds to spin up on first load.
+
+A full-stack **home service booking platform** built with a **Node.js/Express.js MVC** backend, **PostgreSQL** relational database, **EJS** server-side rendering, and **Bootstrap 5**. The project doubles as a showcase of solid relational database design (views, triggers, stored procedures) alongside a clean MVC application structure.
 
 ---
 
-##  Database Schema (ER Diagram)
+## About
 
-This entity-relationship model showcases a highly optimized relational database structure:
+HomeServe connects customers looking for home services — like cleaning, repairs, or maintenance — with local providers. Customers can browse services, check pricing and availability, and book a provider in a few clicks, while providers manage their schedules and track jobs through a dedicated dashboard. Beyond the customer-facing flow, the project was built as a deep dive into relational database design: enforcing business rules (like preventing double-bookings) directly at the database level with triggers, stored procedures, and views, rather than relying solely on application code.
+
+---
+
+## Features
+
+- Browse service categories, view pricing variants, and find matching providers
+- End-to-end booking flow with transactional checkout (items, coupons, payment)
+- Customer booking history with ratings/review submission
+- Provider dashboard for managing availability
+- Analytics dashboard with KPI charts (revenue, bookings, ratings)
+- Double-booking prevention and live rating recalculation via database triggers
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Node.js, Express.js (MVC) |
+| Database | PostgreSQL (connection pool, SSL-ready) |
+| Templating | EJS (server-side rendering) |
+| Frontend | Bootstrap 5.3, custom CSS, GSAP, Chart.js 4 |
+| Security | Helmet.js (CSP), express-validator, parameterized queries |
+
+---
+
+## Project Structure
+
+```
+HomeServe/
+├── app.js                  # Express app entry point
+├── config/
+│   └── db.js                # PostgreSQL pool configuration
+├── controllers/             # Route handlers (MVC controllers)
+├── models/                  # Data access layer
+├── routes/                  # Express route definitions
+├── middleware/
+│   └── errorHandler.js
+├── views/                   # EJS templates
+│   └── partials/
+├── public/                  # Static assets (css, js, images)
+├── database/
+│   ├── schema.sql            # Table definitions
+│   ├── indexes.sql           # Performance indexes
+│   ├── views.sql              # Analytical SQL views
+│   ├── triggers.sql           # PL/pgSQL triggers
+│   ├── procedures.sql         # Stored procedures/functions
+│   └── seed.sql                # Sample data
+└── package.json
+```
+
+---
+
+## Database Schema (ER Diagram)
 
 ```mermaid
 erDiagram
     Customer ||--o{ Address : "registers"
     Customer ||--o{ Booking : "creates"
     Customer ||--o{ ProviderReview : "writes"
-    
+
     Address ||--o{ Booking : "ships_to"
-    
+
     Provider ||--o{ ProviderService : "offers"
     Provider ||--o{ ProviderAvailability : "schedules"
     Provider ||--o{ Booking : "fulfills"
     Provider ||--o{ ProviderReview : "receives"
-    
+
     Category ||--o{ Service : "categorizes"
     Service ||--o{ ServiceVariant : "extends"
     Service ||--o{ ProviderService : "maps"
     Service ||--o{ BookingItem : "includes"
     ServiceVariant ||--o{ BookingItem : "customizes"
-    
+
     Booking ||--o{ BookingItem : "contains"
     Booking ||--|| Payment : "settles"
     Booking ||--o{ BookingStatusLog : "tracks"
     Booking ||--o{ BookingCoupon : "applies"
-    
+
     Coupon ||--o{ BookingCoupon : "logs"
 
     Customer {
@@ -88,55 +145,38 @@ erDiagram
 
 ---
 
-##  Key DBMS Features
+## Key Database Features
 
-This platform emphasizes database-level performance, data integrity, and strict constraints:
+**SQL Views** — pre-joined data for common queries:
+- `vw_service_details` — services, categories, pricing variants
+- `vw_booking_summary` — booking status, customer, address, payment
+- `vw_provider_analytics` — provider jobs, ratings, revenue
+- `vw_revenue_by_month` — monthly transaction volume
 
-### 1. High-Performance SQL Views
-Instead of running heavy relational joins on the server, analytical queries are compiled directly on PostgreSQL views:
-*   `vw_service_details`: Joins services, categories, and pricing variants.
-*   `vw_booking_summary`: Merges booking statuses, customer profiles, address metadata, and payments.
-*   `vw_provider_analytics`: Aggregates active jobs, historical ratings, and lifetime provider revenues.
-*   `vw_revenue_by_month`: Pre-computes monthly platform transaction volumes.
+**Stored Procedures** — transactional integrity:
+- `fn_create_booking` — inserts booking, items, coupons, and payment in a single transaction with rollback on failure
+- `fn_calculate_booking_amount` — computes totals from base price, variants, and coupon discounts
 
-### 2. Transactional Stored Procedures
-- **`fn_create_booking`**: Integrates booking entries, item details, coupons, and payments inside a strict transactional boundary with a complete auto-rollback guarantee if any single insert fails.
-- **`fn_calculate_booking_amount`**: Performs server-side calculations of service base prices, optional variant add-ons, and coupon discounts.
-
-### 3. Automated PL/pgSQL Triggers
-- **Prevent Double-Booking**: Rejects confirmed requests if the selected provider is already booked for that date/time slot.
-- **Live Rating Recalculations**: Automatically updates `avg_rating` and `total_reviews` in the `Provider` table whenever a new review is inserted or modified.
-- **Coupon Controls**: Increments coupon usage counters and checks limits dynamically on checkout.
+**Triggers** — automated data consistency:
+- Prevents double-booking a provider for the same date/time slot
+- Recalculates provider `avg_rating` / `total_reviews` on review insert/update
+- Enforces coupon usage limits at checkout
 
 ---
 
-##  Tech Stack & Token System
+## Getting Started
 
-- **Backend:** Node.js, Express.js (MVC)
-- **Database:** PostgreSQL (Client Pool, SSL enabled)
-- **Template Engine:** EJS (Dynamic Server-Side Rendering)
-- **Frontend Design:** Custom Abyssal CSS (Matter display types, 18-20px glass surfaces), GSAP (entrance & floating physics loops), Bootstrap 5.3, Chart.js 4
-- **Security:** Helmet.js, parameterized queries (SQL injection prevention), Express Validator sanitization
+### Prerequisites
+- Node.js v18+
+- PostgreSQL v14+
 
----
-
-##  Getting Started
-
-### 1. Prerequisites
-- **Node.js** (v18+)
-- **PostgreSQL** (v14+)
-
-### 2. Install Dependencies
+### 1. Install dependencies
 ```bash
 npm install
 ```
 
-### 3. Setup Configuration
-Copy `.env.example` to `.env` and fill in your PostgreSQL credentials:
-```bash
-cp .env.example .env
-```
-Inside `.env`:
+### 2. Configure environment
+Create a `.env` file in the project root:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
@@ -147,48 +187,53 @@ PORT=3000
 NODE_ENV=development
 ```
 
-### 4. Create Database & Run SQL Scripts
-Create a local database named `home_services` and execute the schema files in the following order:
+### 3. Set up the database
+Create a database named `home_services`, then run the SQL scripts in order:
 ```bash
-psql -U postgres -d home_services -f database/schema.sql
-psql -U postgres -d home_services -f database/indexes.sql
-psql -U postgres -d home_services -f database/views.sql
-psql -U postgres -d home_services -f database/triggers.sql
-psql -U postgres -d home_services -f database/procedures.sql
-psql -U postgres -d home_services -f database/seed.sql
+npm run db:schema
+npm run db:indexes
+npm run db:views
+npm run db:triggers
+npm run db:procedures
+npm run db:seed
 ```
 
-### 5. Launch the Platform
+### 4. Run the app
 ```bash
-# Start server in development mode (with nodemon auto-restart)
-npm run dev
-
-# Start server in production mode
-npm start
+npm run dev     # development, with nodemon
+npm start       # production
 ```
-Open **http://localhost:3000** in your browser.
+
+Visit **http://localhost:3000**.
 
 ---
 
-##  API Reference
+## API Reference
 
-| Endpoint | Method | Role |
-|:---|:---|:---|
-| `/` | `GET` | Home page with trust cards, category filters, and live search |
-| `/services/:id` | `GET` | Service overview, pricing variants, and matching providers |
-| `/book/:serviceId` | `GET` | Checkout page setup |
-| `/book` | `POST` | Processes the booking transaction |
-| `/bookings` | `GET` | Customer booking history (demo `customer_id=1`) |
-| `/bookings/:id/review` | `POST` | Submits customer rating & review feedback |
-| `/provider` | `GET` | Provider portal dashboard (demo `provider_id=1`) |
-| `/provider/availability` | `POST` | Appends active availability slots |
-| `/analytics` | `GET` | Analytics dashboard displaying KPI graphs and charts |
+| Endpoint | Method | Description |
+|---|---|---|
+| `/` | GET | Home page with category filters and search |
+| `/services/:id` | GET | Service details, pricing variants, matching providers |
+| `/book/:serviceId` | GET | Checkout page |
+| `/book` | POST | Processes a booking transaction |
+| `/bookings` | GET | Customer booking history |
+| `/bookings/:id/review` | POST | Submit a rating/review |
+| `/provider` | GET | Provider dashboard |
+| `/provider/availability` | POST | Add availability slots |
+| `/analytics` | GET | Analytics dashboard (KPIs, charts) |
 
 ---
 
-##  Security & Production Validation
+## Security
 
-- **Content Security Policy:** Configured via Helmet.js to secure scripts, styles, and fonts origins.
-- **Atomic Isolation:** All multi-step bookings utilize database transactions ensuring data rollback on network failure.
-- **Production SSL Support:** Configured automatically inside `config/db.js` for seamless cloud hosting (Render, Railway, Neon).
-- **Parameterized Protection:** All SQL commands run through pg-pool positional arguments preventing SQL injection vectors.
+- **Helmet.js** Content Security Policy restricting script/style/font origins
+- **Parameterized queries** throughout (via `pg`) to prevent SQL injection
+- **express-validator** for input sanitization
+- **Database transactions** for atomic, multi-step booking writes
+- **SSL-ready** PostgreSQL config for cloud hosting (Render, Railway, Neon)
+
+---
+
+## License
+
+ISC

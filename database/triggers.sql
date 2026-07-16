@@ -1,11 +1,5 @@
--- ============================================================
--- HOME SERVICE BOOKING PLATFORM — TRIGGERS
--- ============================================================
-
--- -------------------------------------------------------
 -- TRIGGER 1: Auto-insert initial 'Pending' status log
 --            after every new Booking
--- -------------------------------------------------------
 CREATE OR REPLACE FUNCTION fn_trg_auto_status_log()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -21,9 +15,7 @@ CREATE TRIGGER trg_after_booking_insert
     FOR EACH ROW
     EXECUTE FUNCTION fn_trg_auto_status_log();
 
--- -------------------------------------------------------
 -- TRIGGER 2: Recalculate provider avg_rating after review
--- -------------------------------------------------------
 CREATE OR REPLACE FUNCTION fn_trg_update_provider_rating()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -50,9 +42,7 @@ CREATE TRIGGER trg_after_review_insert
     FOR EACH ROW
     EXECUTE FUNCTION fn_trg_update_provider_rating();
 
--- -------------------------------------------------------
 -- TRIGGER 3: Prevent double booking (same provider/date/time)
--- -------------------------------------------------------
 CREATE OR REPLACE FUNCTION fn_trg_prevent_double_booking()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -80,10 +70,8 @@ CREATE TRIGGER trg_prevent_double_booking
     FOR EACH ROW
     EXECUTE FUNCTION fn_trg_prevent_double_booking();
 
--- -------------------------------------------------------
 -- TRIGGER 4: Increment coupon usage count when booking
 --            uses a coupon
--- -------------------------------------------------------
 CREATE OR REPLACE FUNCTION fn_trg_increment_coupon_usage()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -102,10 +90,8 @@ CREATE TRIGGER trg_update_coupon_usage
     FOR EACH ROW
     EXECUTE FUNCTION fn_trg_increment_coupon_usage();
 
--- -------------------------------------------------------
 -- TRIGGER 5: Auto-set payment paid_at timestamp
 --            when payment status changes to 'Paid'
--- -------------------------------------------------------
 CREATE OR REPLACE FUNCTION fn_trg_set_paid_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN

@@ -1,8 +1,6 @@
 const pool = require('../config/db');
 
-// -------------------------------------------------------
 // Get all providers (for dashboard selection)
-// -------------------------------------------------------
 async function getAllProviders() {
     const result = await pool.query(
         `SELECT provider_id, name, email, phone, avg_rating, total_reviews, experience_yrs, bio
@@ -11,9 +9,7 @@ async function getAllProviders() {
     return result.rows;
 }
 
-// -------------------------------------------------------
 // Get provider dashboard data (using analytics view)
-// -------------------------------------------------------
 async function getProviderDashboard(providerId) {
     const providerResult = await pool.query(
         `SELECT * FROM vw_provider_analytics WHERE provider_id = $1`,
@@ -75,9 +71,7 @@ async function getProviderDashboard(providerId) {
     };
 }
 
-// -------------------------------------------------------
 // Add availability slot (calls stored procedure)
-// -------------------------------------------------------
 async function addAvailability(providerId, dayOfWeek, startTime, endTime) {
     await pool.query(
         `CALL proc_add_provider_availability($1, $2::day_of_week_enum, $3::TIME, $4::TIME)`,
@@ -85,9 +79,7 @@ async function addAvailability(providerId, dayOfWeek, startTime, endTime) {
     );
 }
 
-// -------------------------------------------------------
 // Delete availability slot
-// -------------------------------------------------------
 async function deleteAvailability(availId, providerId) {
     const result = await pool.query(
         `DELETE FROM ProviderAvailability
@@ -98,9 +90,7 @@ async function deleteAvailability(availId, providerId) {
     if (result.rows.length === 0) throw new Error('Availability slot not found.');
 }
 
-// -------------------------------------------------------
 // Get provider reviews
-// -------------------------------------------------------
 async function getProviderReviews(providerId, limit = 10) {
     const result = await pool.query(
         `SELECT pr.rating, pr.comment, pr.created_at,

@@ -11,20 +11,36 @@
     "db:views": "psql -U postgres -d home_services -f database/views.sql",
     "db:triggers": "psql -U postgres -d home_services -f database/triggers.sql",
     "db:procedures": "psql -U postgres -d home_services -f database/procedures.sql",
-    "db:seed": "psql -U postgres -d home_services -f database/seed.sql"
+    "db:seed": "psql -U postgres -d home_services -f database/seed.sql",
+    "test": "jest --runInBand --detectOpenHandles"
   },
-  "keywords": ["nodejs", "express", "postgresql", "ejs", "bootstrap", "booking"],
+  "keywords": [
+    "nodejs",
+    "express",
+    "postgresql",
+    "ejs",
+    "bootstrap",
+    "booking"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.0.0",
+    "bcrypt": "^6.0.0",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
     "express": "^4.18.2",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.19.0",
     "express-validator": "^7.0.1",
     "helmet": "^7.1.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "jest": "^30.4.2",
+    "nodemon": "^3.1.0",
+    "supertest": "^7.2.2"
   }
 }

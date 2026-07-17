@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<div class="page-wrapper">
+<div class="page-wrapper" style="padding-top: 110px;">
 <div class="container-xl">
 
     <!-- Page Header -->
@@ -12,7 +12,8 @@
                 <%= total %> total booking<%= total !== 1 ? 's' : '' %>
             </p>
         </div>
-        <!-- Customer Selector -->
+        <!-- Customer Selector (Admin only) -->
+        <% if (locals.user && user.role === 'admin' && customers) { %>
         <div class="d-flex align-items-center gap-2">
             <label style="font-size:0.82rem;color:var(--text-muted);white-space:nowrap;">View as:</label>
             <form method="GET" action="/bookings" style="margin:0;">
@@ -45,6 +46,7 @@
                 </div>
             </form>
         </div>
+        <% } %>
     </div>
 
     <!-- Success Alert -->
@@ -201,7 +203,7 @@
                         <% } else if (b.status === 'Pending' || b.status === 'Confirmed') { %>
                         <form method="POST" action="/bookings/<%= b.booking_id %>/status" style="margin:0;" class="cancel-booking-form">
                             <input type="hidden" name="new_status" value="Cancelled">
-                            <input type="hidden" name="redirect_to" value="/bookings?customer_id=<%= currentCustomer %>">
+                            <input type="hidden" name="redirect_to" value="/bookings<%= (locals.user && user.role === 'admin') ? '?customer_id=' + currentCustomer : '' %>">
                             <button type="submit" class="btn-danger-custom" style="font-size: 0.72rem; padding: 0.2rem 0.5rem; line-height:1.2;">Cancel</button>
                         </form>
                         <% } %>
@@ -216,11 +218,11 @@
     <% if (totalPages > 1) { %>
     <div class="d-flex justify-content-center align-items-center gap-2 mt-4">
         <% if (page > 1) { %>
-        <a href="/bookings?customer_id=<%= currentCustomer %>&page=<%= page-1 %>" class="btn-outline-custom">← Prev</a>
+        <a href="/bookings?<%= (locals.user && user.role === 'admin') ? 'customer_id=' + currentCustomer + '&' : '' %>page=<%= page-1 %>" class="btn-outline-custom">← Prev</a>
         <% } %>
         <span style="color:var(--text-muted);font-size:0.88rem;">Page <%= page %> of <%= totalPages %></span>
         <% if (page < totalPages) { %>
-        <a href="/bookings?customer_id=<%= currentCustomer %>&page=<%= page+1 %>" class="btn-outline-custom">Next →</a>
+        <a href="/bookings?<%= (locals.user && user.role === 'admin') ? 'customer_id=' + currentCustomer + '&' : '' %>page=<%= page+1 %>" class="btn-outline-custom">Next →</a>
         <% } %>
     </div>
     <% } %>
@@ -236,7 +238,6 @@
         <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1.5rem;" id="reviewProviderName"></p>
 
         <form method="POST" id="reviewForm" class="form-dark">
-            <input type="hidden" name="customer_id" value="<%= currentCustomer %>">
             <input type="hidden" name="provider_id" id="reviewProviderId">
 
             <div class="mb-3">

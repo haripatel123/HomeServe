@@ -1,7 +1,7 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<div class="page-wrapper">
+<div class="page-wrapper" style="padding-top: 110px;">
 <div class="container-xl">
 
     <!-- Breadcrumb -->
@@ -33,21 +33,38 @@
                     <input type="hidden" name="service_id" value="<%= service.service_id %>">
 
                     <div class="row g-3">
-                        <!-- Customer -->
+                        <!-- Customer (auto-filled from session) -->
                         <div class="col-md-6">
-                            <label class="form-label" for="customer_id">
+                            <label class="form-label">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;margin-right:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                Select Customer
+                                Booking As
                             </label>
-                            <select name="customer_id" id="customer_id" class="form-select" required>
-                                <option value="">— Choose customer —</option>
-                                <% customers.forEach(c => { %>
-                                <option value="<%= c.customer_id %>"
-                                    <%= (formData.customer_id == c.customer_id) ? 'selected' : '' %>>
-                                    <%= c.name %> (ID: <%= c.customer_id %>)
-                                </option>
-                                <% }); %>
-                            </select>
+                            <div class="form-control" style="background:rgba(var(--color-ink-rgb,0,0,0),0.03);cursor:default;display:flex;align-items:center;gap:6px;height:38px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;opacity:0.5;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                <%= user.name %>
+                            </div>
+                        </div>
+
+                        <!-- Select Address -->
+                        <div class="col-md-6">
+                            <label class="form-label" for="address_id">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;margin-right:4px;"><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/><circle cx="12" cy="10" r="3"/></svg>
+                                Select Address
+                            </label>
+                            <% if (addresses && addresses.length > 0) { %>
+                                <select name="address_id" id="address_id" class="form-select" required>
+                                    <% addresses.forEach(a => { %>
+                                        <option value="<%= a.address_id %>"
+                                            <%= (formData.address_id == a.address_id || (a.is_default && !formData.address_id)) ? 'selected' : '' %>>
+                                            <%= a.address_type.toUpperCase() %>: <%= a.line1 %>, <%= a.city %>
+                                        </option>
+                                    <% }); %>
+                                </select>
+                            <% } else { %>
+                                <div class="form-control" style="background:rgba(var(--color-ink-rgb,0,0,0),0.03);cursor:default;color:var(--accent-red);font-weight:600;display:flex;align-items:center;gap:6px;height:38px;font-size:0.8rem;">
+                                    No address found. <a href="/profile" style="color:var(--color-action-blue);text-decoration:underline;">Add address</a>
+                                </div>
+                            <% } %>
                         </div>
 
                         <!-- Provider -->

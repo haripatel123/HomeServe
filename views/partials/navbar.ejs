@@ -1,3 +1,23 @@
+<style>
+.nav-user-dropdown-container:hover .nav-user-dropdown-menu {
+    display: flex !important;
+    animation: dropdownFadeIn 0.2s ease-out;
+}
+.nav-user-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -15px;
+    left: 0;
+    right: 0;
+    height: 15px;
+    background: transparent;
+}
+.dropdown-item-pill:hover {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+</style>
+
 <nav class="navbar-floating-capsule">
     <!-- Brand/Logo -->
     <a href="/" class="navbar-brand-pill">
@@ -14,10 +34,50 @@
     <div class="nav-links-pill d-none d-md-flex">
         <div class="nav-active-capsule"></div>
         <a href="/" class="nav-item-pill <%= currentUrl === '/' ? 'active' : '' %>">Services</a>
-        <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>" class="nav-item-pill <%= currentUrl === '/bookings' ? 'active' : '' %>">Bookings</a>
-        <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>" class="nav-item-pill <%= currentUrl === '/provider' ? 'active' : '' %>">Providers</a>
-        <a href="/analytics" class="nav-item-pill <%= currentUrl === '/analytics' ? 'active' : '' %>">Analytics</a>
+        
+        <% if (locals.user) { %>
+            <% if (user.role === 'customer') { %>
+                <a href="/bookings" class="nav-item-pill <%= currentUrl === '/bookings' ? 'active' : '' %>">My Bookings</a>
+            <% } else if (user.role === 'provider') { %>
+                <a href="/provider" class="nav-item-pill <%= currentUrl === '/provider' ? 'active' : '' %>">Dashboard</a>
+            <% } else if (user.role === 'admin') { %>
+                <a href="/bookings?customer_id=1" class="nav-item-pill <%= currentUrl === '/bookings' ? 'active' : '' %>">Bookings</a>
+                <a href="/provider?provider_id=1" class="nav-item-pill <%= currentUrl === '/provider' ? 'active' : '' %>">Providers</a>
+                <a href="/analytics" class="nav-item-pill <%= currentUrl === '/analytics' ? 'active' : '' %>">Analytics</a>
+            <% } %>
+        <% } %>
+
+        <% if (!locals.user) { %>
+            <a href="/login" class="nav-item-pill <%= currentUrl === '/login' ? 'active' : '' %>">Login</a>
+            <a href="/register" class="nav-item-pill <%= currentUrl === '/register' ? 'active' : '' %>">Register</a>
+        <% } %>
     </div>
+
+    <% if (locals.user) { %>
+        <div class="nav-user-dropdown-container d-none d-md-block" style="position:relative;margin-left:8px;">
+            <div class="nav-user-badge" style="display:flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;background:rgba(var(--color-ink-rgb,0,0,0),0.06);font-size:0.78rem;font-weight:500;color:var(--color-ink);cursor:pointer;transition:all 0.25s ease;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;opacity:0.6;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <%= user.name %>
+                <span style="font-size:0.65rem;padding:1px 6px;border-radius:8px;background:var(--color-ink);color:#fff;text-transform:uppercase;letter-spacing:0.5px;"><%= user.role %></span>
+            </div>
+            
+            <!-- Hover Dropdown Menu -->
+            <div class="nav-user-dropdown-menu" style="position:absolute;top:100%;right:0;width:200px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:8px;box-shadow:var(--shadow-card);display:none;flex-direction:column;gap:4px;margin-top:8px;z-index:9999;">
+                <div style="padding:6px 8px;font-size:0.78rem;color:var(--color-metal);border-bottom:1px solid var(--border-color);margin-bottom:4px;word-break:break-all;">
+                    <div style="font-weight:600;color:var(--text-primary);"><%= user.name %></div>
+                    <div style="font-size:0.72rem;color:var(--text-secondary);"><%= user.email %></div>
+                </div>
+                <a href="/profile" class="dropdown-item-pill" style="display:flex;align-items:center;gap:6px;padding:6px 10px;font-size:0.8rem;color:var(--color-metal);border-radius:6px;transition:all 0.2s ease;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Profile Settings
+                </a>
+                <a href="/logout" class="dropdown-item-pill" style="display:flex;align-items:center;gap:6px;padding:6px 10px;font-size:0.8rem;color:var(--accent-red);border-radius:6px;transition:all 0.2s ease;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Logout
+                </a>
+            </div>
+        </div>
+    <% } %>
 
     <!-- Mobile Menu Toggle Button inside Navbar Capsule -->
     <button class="d-md-none" id="mobileMenuToggle" aria-label="Menu" style="border:none;background:none;padding:2px 8px;margin-left:4px;color:var(--color-ink);">
@@ -30,9 +90,33 @@
 <!-- Mobile Floating Dropdown Capsule Menu -->
 <div class="mobile-menu-floating d-md-none" id="mobileMenu" style="display:none;">
     <a href="/" class="nav-item-pill <%= currentUrl === '/' ? 'active' : '' %>">Services</a>
-    <a href="/bookings?customer_id=<%= typeof currentCustomer !== 'undefined' ? currentCustomer : 1 %>" class="nav-item-pill <%= currentUrl === '/bookings' ? 'active' : '' %>">Bookings</a>
-    <a href="/provider?provider_id=<%= typeof currentProvider !== 'undefined' ? currentProvider : 1 %>" class="nav-item-pill <%= currentUrl === '/provider' ? 'active' : '' %>">Providers</a>
-    <a href="/analytics" class="nav-item-pill <%= currentUrl === '/analytics' ? 'active' : '' %>">Analytics</a>
+    
+    <% if (locals.user) { %>
+        <% if (user.role === 'customer') { %>
+            <a href="/bookings" class="nav-item-pill <%= currentUrl === '/bookings' ? 'active' : '' %>">My Bookings</a>
+        <% } else if (user.role === 'provider') { %>
+            <a href="/provider" class="nav-item-pill <%= currentUrl === '/provider' ? 'active' : '' %>">Dashboard</a>
+        <% } else if (user.role === 'admin') { %>
+            <a href="/bookings?customer_id=1" class="nav-item-pill <%= currentUrl === '/bookings' ? 'active' : '' %>">Bookings</a>
+            <a href="/provider?provider_id=1" class="nav-item-pill <%= currentUrl === '/provider' ? 'active' : '' %>">Providers</a>
+            <a href="/analytics" class="nav-item-pill <%= currentUrl === '/analytics' ? 'active' : '' %>">Analytics</a>
+        <% } %>
+    <% } %>
+
+    <hr style="margin: 6px 0; opacity: 0.15; border-color: var(--color-ink);">
+    
+    <% if (locals.user) { %>
+        <div style="padding:6px 12px;font-size:0.8rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;opacity:0.6;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <%= user.name %>
+            <span style="font-size:0.65rem;padding:1px 5px;border-radius:6px;background:var(--color-ink);color:#fff;text-transform:uppercase;letter-spacing:0.5px;"><%= user.role %></span>
+        </div>
+        <a href="/profile" class="nav-item-pill <%= currentUrl === '/profile' ? 'active' : '' %>">Profile Settings</a>
+        <a href="/logout" class="nav-item-pill">Logout</a>
+    <% } else { %>
+        <a href="/login" class="nav-item-pill <%= currentUrl === '/login' ? 'active' : '' %>">Login</a>
+        <a href="/register" class="nav-item-pill <%= currentUrl === '/register' ? 'active' : '' %>">Register</a>
+    <% } %>
 </div>
 
 <script>
@@ -142,3 +226,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+

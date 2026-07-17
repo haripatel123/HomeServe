@@ -14,14 +14,16 @@ exports.showForm = async (req, res, next) => {
             return res.status(404).render('404', { title: 'Service Not Found' });
         }
 
-        const customers = await bookingModel.getAllCustomers();
+        const addresses = await bookingModel.getCustomerAddresses(req.user.customer_id);
 
         res.render('booking-form', {
             title: `Book ${service.service_name} — HomeServe`,
             service,
-            customers,
+            addresses,
             error: null,
-            formData: {},
+            formData: {
+                variant_id: req.query.variant_id || ''
+            },
         });
     } catch (err) {
         next(err);
@@ -31,23 +33,24 @@ exports.showForm = async (req, res, next) => {
 // POST /book  — Process booking
 exports.createBooking = async (req, res, next) => {
     try {
+        const customerId = req.user.customer_id;
         const {
-            customer_id, provider_id, service_id, variant_id,
-            booking_date, booking_time, notes, coupon_code, payment_method
+            provider_id, service_id, variant_id,
+            booking_date, booking_time, notes, coupon_code, payment_method, address_id
         } = req.body;
 
         // --- Server-side validation ---
         const errors = [];
 
-        const customerId = parseInt(customer_id);
         const providerId = parseInt(provider_id);
         const serviceId  = parseInt(service_id);
         const variantId  = variant_id ? parseInt(variant_id) : null;
+        const addressId  = parseInt(address_id);
 
-        if (!Number.isInteger(customerId) || customerId <= 0) errors.push('Invalid customer.');
         if (!Number.isInteger(providerId) || providerId <= 0) errors.push('Invalid provider.');
         if (!Number.isInteger(serviceId)  || serviceId <= 0)  errors.push('Invalid service.');
         if (variantId !== null && (!Number.isInteger(variantId) || variantId <= 0)) errors.push('Invalid variant.');
+        if (!Number.isInteger(addressId)  || addressId <= 0)  errors.push('Invalid address selection.');
 
         if (!booking_date) {
             errors.push('Booking date is required.');
@@ -74,32 +77,36 @@ exports.createBooking = async (req, res, next) => {
             errors.push('Invalid payment method.');
         }
 
-        if (errors.length > 0) {
-            const service   = await serviceModel.getServiceById(serviceId);
-            const customers = await bookingModel.getAllCustomers();
+        // Get customer addresses for verification
+        const addresses = await bookingModel.getCustomerAddresses(customerId);
+        if (addresses.length === 0) {
+            const service = await serviceModel.getServiceById(serviceId);
             return res.status(400).render('booking-form', {
                 title: `Book Service — HomeServe`,
                 service,
-                customers,
-                error: errors.join(' '),
+                addresses: [],
+                error: 'No address found for your account. Please add an address first.',
                 formData: req.body,
             });
         }
 
-        // Get customer addresses
-        const addresses = await bookingModel.getCustomerAddresses(customerId);
-        if (addresses.length === 0) {
-            const service   = await serviceModel.getServiceById(serviceId);
-            const customers = await bookingModel.getAllCustomers();
+        if (addressId) {
+            const hasAddress = addresses.some(a => a.address_id === addressId);
+            if (!hasAddress) {
+                errors.push('Selected address does not belong to your account.');
+            }
+        }
+
+        if (errors.length > 0) {
+            const service = await serviceModel.getServiceById(serviceId);
             return res.status(400).render('booking-form', {
                 title: `Book Service — HomeServe`,
                 service,
-                customers,
-                error: 'No address found for this customer.',
+                addresses,
+                error: errors.join(' '),
                 formData: req.body,
             });
         }
-        const addressId = addresses.find(a => a.is_default)?.address_id || addresses[0].address_id;
 
         // Call stored function (transactional)
         const bookingId = await bookingModel.createBooking({
@@ -112,7 +119,7 @@ exports.createBooking = async (req, res, next) => {
             paymentMethod: payment_method || 'Cash',
         });
 
-        res.redirect(`/bookings?success=true&id=${bookingId}&customer_id=${customerId}`);
+        res.redirect(`/bookings?success=true&id=${bookingId}`);
     } catch (err) {
         // Handle known DB errors gracefully
         const knownErrors = [
@@ -126,11 +133,9 @@ exports.createBooking = async (req, res, next) => {
             try {
                 const serviceId = parseInt(req.body.service_id);
                 const service   = await serviceModel.getServiceById(serviceId);
-                const customers = await bookingModel.getAllCustomers();
                 return res.status(400).render('booking-form', {
                     title: 'Book Service — HomeServe',
                     service,
-                    customers,
                     error: err.message,
                     formData: req.body,
                 });
@@ -140,10 +145,21 @@ exports.createBooking = async (req, res, next) => {
     }
 };
 
-// GET /bookings  — Booking history for a customer
+// GET /bookings  — Booking history
 exports.history = async (req, res, next) => {
     try {
-        const customerId = parseInt(req.query.customer_id) || 1;
+        let customerId;
+        let customers = null;
+
+        if (req.user.role === 'admin') {
+            // Admin can browse any customer's bookings
+            customerId = parseInt(req.query.customer_id) || 1;
+            customers = await bookingModel.getAllCustomers();
+        } else {
+            // Regular customer sees only their own
+            customerId = req.user.customer_id;
+        }
+
         if (!Number.isInteger(customerId) || customerId <= 0) {
             return res.status(400).render('404', { title: 'Invalid Customer ID' });
         }
@@ -153,7 +169,6 @@ exports.history = async (req, res, next) => {
         const offset = (page - 1) * limit;
 
         const { bookings, total } = await bookingModel.getCustomerBookings(customerId, limit, offset);
-        const customers = await bookingModel.getAllCustomers();
 
         res.render('booking-history', {
             title: 'My Bookings — HomeServe',
@@ -176,25 +191,24 @@ exports.history = async (req, res, next) => {
 exports.addReview = async (req, res, next) => {
     try {
         const bookingId  = parseInt(req.params.id);
-        const customerId = parseInt(req.body.customer_id);
+        const customerId = req.user.customer_id;
         const providerId = parseInt(req.body.provider_id);
         const rating     = parseInt(req.body.rating);
         const comment    = req.body.comment || '';
 
         // Validate
         if (!Number.isInteger(bookingId)  || bookingId <= 0)  return res.status(400).json({ error: 'Invalid booking ID.' });
-        if (!Number.isInteger(customerId) || customerId <= 0)  return res.status(400).json({ error: 'Invalid customer.' });
         if (!Number.isInteger(providerId) || providerId <= 0)  return res.status(400).json({ error: 'Invalid provider.' });
         if (!Number.isInteger(rating) || rating < 1 || rating > 5) return res.status(400).json({ error: 'Rating must be between 1 and 5.' });
         if (comment.length > 500) return res.status(400).json({ error: 'Comment too long (max 500 chars).' });
 
         await bookingModel.addReview(bookingId, providerId, customerId, rating, comment);
-        res.redirect(`/bookings?customer_id=${customerId}&review=true`);
+        res.redirect(`/bookings?review=true`);
     } catch (err) {
         const knownErrors = ['completed', 'review already', 'not found'];
         const isKnown = knownErrors.some(k => err.message?.toLowerCase().includes(k));
         if (isKnown) {
-            return res.status(400).redirect(`/bookings?customer_id=${req.body.customer_id}&review_error=true`);
+            return res.status(400).redirect(`/bookings?review_error=true`);
         }
         next(err);
     }
@@ -245,3 +259,4 @@ exports.calculateAmount = async (req, res) => {
         res.status(400).json({ error: err.message });
     }
 };
+

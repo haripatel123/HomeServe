@@ -1,23 +1,25 @@
 const express = require('express');
 const router  = express.Router();
 const bookingController = require('../controllers/bookingController');
+const { ensureAuthenticated, ensureRole } = require('../middleware/auth');
 
-// Booking form
-router.get('/book/:serviceId', bookingController.showForm);
+// Booking form — customers only
+router.get('/book/:serviceId', ensureRole('customer'), bookingController.showForm);
 
-// Create booking
-router.post('/book', bookingController.createBooking);
+// Create booking — customers only
+router.post('/book', ensureRole('customer'), bookingController.createBooking);
 
-// Booking history
-router.get('/bookings', bookingController.history);
+// Booking history — customers see own, admin sees all
+router.get('/bookings', ensureRole('customer', 'admin'), bookingController.history);
 
-// Add review
-router.post('/bookings/:id/review', bookingController.addReview);
+// Add review — customers only
+router.post('/bookings/:id/review', ensureRole('customer'), bookingController.addReview);
 
-// Update status
-router.post('/bookings/:id/status', bookingController.updateStatus);
+// Update status — providers and admin
+router.post('/bookings/:id/status', ensureRole('provider', 'admin'), bookingController.updateStatus);
 
-// AJAX price calculation
-router.get('/api/calculate-amount', bookingController.calculateAmount);
+// AJAX price calculation — any authenticated user
+router.get('/api/calculate-amount', ensureAuthenticated, bookingController.calculateAmount);
 
 module.exports = router;
+

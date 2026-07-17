@@ -1,0 +1,76 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="page-wrapper" style="padding-top: 110px;">
+    <div class="container-xl">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="dark-card p-4">
+                    <h1 class="text-center mb-2" style="font-size:1.6rem;">Login</h1>
+                    <p class="text-center" style="color:var(--text-muted);font-size:0.88rem;margin-bottom:1.75rem;">Welcome back! Enter your details to continue.</p>
+
+                    <!-- Render Flash Success Messages -->
+                    <% if (locals.success_msg && success_msg.length > 0) { %>
+                        <div class="alert-dark-success mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <span><%= success_msg %></span>
+                        </div>
+                    <% } %>
+
+                    <!-- Render Error Flash Messages -->
+                    <% if (locals.error_msg && error_msg.length > 0) { %>
+                        <div class="alert-dark-error mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <span><%= error_msg %></span>
+                        </div>
+                    <% } %>
+
+                    <!-- Render Passport Flash Errors -->
+                    <% if (locals.error && error.length > 0) { %>
+                        <div class="alert-dark-error mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <span><%= error %></span>
+                        </div>
+                    <% } %>
+
+                    <!-- Render Server-Side Validation Errors -->
+                    <% if (locals.errors && errors.length > 0) { %>
+                        <div class="alert-dark-error mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <ul class="mb-0 ps-3" style="list-style-type: none; padding-left: 0 !important;">
+                                <% errors.forEach(function(error) { %>
+                                    <li><%= error.msg %></li>
+                                <% }) %>
+                            </ul>
+                        </div>
+                    <% } %>
+
+                    <form action="/login" method="POST" class="form-dark">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" required placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="Enter password">
+                        </div>
+                        
+                        <div class="pt-2">
+                            <button type="submit" class="btn-green w-100 py-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:4px;"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                                Login
+                            </button>
+                        </div>
+                    </form>
+
+                    <p class="text-center mt-4 mb-0" style="font-size:0.88rem;color:var(--text-muted);">
+                        Don't have an account yet? <a href="/register" class="text-green" style="font-weight: 500;">Sign up here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+

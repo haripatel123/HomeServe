@@ -2,6 +2,8 @@
 -- HOME SERVICE BOOKING PLATFORM — SCHEMA
 
 -- Drop in reverse dependency order
+DROP TABLE IF EXISTS Account CASCADE;
+DROP TABLE IF EXISTS "session" CASCADE;
 DROP TABLE IF EXISTS ProviderReview CASCADE;
 DROP TABLE IF EXISTS BookingStatusLog CASCADE;
 DROP TABLE IF EXISTS Payment CASCADE;
@@ -56,6 +58,24 @@ CREATE TABLE Provider (
 );
 
 
+-- ACCOUNT
+
+CREATE TABLE Account (
+    account_id    SERIAL PRIMARY KEY,
+    email         VARCHAR(150) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role          VARCHAR(20) NOT NULL CHECK (role IN ('customer', 'provider', 'admin')),
+    customer_id   INTEGER REFERENCES Customer(customer_id) ON DELETE CASCADE,
+    provider_id   INTEGER REFERENCES Provider(provider_id) ON DELETE CASCADE,
+    created_at    TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT chk_profile CHECK (
+        (role = 'customer' AND customer_id IS NOT NULL AND provider_id IS NULL) OR
+        (role = 'provider' AND provider_id IS NOT NULL AND customer_id IS NULL) OR
+        (role = 'admin' AND customer_id IS NULL AND provider_id IS NULL)
+    )
+);
+
+
 -- ADDRESS
 
 CREATE TABLE Address (
@@ -66,7 +86,8 @@ CREATE TABLE Address (
     city         VARCHAR(100) NOT NULL,
     state        VARCHAR(100) NOT NULL,
     pincode      CHAR(6) NOT NULL CHECK (pincode ~ '^\d{6}$'),
-    is_default   BOOLEAN DEFAULT FALSE
+    is_default   BOOLEAN DEFAULT FALSE,
+    address_type VARCHAR(50) DEFAULT 'Home'
 );
 
 -- CATEGORY
@@ -198,3 +219,14 @@ CREATE TABLE ProviderReview (
     comment      TEXT,
     created_at   TIMESTAMP DEFAULT NOW()
 );
+
+-- SESSION STORAGE (for connect-pg-simple)
+
+CREATE TABLE "session" (
+  "sid" varchar NOT NULL COLLATE "default",
+  "sess" json NOT NULL,
+  "expire" timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+ALTER TABLE "session" ADD CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+CREATE INDEX "IDX_session_expire" ON "session" ("expire");

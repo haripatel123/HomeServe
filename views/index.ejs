@@ -23,7 +23,17 @@
                                 </svg>
                                 Browse Services
                             </a>
-                            <a href="/bookings" class="btn-outline-custom">My Bookings</a>
+                            <% if (locals.user) { %>
+                                <% if (user.role === 'customer') { %>
+                                    <a href="/bookings" class="btn-outline-custom">My Bookings</a>
+                                <% } else if (user.role === 'provider') { %>
+                                    <a href="/provider" class="btn-outline-custom">My Dashboard</a>
+                                <% } else if (user.role === 'admin') { %>
+                                    <a href="/analytics" class="btn-outline-custom">Analytics</a>
+                                <% } %>
+                            <% } else { %>
+                                <a href="/login" class="btn-outline-custom">Login to Book</a>
+                            <% } %>
                         </div>
 
                         <div class="hero-stats">

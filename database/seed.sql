@@ -1,11 +1,5 @@
--- ============================================================
--- HOME SERVICE BOOKING PLATFORM — SEED DATA
--- Rich demo data: 5 customers, 6 providers, 20 services
--- ============================================================
 
--- -------------------------------------------------------
 -- CATEGORIES
--- -------------------------------------------------------
 INSERT INTO Category (name, icon_name, description) VALUES
 ('Plumbing',        'wrench',       'Pipe repairs, leaks, installations'),
 ('Electrical',      'zap',          'Wiring, switches, appliance repair'),
@@ -26,20 +20,16 @@ INSERT INTO Customer (name, email, phone) VALUES
 ('Sneha Gupta',     'sneha.gupta@demo.com',   '9876543213'),
 ('Vikram Singh',    'vikram.singh@demo.com',  '9876543214');
 
--- -------------------------------------------------------
 -- ADDRESSES
--- -------------------------------------------------------
-INSERT INTO Address (customer_id, line1, line2, city, state, pincode, is_default) VALUES
-(1, '12 Andheri West', 'Near Station', 'Mumbai',    'Maharashtra', '400053', TRUE),
-(1, '5 Bandra Road',   NULL,           'Mumbai',    'Maharashtra', '400050', FALSE),
-(2, '34 Koregaon Park',NULL,           'Pune',      'Maharashtra', '411001', TRUE),
-(3, '78 Indiranagar',  'Block 2',      'Bangalore', 'Karnataka',   '560008', TRUE),
-(4, '22 Connaught Place', NULL,        'Delhi',     'Delhi',       '110001', TRUE),
-(5, '9 Anna Nagar',    NULL,           'Chennai',   'Tamil Nadu',  '600040', TRUE);
+INSERT INTO Address (customer_id, line1, line2, city, state, pincode, is_default, address_type) VALUES
+(1, '12 Andheri West', 'Near Station', 'Mumbai',    'Maharashtra', '400053', TRUE, 'Home'),
+(1, '5 Bandra Road',   NULL,           'Mumbai',    'Maharashtra', '400050', FALSE, 'Work'),
+(2, '34 Koregaon Park',NULL,           'Pune',      'Maharashtra', '411001', TRUE, 'Home'),
+(3, '78 Indiranagar',  'Block 2',      'Bangalore', 'Karnataka',   '560008', TRUE, 'Home'),
+(4, '22 Connaught Place', NULL,        'Delhi',     'Delhi',       '110001', TRUE, 'Home'),
+(5, '9 Anna Nagar',    NULL,           'Chennai',   'Tamil Nadu',  '600040', TRUE, 'Home');
 
--- -------------------------------------------------------
 -- PROVIDERS (6 demo providers)
--- -------------------------------------------------------
 INSERT INTO Provider (name, email, phone, bio, experience_yrs, avg_rating, total_reviews) VALUES
 ('Suresh Kumar',    'suresh@demo.com',    '9811112222', 'Expert plumber with 8 years experience in residential plumbing.', 8,  4.80, 0),
 ('Ravi Electricals','ravi@demo.com',      '9822223333', 'Certified electrician handling all household wiring needs.', 6,  4.60, 0),
@@ -48,9 +38,7 @@ INSERT INTO Provider (name, email, phone, bio, experience_yrs, avg_rating, total
 ('CoolAir Services','coolair@demo.com',   '9855556666', 'AC repair, servicing, and installation specialists.', 5,  4.50, 0),
 ('GreenThumb',      'green@demo.com',     '9866667777', 'Garden maintenance, lawn care, and plant consultancy.', 3,  4.40, 0);
 
--- -------------------------------------------------------
 -- SERVICES (20 services across categories)
--- -------------------------------------------------------
 INSERT INTO Service (category_id, name, description, base_price, duration_min) VALUES
 -- Plumbing (1)
 (1, 'Pipe Leak Repair',       'Fix any pipe leaks in kitchen, bathroom or outdoor.',     350, 60),
@@ -81,9 +69,7 @@ INSERT INTO Service (category_id, name, description, base_price, duration_min) V
 (8, 'Lawn Mowing & Trimming', 'Mow, edge, and clean up your lawn.',                      350, 60),
 (8, 'Plant Care Package',     'Repotting, fertilizing, and health check for plants.',    500, 90);
 
--- -------------------------------------------------------
 -- SERVICE VARIANTS
--- -------------------------------------------------------
 INSERT INTO ServiceVariant (service_id, variant_name, price, description) VALUES
 -- Home Deep Cleaning (7) variants
 (7, 'Standard (1BHK)',  800,  '1BHK apartment deep clean'),
@@ -101,9 +87,7 @@ INSERT INTO ServiceVariant (service_id, variant_name, price, description) VALUES
 (17, '2BHK', 1099,  'Cockroach control for 2BHK'),
 (17, '3BHK', 1399,  'Cockroach control for 3BHK');
 
--- -------------------------------------------------------
 -- PROVIDER-SERVICE MAPPING
--- -------------------------------------------------------
 INSERT INTO ProviderService (provider_id, service_id) VALUES
 -- Suresh (Plumbing)
 (1, 1), (1, 2), (1, 3),
@@ -118,9 +102,7 @@ INSERT INTO ProviderService (provider_id, service_id) VALUES
 -- GreenThumb (Gardening + Pest Control)
 (6, 17), (6, 18), (6, 19), (6, 20);
 
--- -------------------------------------------------------
 -- PROVIDER AVAILABILITY
--- -------------------------------------------------------
 INSERT INTO ProviderAvailability (provider_id, day_of_week, start_time, end_time) VALUES
 (1, 'Monday',    '08:00', '18:00'),
 (1, 'Tuesday',   '08:00', '18:00'),
@@ -155,9 +137,7 @@ INSERT INTO ProviderAvailability (provider_id, day_of_week, start_time, end_time
 (6, 'Saturday',  '06:00', '16:00'),
 (6, 'Sunday',    '06:00', '16:00');
 
--- -------------------------------------------------------
 -- COUPONS
--- -------------------------------------------------------
 INSERT INTO Coupon (code, discount_pct, min_order, usage_limit, valid_from, valid_to) VALUES
 ('WELCOME10', 10, 200,  100, '2025-01-01', '2026-12-31'),
 ('CLEAN20',   20, 500,   50, '2025-01-01', '2026-12-31'),
@@ -165,9 +145,7 @@ INSERT INTO Coupon (code, discount_pct, min_order, usage_limit, valid_from, vali
 ('MEGA25',    25, 800,   20, '2025-01-01', '2026-06-30'),
 ('FIRST50',   50, 100,    5, '2025-01-01', '2026-12-31');
 
--- -------------------------------------------------------
 -- DEMO BOOKINGS (rich historical data)
--- -------------------------------------------------------
 INSERT INTO Booking (customer_id, provider_id, address_id, booking_date, booking_time, status, total_amount, created_at) VALUES
 (1, 1, 1, '2025-11-10', '10:00', 'Completed', 350.00, '2025-11-09 10:00:00'),
 (2, 2, 3, '2025-11-12', '11:00', 'Completed', 200.00, '2025-11-11 09:00:00'),
@@ -210,9 +188,7 @@ INSERT INTO Booking (customer_id, provider_id, address_id, booking_date, booking
 (4, 6, 5, '2026-06-08', '07:00', 'Pending',   350.00, '2026-06-07 07:00:00'),
 (5, 2, 6, '2026-06-10', '13:00', 'Cancelled', 500.00, '2026-06-09 13:00:00');
 
--- -------------------------------------------------------
 -- BOOKING ITEMS for seeded bookings
--- -------------------------------------------------------
 INSERT INTO BookingItem (booking_id, service_id, variant_id, quantity, unit_price) VALUES
 (1, 1, NULL, 1, 350.00),
 (2, 4, NULL, 1, 200.00),
@@ -255,9 +231,7 @@ INSERT INTO BookingItem (booking_id, service_id, variant_id, quantity, unit_pric
 (39,19,NULL, 1, 350.00),
 (40,6, NULL, 1, 500.00);
 
--- -------------------------------------------------------
 -- BOOKING STATUS LOGS (for all completed bookings)
--- -------------------------------------------------------
 INSERT INTO BookingStatusLog (booking_id, old_status, new_status, notes, changed_at) VALUES
 (1, NULL,        'Pending',    'Booking created',    '2025-11-09 10:01:00'),
 (1, 'Pending',   'Confirmed',  'Provider confirmed', '2025-11-09 12:00:00'),
@@ -269,9 +243,7 @@ INSERT INTO BookingStatusLog (booking_id, old_status, new_status, notes, changed
 (3, 'Pending',   'Confirmed',  'Provider confirmed', '2025-11-14 09:00:00'),
 (3, 'Confirmed', 'Completed',  'Job done',           '2025-11-15 13:00:00');
 
--- -------------------------------------------------------
 -- PAYMENTS (for all bookings)
--- -------------------------------------------------------
 INSERT INTO Payment (booking_id, amount, method, status, paid_at) VALUES
 (1,  350.00,  'UPI',    'Paid',    '2025-11-10 11:30:00'),
 (2,  200.00,  'Cash',   'Paid',    '2025-11-12 12:00:00'),
@@ -314,9 +286,7 @@ INSERT INTO Payment (booking_id, amount, method, status, paid_at) VALUES
 (39, 350.00,  'Card',   'Pending', NULL),
 (40, 500.00,  'Cash',   'Refunded','2026-06-10 14:00:00');
 
--- -------------------------------------------------------
 -- REVIEWS (for completed bookings)
--- -------------------------------------------------------
 INSERT INTO ProviderReview (booking_id, provider_id, customer_id, rating, comment, created_at) VALUES
 (1,  1, 1, 5, 'Suresh fixed the leak perfectly. Very professional!',       '2025-11-10 14:00:00'),
 (2,  2, 2, 4, 'Good work on the switchboard. Quick and clean.',            '2025-11-12 15:00:00'),
@@ -353,3 +323,23 @@ INSERT INTO ProviderReview (booking_id, provider_id, customer_id, rating, commen
 (33, 3, 3, 5, 'Sofa looks brand new after cleaning!',                      '2026-05-12 14:00:00'),
 (34, 5, 4, 5, 'AC Service + Gas refill done to perfection.',               '2026-05-18 16:00:00'),
 (35, 4, 5, 4, 'Furniture assembled on time. Good job.',                    '2026-05-22 17:00:00');
+
+-- ACCOUNTS (with bcrypt password: password123)
+INSERT INTO Account (email, password_hash, role, customer_id, provider_id) VALUES
+-- Customers (IDs 1 to 5)
+('raj.patel@demo.com',     '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'customer', 1, NULL),
+('priya.sharma@demo.com',  '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'customer', 2, NULL),
+('arjun.mehta@demo.com',   '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'customer', 3, NULL),
+('sneha.gupta@demo.com',   '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'customer', 4, NULL),
+('vikram.singh@demo.com',  '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'customer', 5, NULL),
+
+-- Providers (IDs 1 to 6)
+('suresh@demo.com',    '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'provider', NULL, 1),
+('ravi@demo.com',      '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'provider', NULL, 2),
+('clean@demo.com',     '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'provider', NULL, 3),
+('amit@demo.com',      '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'provider', NULL, 4),
+('coolair@demo.com',   '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'provider', NULL, 5),
+('green@demo.com',     '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'provider', NULL, 6),
+
+-- Admin
+('admin@demo.com',     '$2b$10$kT4DcShuA9UdCRzIOeZ17ObPQmfKXe60galARJs7s9GEqGyekgJJ.', 'admin', NULL, NULL);

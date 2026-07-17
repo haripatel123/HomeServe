@@ -7,3 +7,5 @@ logs/
 npm-debug.log*
 Thumbs.db
 design.md
+database_benchmark_results.md
+HomeServe_Resume_Metrics_Guide.md

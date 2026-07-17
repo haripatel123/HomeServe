@@ -5,15 +5,25 @@ const VALID_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday
 // GET /provider  — Provider dashboard
 exports.dashboard = async (req, res, next) => {
     try {
-        const providerId = parseInt(req.query.provider_id) || 1;
+        let providerId;
+        let providers = null;
+
+        if (req.user.role === 'admin') {
+            // Admin can browse any provider's dashboard
+            providerId = parseInt(req.query.provider_id) || 1;
+            providers = await providerModel.getAllProviders();
+        } else {
+            // Regular provider sees only their own dashboard
+            providerId = req.user.provider_id;
+        }
+
         if (!Number.isInteger(providerId) || providerId <= 0) {
             return res.status(400).render('404', { title: 'Invalid Provider ID' });
         }
 
-        const [dashData, reviews, providers] = await Promise.all([
+        const [dashData, reviews] = await Promise.all([
             providerModel.getProviderDashboard(providerId),
             providerModel.getProviderReviews(providerId, 5),
-            providerModel.getAllProviders(),
         ]);
 
         if (!dashData) {
@@ -37,7 +47,9 @@ exports.dashboard = async (req, res, next) => {
 // POST /provider/availability  — Add availability
 exports.addAvailability = async (req, res, next) => {
     try {
-        const providerId = parseInt(req.body.provider_id);
+        const providerId = req.user.role === 'admin'
+            ? parseInt(req.body.provider_id)
+            : req.user.provider_id;
         const { day_of_week, start_time, end_time } = req.body;
 
         if (!Number.isInteger(providerId) || providerId <= 0) {
@@ -59,7 +71,7 @@ exports.addAvailability = async (req, res, next) => {
         await providerModel.addAvailability(providerId, day_of_week, start_time, end_time);
         res.redirect(`/provider?provider_id=${providerId}&success=Availability+slot+added`);
     } catch (err) {
-        const providerId = req.body.provider_id || 1;
+        const providerId = req.user.provider_id || req.body.provider_id || 1;
         const msg = encodeURIComponent(err.message || 'Failed to add availability');
         res.redirect(`/provider?provider_id=${providerId}&error=${msg}`);
     }
@@ -68,8 +80,10 @@ exports.addAvailability = async (req, res, next) => {
 // POST /provider/availability/:id/delete  — Remove availability
 exports.deleteAvailability = async (req, res, next) => {
     try {
-        const availId    = parseInt(req.params.id);
-        const providerId = parseInt(req.body.provider_id);
+        const availId = parseInt(req.params.id);
+        const providerId = req.user.role === 'admin'
+            ? parseInt(req.body.provider_id)
+            : req.user.provider_id;
 
         if (!Number.isInteger(availId) || availId <= 0) {
             return res.redirect(`/provider?provider_id=${providerId}&error=Invalid+slot+ID`);
@@ -81,8 +95,9 @@ exports.deleteAvailability = async (req, res, next) => {
         await providerModel.deleteAvailability(availId, providerId);
         res.redirect(`/provider?provider_id=${providerId}&success=Availability+slot+removed`);
     } catch (err) {
-        const providerId = req.body.provider_id || 1;
+        const providerId = req.user.provider_id || req.body.provider_id || 1;
         const msg = encodeURIComponent(err.message || 'Failed to delete slot');
         res.redirect(`/provider?provider_id=${providerId}&error=${msg}`);
     }
 };
+

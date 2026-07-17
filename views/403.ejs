@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="container-xl">
+    <div class="error-page">
+        <div class="error-code">403</div>
+        <h1 class="error-title">Access Denied</h1>
+        <p class="error-msg"><%= typeof message !== 'undefined' && message ? message : "You don't have permission to access this page." %></p>
+        <div class="d-flex gap-3 flex-wrap justify-content-center">
+            <a href="/" class="btn-green">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Go Home
+            </a>
+            <% if (locals.user) { %>
+                <% if (user.role === 'customer') { %>
+                    <a href="/bookings" class="btn-outline-custom">My Bookings</a>
+                <% } else if (user.role === 'provider') { %>
+                    <a href="/provider" class="btn-outline-custom">My Dashboard</a>
+                <% } else if (user.role === 'admin') { %>
+                    <a href="/analytics" class="btn-outline-custom">Analytics</a>
+                <% } %>
+            <% } else { %>
+                <a href="/login" class="btn-outline-custom">Login</a>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

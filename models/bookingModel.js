@@ -112,6 +112,69 @@ async function getCustomerAddresses(customerId) {
     return result.rows;
 }
 
+// Add new customer address
+async function addCustomerAddress(customerId, addressData) {
+    const { line1, line2, city, state, pincode, isDefault, addressType } = addressData;
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        if (isDefault) {
+            await client.query('UPDATE Address SET is_default = FALSE WHERE customer_id = $1', [customerId]);
+        }
+        const res = await client.query(
+            `INSERT INTO Address (customer_id, line1, line2, city, state, pincode, is_default, address_type)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING address_id`,
+            [customerId, line1, line2 || null, city, state, pincode, isDefault || false, addressType || 'Home']
+        );
+        await client.query('COMMIT');
+        return res.rows[0].address_id;
+    } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+    } finally {
+        client.release();
+    }
+}
+
+// Delete customer address
+async function deleteCustomerAddress(addressId, customerId) {
+    await pool.query(
+        `DELETE FROM Address WHERE address_id = $1 AND customer_id = $2`,
+        [addressId, customerId]
+    );
+}
+
+// Set customer default address
+async function setDefaultCustomerAddress(addressId, customerId) {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        await client.query('UPDATE Address SET is_default = FALSE WHERE customer_id = $1', [customerId]);
+        await client.query('UPDATE Address SET is_default = TRUE WHERE address_id = $1 AND customer_id = $2', [addressId, customerId]);
+        await client.query('COMMIT');
+    } catch (err) {
+        await client.query('ROLLBACK');
+        throw err;
+    } finally {
+        client.release();
+    }
+}
+
+// Update user profile in customer or provider tables
+async function updateUserProfile(role, id, name, phone, bio = null, experienceYrs = null) {
+    if (role === 'provider') {
+        await pool.query(
+            `UPDATE Provider SET name = $1, phone = $2, bio = $3, experience_yrs = $4 WHERE provider_id = $5`,
+            [name, phone, bio || null, parseInt(experienceYrs) || 0, id]
+        );
+    } else if (role === 'customer') {
+        await pool.query(
+            `UPDATE Customer SET name = $1, phone = $2 WHERE customer_id = $3`,
+            [name, phone, id]
+        );
+    }
+}
+
 // Get all customers (for demo selection)
 async function getAllCustomers() {
     const result = await pool.query(
@@ -128,5 +191,9 @@ module.exports = {
     updateBookingStatus,
     addReview,
     getCustomerAddresses,
+    addCustomerAddress,
+    deleteCustomerAddress,
+    setDefaultCustomerAddress,
+    updateUserProfile,
     getAllCustomers,
 };

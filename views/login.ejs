@@ -52,7 +52,15 @@
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required placeholder="Enter password">
+                            <div class="password-container">
+                                <input type="password" class="form-control" id="password" name="password" required placeholder="Enter password">
+                                <button type="button" id="togglePassword" class="btn-toggle-password" aria-label="Toggle password visibility">
+                                    <svg xmlns="http://www.w3.org/2000/svg" id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         
                         <div class="pt-2">
@@ -62,6 +70,33 @@
                             </button>
                         </div>
                     </form>
+
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const togglePassword = document.querySelector('#togglePassword');
+                        const passwordInput = document.querySelector('#password');
+                        const eyeIcon = document.querySelector('#eyeIcon');
+
+                        if (togglePassword && passwordInput && eyeIcon) {
+                            togglePassword.addEventListener('click', function () {
+                                const isPassword = passwordInput.getAttribute('type') === 'password';
+                                passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                                
+                                if (isPassword) {
+                                    eyeIcon.innerHTML = `
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    `;
+                                } else {
+                                    eyeIcon.innerHTML = `
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    `;
+                                }
+                            });
+                        }
+                    });
+                    </script>
 
                     <p class="text-center mt-4 mb-0" style="font-size:0.88rem;color:var(--text-muted);">
                         Don't have an account yet? <a href="/register" class="text-green" style="font-weight: 500;">Sign up here</a>

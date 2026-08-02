@@ -32,7 +32,23 @@ async function getServiceById(serviceId) {
     );
 
     const providersResult = await pool.query(
-        `SELECT p.provider_id, p.name, p.avg_rating, p.total_reviews, p.experience_yrs, p.bio
+        `SELECT p.provider_id, p.name, p.avg_rating, p.total_reviews, p.experience_yrs, p.bio,
+                COALESCE(
+                  (SELECT json_agg(json_build_object(
+                      'day', pa.day_of_week,
+                      'start', TO_CHAR(pa.start_time, 'HH24:MI'),
+                      'end', TO_CHAR(pa.end_time, 'HH24:MI')
+                   ) ORDER BY CASE pa.day_of_week
+                       WHEN 'Monday'    THEN 1
+                       WHEN 'Tuesday'   THEN 2
+                       WHEN 'Wednesday' THEN 3
+                       WHEN 'Thursday'  THEN 4
+                       WHEN 'Friday'    THEN 5
+                       WHEN 'Saturday'  THEN 6
+                       WHEN 'Sunday'    THEN 7
+                   END)
+                   FROM ProviderAvailability pa WHERE pa.provider_id = p.provider_id), '[]'::json
+                ) AS schedule
          FROM Provider p
          JOIN ProviderService ps ON p.provider_id = ps.provider_id
          WHERE ps.service_id = $1 AND p.is_active = TRUE

@@ -58,9 +58,14 @@
 
                     <div class="col-lg-5 col-12 d-flex justify-content-center justify-content-lg-end mt-5 mt-lg-0">
                         <div class="hero-feed-container">
-                            <div class="hero-feed-header">
-                                <div class="hero-feed-pulse"></div>
-                                <span class="hero-feed-title">Recent Bookings</span>
+                            <div class="hero-feed-header d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="hero-feed-pulse"></div>
+                                    <span class="hero-feed-title">Recent Bookings</span>
+                                </div>
+                                <% if (locals.featuredProvider) { %>
+                                <span class="badge-status badge-completed" style="font-size:0.7rem;padding:2px 8px;">Top Pro: <%= featuredProvider.name %></span>
+                                <% } %>
                             </div>
                             <div class="hero-feed-scroll" id="heroFeedScroll">
                                 <div class="hero-feed-item">

@@ -125,21 +125,26 @@ exports.createBooking = async (req, res, next) => {
         const knownErrors = [
             'already booked', 'invalid', 'expired', 'usage limit',
             'minimum order', 'past', 'inactive', 'not found',
-            'available', 'availability',
+            'available', 'availability', 'scheduled', 'slot', 'provider'
         ];
-        const isKnown = knownErrors.some(k => err.message?.toLowerCase().includes(k));
+        const isKnown = err.code === 'P0001' || knownErrors.some(k => err.message?.toLowerCase().includes(k));
 
         if (isKnown) {
             try {
-                const serviceId = parseInt(req.body.service_id);
-                const service   = await serviceModel.getServiceById(serviceId);
+                const customerId = req.user.customer_id;
+                const serviceId  = parseInt(req.body.service_id);
+                const service    = await serviceModel.getServiceById(serviceId);
+                const addresses  = await bookingModel.getCustomerAddresses(customerId);
                 return res.status(400).render('booking-form', {
                     title: 'Book Service — HomeServe',
                     service,
+                    addresses,
                     error: err.message,
                     formData: req.body,
                 });
-            } catch (_) { /* fall through to global handler */ }
+            } catch (renderErr) {
+                console.error('[ERROR] Failed to render booking form error:', renderErr);
+            }
         }
         next(err);
     }

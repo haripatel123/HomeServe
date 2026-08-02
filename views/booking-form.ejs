@@ -77,11 +77,13 @@
                                 <option value="">— Choose provider —</option>
                                 <% service.providers.forEach(p => { %>
                                 <option value="<%= p.provider_id %>"
+                                    data-schedule='<%= JSON.stringify(p.schedule || []) %>'
                                     <%= (formData.provider_id == p.provider_id) ? 'selected' : '' %>>
                                     <%= p.name %> ★ <%= parseFloat(p.avg_rating).toFixed(1) %>
                                 </option>
                                 <% }); %>
                             </select>
+                            <div id="provider-schedule-info" style="font-size:0.78rem;color:var(--text-muted);margin-top:0.4rem;display:none;"></div>
                         </div>
 
                         <!-- Variant -->
@@ -329,4 +331,34 @@ document.getElementById('applyCouponBtn')?.addEventListener('click', async funct
         resultEl.style.color = 'var(--accent-red)';
     }
 });
+
+// Dynamic provider availability display
+function updateProviderSchedule() {
+    const providerSel = document.getElementById('provider_id');
+    const infoEl = document.getElementById('provider-schedule-info');
+    if (!providerSel || !infoEl) return;
+
+    const selectedOpt = providerSel.options[providerSel.selectedIndex];
+    if (!selectedOpt || !selectedOpt.value) {
+        infoEl.style.display = 'none';
+        return;
+    }
+
+    try {
+        const schedule = JSON.parse(selectedOpt.dataset.schedule || '[]');
+        if (!schedule || schedule.length === 0) {
+            infoEl.style.display = 'block';
+            infoEl.innerHTML = '<span style="color:var(--accent-amber);">⚠️ No scheduled hours found for this provider.</span>';
+        } else {
+            const schedParts = schedule.map(s => `<strong>${s.day}:</strong> ${s.start}–${s.end}`);
+            infoEl.style.display = 'block';
+            infoEl.innerHTML = `<span style="color:var(--color-action-blue);font-weight:600;">📅 Available:</span> ${schedParts.join(' | ')}`;
+        }
+    } catch (_) {
+        infoEl.style.display = 'none';
+    }
+}
+
+document.getElementById('provider_id')?.addEventListener('change', updateProviderSchedule);
+updateProviderSchedule();
 </script>

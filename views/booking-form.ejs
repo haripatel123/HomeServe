@@ -352,7 +352,7 @@ function updateProviderSchedule() {
         } else {
             const schedParts = schedule.map(s => `<strong>${s.day}:</strong> ${s.start}–${s.end}`);
             infoEl.style.display = 'block';
-            infoEl.innerHTML = `<span style="color:var(--color-action-blue);font-weight:600;">📅 Available:</span> ${schedParts.join(' | ')}`;
+            infoEl.innerHTML = `<span style="color:var(--color-action-blue);font-weight:600;"> Available:</span> ${schedParts.join(' | ')}`;
         }
     } catch (_) {
         infoEl.style.display = 'none';

@@ -7,6 +7,7 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
+  req.session.returnTo = req.originalUrl;
   req.flash('error_msg', 'Please log in to access this page');
   res.redirect('/login');
 }
@@ -16,6 +17,7 @@ function ensureAuthenticated(req, res, next) {
 function ensureRole(...roles) {
   return (req, res, next) => {
     if (!req.isAuthenticated()) {
+      req.session.returnTo = req.originalUrl;
       req.flash('error_msg', 'Please log in to access this page');
       return res.redirect('/login');
     }

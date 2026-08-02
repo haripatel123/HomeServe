@@ -3,13 +3,51 @@ const passport = require('passport');
 const pool = require('../config/db');
 const bookingModel = require('../models/bookingModel');
 
+// Validate returnTo paths to prevent open-redirect attacks
+function safeReturnTo(url) {
+  if (!url || typeof url !== 'string') return null;
+  // Must start with / but not // (protocol-relative)
+  if (!url.startsWith('/') || url.startsWith('//')) return null;
+  // Block auth pages to avoid redirect loops
+  const blocked = ['/login', '/register', '/logout'];
+  const pathname = url.split('?')[0];
+  if (blocked.includes(pathname)) return null;
+  return url;
+}
+
 
 module.exports = {
   showRegisterForm: (req, res) => {
+    // Capture where the user came from (via query param or Referer header)
+    if (!req.session.returnTo) {
+      const from = req.query.returnTo || req.get('Referer');
+      if (from) {
+        try {
+          const url = new URL(from, `${req.protocol}://${req.get('host')}`);
+          // Only store same-origin, non-auth paths
+          if (url.host === req.get('host') && !['/login', '/register', '/logout'].includes(url.pathname)) {
+            req.session.returnTo = url.pathname + url.search;
+          }
+        } catch (_) { /* ignore malformed URLs */ }
+      }
+    }
     res.render('register', { title: 'Register — HomeServe' });
   },
 
   showLoginForm: (req, res) => {
+    // Capture where the user came from (via query param or Referer header)
+    if (!req.session.returnTo) {
+      const from = req.query.returnTo || req.get('Referer');
+      if (from) {
+        try {
+          const url = new URL(from, `${req.protocol}://${req.get('host')}`);
+          // Only store same-origin, non-auth paths
+          if (url.host === req.get('host') && !['/login', '/register', '/logout'].includes(url.pathname)) {
+            req.session.returnTo = url.pathname + url.search;
+          }
+        } catch (_) { /* ignore malformed URLs */ }
+      }
+    }
     res.render('login', { title: 'Login — HomeServe' });
   },
 
@@ -58,6 +96,7 @@ module.exports = {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
+      let accountId;
       if (selectedRole === 'provider') {
         // Insert into Provider table
         const providerResult = await client.query(
@@ -67,10 +106,11 @@ module.exports = {
         const providerId = providerResult.rows[0].provider_id;
 
         // Insert into Account with provider_id
-        await client.query(
-          'INSERT INTO Account (email, password_hash, role, provider_id) VALUES ($1, $2, $3, $4)',
+        const accountResult = await client.query(
+          'INSERT INTO Account (email, password_hash, role, provider_id) VALUES ($1, $2, $3, $4) RETURNING account_id',
           [email, hashedPassword, 'provider', providerId]
         );
+        accountId = accountResult.rows[0].account_id;
       } else {
         // Insert into Customer table
         const customerResult = await client.query(
@@ -80,16 +120,45 @@ module.exports = {
         const customerId = customerResult.rows[0].customer_id;
 
         // Insert into Account with customer_id
-        await client.query(
-          'INSERT INTO Account (email, password_hash, role, customer_id) VALUES ($1, $2, $3, $4)',
+        const accountResult = await client.query(
+          'INSERT INTO Account (email, password_hash, role, customer_id) VALUES ($1, $2, $3, $4) RETURNING account_id',
           [email, hashedPassword, 'customer', customerId]
         );
+        accountId = accountResult.rows[0].account_id;
       }
 
       await client.query('COMMIT');
 
-      req.flash('success_msg', 'You are now registered and can log in');
-      res.redirect('/login');
+      // Auto login after successful registration
+      const newUser = {
+        account_id: accountId,
+        role: selectedRole
+      };
+
+      req.logIn(newUser, (err) => {
+        if (err) {
+          console.error('[ERROR] Auto-login failed:', err);
+          req.flash('success_msg', 'You are now registered and can log in');
+          return res.redirect('/login');
+        }
+
+        req.flash('success_msg', 'Registration successful! Welcome to HomeServe.');
+
+        // Redirect to the page the user was on before registering
+        const returnTo = req.session.returnTo;
+        delete req.session.returnTo;
+
+        if (returnTo) {
+          return res.redirect(returnTo);
+        }
+
+        // Fall back to role-based default
+        if (newUser.role === 'provider') {
+          return res.redirect('/provider');
+        } else {
+          return res.redirect('/');
+        }
+      });
     } catch (err) {
       await client.query('ROLLBACK');
       console.error(err);
@@ -123,7 +192,15 @@ module.exports = {
       req.logIn(user, (err) => {
         if (err) return next(err);
 
-        // Role-based redirect after login
+        // Redirect to the page the user was on before logging in
+        const returnTo = req.session.returnTo;
+        delete req.session.returnTo;
+
+        if (returnTo) {
+          return res.redirect(returnTo);
+        }
+
+        // Fall back to role-based redirect
         switch (user.role) {
           case 'provider':
             return res.redirect('/provider');
@@ -164,7 +241,8 @@ module.exports = {
         addresses,
         providerDetails,
         errors: [],
-        formData: {}
+        formData: {},
+        returnTo: safeReturnTo(req.query.returnTo)
       });
     } catch (err) {
       next(err);
@@ -231,7 +309,8 @@ module.exports = {
         addresses,
         providerDetails: null,
         errors,
-        formData: req.body
+        formData: req.body,
+        returnTo: safeReturnTo(req.body.returnTo)
       });
     }
 
@@ -246,7 +325,8 @@ module.exports = {
         addressType: address_type || 'Home'
       });
       req.flash('success_msg', 'Address added successfully');
-      res.redirect('/profile');
+      const returnTo = safeReturnTo(req.body.returnTo);
+      res.redirect(returnTo || '/profile');
     } catch (err) {
       next(err);
     }

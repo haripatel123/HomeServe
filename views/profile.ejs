@@ -23,6 +23,15 @@
             </div>
         <% } %>
 
+        <% if (locals.returnTo) { %>
+            <div class="alert-dark-success mb-4" style="background:rgba(59,130,246,0.08);border-color:rgba(59,130,246,0.2);color:#93c5fd;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;flex-shrink:0;">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                </svg>
+                <span>Add an address below and you’ll be redirected back to complete your booking.</span>
+            </div>
+        <% } %>
+
         <div class="row g-4">
             <!-- Left: Profile Info -->
             <div class="<%= user.role === 'customer' ? 'col-lg-5' : 'col-lg-6 mx-auto' %>">
@@ -120,6 +129,9 @@
                     <p style="color:var(--text-muted);font-size:0.82rem;margin-bottom:1.25rem;">Add another delivery or service location.</p>
 
                     <form action="/profile/address" method="POST" class="form-dark">
+                        <% if (locals.returnTo) { %>
+                            <input type="hidden" name="returnTo" value="<%= returnTo %>">
+                        <% } %>
                         <div class="mb-3">
                             <label for="line1" class="form-label">Address Line 1</label>
                             <input type="text" class="form-control" id="line1" name="line1" value="<%= locals.formData.line1 || '' %>" required placeholder="e.g. Flat/House No, Building Name">

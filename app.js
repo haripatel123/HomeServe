@@ -8,6 +8,7 @@ const passport = require('passport');
 const flash = require('express-flash');
 const pool = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
+const { globalLimiter } = require('./middleware/rateLimiter');
 
 // Passport config
 require('./config/passport')(passport);
@@ -56,6 +57,9 @@ app.use(express.json({ limit: '10kb' }));
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Global rate limiting (dynamic routes only)
+app.use(globalLimiter);
 
 // Session (stored in PostgreSQL via connect-pg-simple)
 app.use(

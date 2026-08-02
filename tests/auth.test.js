@@ -92,7 +92,7 @@ describe('Authentication Routes', () => {
                 })
                 .expect(302);
 
-            expect(response.header.location).toBe('/login');
+            expect(response.header.location).toBe('/');
         });
     });
 });

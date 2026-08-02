@@ -57,76 +57,101 @@
                     </div>
 
                     <div class="col-lg-5 col-12 d-flex justify-content-center justify-content-lg-end mt-5 mt-lg-0">
-                        <div class="hero-showcase-wrapper position-relative w-100" style="max-width: 440px; min-height: 430px;">
-                            
-                            <!-- Card 1: Verified Professional (Main Focus) -->
-                            <div class="showcase-card main-provider-card" id="showcaseCard1">
-                                <div class="showcase-card-header d-flex justify-content-between align-items-center">
-                                    <span class="showcase-badge-label">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="me-1" style="width: 12px; height: 12px; color: #00ffb7; vertical-align: -1px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                        Verified Professional
-                                    </span>
-                                    <span class="prov-pulse-dot"></span>
+                        <div class="hero-feed-container">
+                            <div class="hero-feed-header">
+                                <div class="hero-feed-pulse"></div>
+                                <span class="hero-feed-title">Recent Bookings</span>
+                            </div>
+                            <div class="hero-feed-scroll" id="heroFeedScroll">
+                                <div class="hero-feed-item">
+                                    <div class="hero-feed-avatar" style="background:rgba(59,130,246,0.1);color:#3b82f6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M5.636 18.364a9 9 0 0 1 0-12.728"/><path d="M3.172 3.172C-.77 7.114-.77 13.486 3.172 17.828"/><path d="M12 12v.01"/><path d="M12 2a4 4 0 0 0-4 4c0 1.5.8 3 2 4l2 2 2-2c1.2-1 2-2.5 2-4a4 4 0 0 0-4-4z"/></svg>
+                                    </div>
+                                    <div class="hero-feed-info">
+                                        <div class="hero-feed-name">Priya Shah</div>
+                                        <div class="hero-feed-service">Booked Plumbing Repair</div>
+                                    </div>
+                                    <div class="hero-feed-time">2m ago</div>
+                                    <div class="hero-feed-dot"></div>
                                 </div>
-                                <div class="showcase-card-body d-flex align-items-center gap-3">
-                                    <div class="avatar-portrait-box">
-                                        <img src="/images/suresh_kumar.png" alt="Suresh Kumar" class="avatar-portrait-img">
-                                        <span class="avatar-check-badge">✔</span>
+                                <div class="hero-feed-item">
+                                    <div class="hero-feed-avatar" style="background:rgba(251,191,36,0.1);color:#fbbf24;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
                                     </div>
-                                    <div class="showcase-prov-info">
-                                        <h3 class="showcase-prov-name">Suresh Kumar</h3>
-                                        <div class="showcase-rating-line">
-                                            <span class="showcase-star-rating">★ 4.8</span>
-                                            <span class="showcase-jobs-count">· 6 Jobs Completed</span>
-                                        </div>
-                                        <p class="showcase-prov-spec">Plumbing Specialist</p>
+                                    <div class="hero-feed-info">
+                                        <div class="hero-feed-name">Amit Patel</div>
+                                        <div class="hero-feed-service">Booked Electrical Wiring</div>
                                     </div>
+                                    <div class="hero-feed-time">5m ago</div>
+                                    <div class="hero-feed-dot"></div>
                                 </div>
-                                <div class="showcase-card-footer d-flex align-items-center justify-content-between">
-                                    <div class="showcase-rate-strip">
-                                        <span class="rate-amount">₹250/hour</span>
-                                        <span class="rate-status">Available Today</span>
+                                <div class="hero-feed-item">
+                                    <div class="hero-feed-avatar" style="background:rgba(52,211,153,0.1);color:#34d399;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M3 22v-2a4 4 0 0 1 4-4h2"/><circle cx="12" cy="5" r="3"/><path d="m15 9 3 3-3 3"/><path d="M18 12H9"/></svg>
                                     </div>
-                                    <button class="btn-showcase-cta">Book Service</button>
+                                    <div class="hero-feed-info">
+                                        <div class="hero-feed-name">Neha Gupta</div>
+                                        <div class="hero-feed-service">Booked Deep Cleaning</div>
+                                    </div>
+                                    <div class="hero-feed-time">12m ago</div>
+                                    <div class="hero-feed-dot"></div>
+                                </div>
+                                <div class="hero-feed-item">
+                                    <div class="hero-feed-avatar" style="background:rgba(168,85,247,0.1);color:#a855f7;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg>
+                                    </div>
+                                    <div class="hero-feed-info">
+                                        <div class="hero-feed-name">Rahul Verma</div>
+                                        <div class="hero-feed-service">Booked Furniture Assembly</div>
+                                    </div>
+                                    <div class="hero-feed-time">18m ago</div>
+                                    <div class="hero-feed-dot"></div>
+                                </div>
+                                <div class="hero-feed-item">
+                                    <div class="hero-feed-avatar" style="background:rgba(251,113,133,0.1);color:#fb7185;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3l.4.4z"/></svg>
+                                    </div>
+                                    <div class="hero-feed-info">
+                                        <div class="hero-feed-name">Sneha Iyer</div>
+                                        <div class="hero-feed-service">Booked Wall Painting</div>
+                                    </div>
+                                    <div class="hero-feed-time">25m ago</div>
+                                    <div class="hero-feed-dot"></div>
+                                </div>
+                                <div class="hero-feed-item">
+                                    <div class="hero-feed-avatar" style="background:rgba(251,146,60,0.1);color:#fb923c;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+                                    </div>
+                                    <div class="hero-feed-info">
+                                        <div class="hero-feed-name">Karan Mehta</div>
+                                        <div class="hero-feed-service">Booked AC Servicing</div>
+                                    </div>
+                                    <div class="hero-feed-time">31m ago</div>
+                                    <div class="hero-feed-dot"></div>
+                                </div>
+                                <div class="hero-feed-item">
+                                    <div class="hero-feed-avatar" style="background:rgba(20,184,166,0.1);color:#14b8a6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 14.06c1.32 0 2.44-1.1 2.44-2.44 0-.7-.34-1.36-1.02-1.92-.69-.56-1.18-1.14-1.42-1.9-.23.76-.72 1.34-1.42 1.9-.68.56-1.02 1.22-1.02 1.92 0 1.34 1.1 2.44 2.44 2.44z"/></svg>
+                                    </div>
+                                    <div class="hero-feed-info">
+                                        <div class="hero-feed-name">Divya Rao</div>
+                                        <div class="hero-feed-service">Booked Water Purifier Service</div>
+                                    </div>
+                                    <div class="hero-feed-time">40m ago</div>
+                                    <div class="hero-feed-dot"></div>
+                                </div>
+                                <div class="hero-feed-item">
+                                    <div class="hero-feed-avatar" style="background:rgba(139,92,246,0.1);color:#8b5cf6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect width="7" height="13" x="3" y="8" rx="1"/><path d="m15 2-3 6h4l-3 6"/><path d="M14 8h4a2 2 0 0 1 2 2v6.5a.5.5 0 0 1-.5.5h-5"/></svg>
+                                    </div>
+                                    <div class="hero-feed-info">
+                                        <div class="hero-feed-name">Vikram Singh</div>
+                                        <div class="hero-feed-service">Booked Appliance Repair</div>
+                                    </div>
+                                    <div class="hero-feed-time">52m ago</div>
+                                    <div class="hero-feed-dot"></div>
                                 </div>
                             </div>
-
-                            <!-- Card 2: Customer Review Testimonial -->
-                            <div class="showcase-card review-testimonial-card" id="showcaseCard2">
-                                <div class="review-rating-stars">★★★★★</div>
-                                <p class="review-card-text">
-                                    "Suresh fixed the leak perfectly. Very professional!"
-                                </p>
-                                <div class="review-author-line d-flex align-items-center gap-2">
-                                    <div class="review-author-avatar">
-                                        <img src="/images/priya_shah.png" alt="Priya Shah" class="author-avatar-img">
-                                    </div>
-                                    <span class="review-author-name">— Priya Shah</span>
-                                </div>
-                            </div>
-
-                            <!-- Card 3: Trust Statistics -->
-                            <div class="showcase-card trust-stats-card" id="showcaseCard3">
-                                <div class="trust-heading d-flex align-items-center gap-2">
-                                    <span class="trust-verified-icon">✔</span>
-                                    <span class="trust-title">Verified Trust</span>
-                                </div>
-                                <div class="trust-metrics-grid">
-                                    <div class="trust-metric-item">
-                                        <span class="metric-num">40+</span>
-                                        <span class="metric-label">Happy Customers</span>
-                                    </div>
-                                    <div class="trust-metric-item">
-                                        <span class="metric-num">4.7★</span>
-                                        <span class="metric-label">Avg Rating</span>
-                                    </div>
-                                    <div class="trust-metric-item">
-                                        <span class="metric-num">250+</span>
-                                        <span class="metric-label">Verified Pros</span>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
@@ -447,90 +472,17 @@
                     }
                 }, true); // capturing phase because error events don't bubble
 
-                // ── Interactive GSAP Hero Showcase Cards Animations ──
+                // ── Live Booking Feed — infinite scroll + pause on hover ──
                 document.addEventListener('DOMContentLoaded', () => {
-                    const card1 = document.getElementById('showcaseCard1');
-                    const card2 = document.getElementById('showcaseCard2');
-                    const card3 = document.getElementById('showcaseCard3');
-
-                    if (!card1 || !card2 || !card3) return;
-
-                    // Set initial hidden positions for clean entrance
-                    gsap.set(card1, { opacity: 0, x: 80 });
-                    gsap.set(card2, { opacity: 0, y: 60 });
-                    gsap.set(card3, { opacity: 0, scale: 0.92 });
-
-                    // 1. Entrance Timeline
-                    const tl = gsap.timeline();
-                    tl.to(card1, { opacity: 1, x: 0, duration: 1.1, ease: "power3.out" })
-                      .to(card2, { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" }, "-=0.6")
-                      .to(card3, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, "-=0.5");
-
-                    // 2. Slow continuous float loop (active after entrance completes)
-                    tl.add(() => {
-                        // Card 1 main float
-                        gsap.to(card1, {
-                            y: "+=6",
-                            duration: 3.5,
-                            yoyo: true,
-                            repeat: -1,
-                            ease: "sine.inOut"
-                        });
-                        
-                        // Card 2 float & gentle oscillation
-                        gsap.to(card2, {
-                            y: "-=5",
-                            rotation: 1.5,
-                            duration: 4.2,
-                            yoyo: true,
-                            repeat: -1,
-                            ease: "sine.inOut"
-                        });
-                        
-                        // Card 3 float
-                        gsap.to(card3, {
-                            y: "+=4",
-                            duration: 3.8,
-                            yoyo: true,
-                            repeat: -1,
-                            ease: "sine.inOut"
-                        });
-
-                        // Verified badges soft pulse
-                        gsap.to(['.avatar-check-badge', '.trust-verified-icon'], {
-                            scale: 1.12,
-                            duration: 1.8,
-                            yoyo: true,
-                            repeat: -1,
-                            ease: "sine.inOut",
-                            stagger: 0.6
-                        });
-                    });
-
-                    // 3. Hover scaling and z-index bringing forward
-                    const cards = [card1, card2, card3];
-                    cards.forEach(card => {
-                        const originalZ = window.getComputedStyle(card).zIndex;
-
-                        card.addEventListener('mouseenter', () => {
-                            gsap.to(card, {
-                                scale: 1.05,
-                                zIndex: 15,
-                                duration: 0.3,
-                                ease: "power2.out",
-                                overwrite: "auto"
-                            });
-                        });
-
-                        card.addEventListener('mouseleave', () => {
-                            gsap.to(card, {
-                                scale: 1,
-                                zIndex: originalZ,
-                                duration: 0.3,
-                                ease: "power2.out",
-                                overwrite: "auto"
-                            });
-                        });
-                    });
+                    const feed = document.getElementById('heroFeedScroll');
+                    if (!feed) return;
+                    // Duplicate items for seamless infinite scroll
+                    feed.innerHTML += feed.innerHTML;
+                    // Pause on hover
+                    const container = feed.closest('.hero-feed-container');
+                    if (container) {
+                        container.addEventListener('mouseenter', () => feed.style.animationPlayState = 'paused');
+                        container.addEventListener('mouseleave', () => feed.style.animationPlayState = 'running');
+                    }
                 });
             </script>

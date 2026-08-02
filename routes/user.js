@@ -2,14 +2,15 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user');
 const { forwardAuthenticated, ensureAuthenticated } = require('../middleware/auth');
+const { authLimiter } = require('../middleware/rateLimiter');
 
 // Registration routes
 router.get('/register', forwardAuthenticated, userController.showRegisterForm);
-router.post('/register', userController.register);
+router.post('/register', authLimiter, userController.register);
 
 // Login routes
 router.get('/login', forwardAuthenticated, userController.showLoginForm);
-router.post('/login', userController.login);
+router.post('/login', authLimiter, userController.login);
 
 // Logout route
 router.get('/logout', userController.logout);
